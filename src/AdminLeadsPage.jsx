@@ -115,6 +115,23 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
     if (!open) { prevId.current = null; setAssignOpen(false); setConfirmDel(false); }
   }, [open, lead]);
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+  }, [open]);
+
   const set = useCallback((k, v) => setLocal(l => ({ ...l, [k]:v })), []);
 
   const handleAddComment = useCallback(async () => {
@@ -146,14 +163,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       <style>{STYLES}</style>
       {/* Overlay */}
       <div onClick={onClose} style={{
-        position:"fixed", inset:0, zIndex:200,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:200,
         background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)",
         opacity: open?1:0, pointerEvents: open?"all":"none", transition:"opacity .25s",
       }} />
 
       {/* Sheet */}
       <div style={{
-        position:"fixed", inset:0, zIndex:201,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
       }}>
@@ -162,7 +179,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           background:C.card, borderRadius:"22px 22px 0 0",
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"93vh",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 80px)",
           transform: open?"translateY(0)":"translateY(100%)",
           transition:"transform .32s cubic-bezier(.32,0,.16,1)",
         }}>
@@ -201,7 +218,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px 8px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"12px 16px calc(8px + env(safe-area-inset-bottom, 80px))", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <Div label="Actions" />
@@ -373,10 +390,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 // ─── Assign Modal ─────────────────────────────────────────────────
 function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", maxHeight:"70vh", overflowY:"auto" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"calc(32px + env(safe-area-inset-bottom, 80px))", maxHeight:"70vh", overflowY:"auto" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>توزيع: {lead.name}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -416,23 +433,27 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
   return (
     <div className="lead-card" onClick={onClick} style={{
-      background: C.card,
-      border: `1px solid ${C.border}`,
-      borderLeft: `3px solid ${meta.color}`,
+      background: "#252525",
+      border: "1px solid #333333",
       borderRadius: 16,
       cursor: "pointer",
       overflow: "hidden",
+      position: "relative",
+      boxShadow: "0 2px 24px rgba(0,0,0,.5)",
     }}>
-      <div style={{ padding:"13px 14px" }}>
+      {/* Red top accent bar */}
+      <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:"#cc1515", borderRadius:"16px 16px 0 0" }} />
 
-        {/* Row 1: Avatar + Name/Phone + Status + Arrow */}
+      <div style={{ padding:"14px 14px 13px" }}>
+
+        {/* Row 1: Avatar + Name/Phone + Status + Action icons */}
         <div style={{ display:"flex", alignItems:"center", gap:11, marginBottom: hasCallback ? 8 : 10 }}>
-          {/* Avatar circle */}
+          {/* Avatar: black square */}
           <div style={{
-            width:42, height:42, borderRadius:"50%", flexShrink:0,
-            background:`${meta.color}22`, border:`1.5px solid ${meta.color}55`,
+            width:42, height:42, borderRadius:10, flexShrink:0,
+            background:"#1a1a1a", border:"1px solid #383838",
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:"1rem", fontWeight:900, color:meta.color, fontFamily:"Archivo,sans-serif",
+            fontSize:"1rem", fontWeight:900, color:"#ffffff", fontFamily:"Archivo,sans-serif",
           }}>{initial}</div>
 
           {/* Name + phone */}
@@ -508,10 +529,10 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 // ─── Modals ───────────────────────────────────────────────────────
 function ModalWrap({ onClose, title, children }) {
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 32px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px calc(32px + env(safe-area-inset-bottom, 80px))", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{title}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -639,7 +660,7 @@ function FacebookModal({ onClose }) {
 // ─── Delete Confirm Popup ─────────────────────────────────────────
 function DeletePopup({ lead, onConfirm, onCancel }) {
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:400, background:"rgba(0,0,0,.85)", backdropFilter:"blur(12px)", display:"flex", alignItems:"center", justifyContent:"center", padding:"0 24px" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:400, background:"rgba(0,0,0,.85)", backdropFilter:"blur(12px)", display:"flex", alignItems:"center", justifyContent:"center", padding:"0 24px" }}
       onClick={onCancel}
     >
       <div onClick={e=>e.stopPropagation()} style={{
@@ -665,11 +686,21 @@ function DeletePopup({ lead, onConfirm, onCancel }) {
 
 // ─── FAB Chooser Modal ────────────────────────────────────────────
 function FabChooserModal({ onClose, onChoose }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+  }, []);
   return (
-    <div style={{ position:"fixed", inset:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px calc(90px + env(safe-area-inset-bottom, 80px))" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>إضافة ليد جديد</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -817,26 +848,6 @@ export default function AdminLeadsPage() {
         />
       )}
 
-      {/* ── HEADER ── */}
-      <div style={{
-        background:C.card,
-        borderBottom:`1px solid ${C.border}`,
-        padding:"14px 16px 14px",
-        position:"sticky", top:0, zIndex:50,
-        boxShadow:"0 2px 20px rgba(0,0,0,.5)",
-      }}>
-        {/* Top row */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ fontSize:".65rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:1.2 }}>
-            Admin · Leads
-          </div>
-          <div style={{ background:`${C.red}18`, borderRadius:8, padding:"3px 10px", fontSize:".62rem", fontWeight:800, color:C.red, fontFamily:"Archivo,sans-serif", border:`1px solid ${C.red}30` }}>
-            {leads.length} Total
-          </div>
-        </div>
-
-      </div>
-
       {/* ── BODY ── */}
       <div
         ref={bodyRef}
@@ -944,7 +955,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"absolute", bottom:90, right:20,
+        position:"fixed", bottom:"calc(88px + env(safe-area-inset-bottom, 0px))", right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
