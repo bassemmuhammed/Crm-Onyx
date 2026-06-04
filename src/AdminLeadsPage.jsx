@@ -169,7 +169,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       }} />
 
       {/* Sheet */}
-      <div style={{
+      <div onClick={onClose} style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
@@ -218,7 +218,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px calc(8px + env(safe-area-inset-bottom, 80px))", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"12px 16px 8px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <Div label="Actions" />
@@ -345,7 +345,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Footer */}
-          <div style={{ padding:"10px 16px 20px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+          <div style={{ padding:"10px 16px", paddingBottom:"calc(20px + env(safe-area-inset-bottom, 70px))", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>تأكيد الحذف النهائي؟</span>
@@ -955,11 +955,11 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:"calc(88px + env(safe-area-inset-bottom, 0px))", right:20,
+        position:"fixed", bottom:96, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
-        cursor:"pointer", zIndex:40,
+        cursor:"pointer", zIndex:150,
       }}>
         <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
       </div>
