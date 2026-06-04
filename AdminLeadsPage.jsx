@@ -848,23 +848,6 @@ export default function AdminLeadsPage() {
         />
       )}
 
-      {/* ── HEADER ── */}
-      <div style={{
-        background:C.card,
-        borderBottom:`1px solid ${C.border}`,
-        padding:"14px 16px 14px",
-        position:"sticky", top:0, zIndex:50,
-        boxShadow:"0 2px 20px rgba(0,0,0,.5)",
-      }}>
-        {/* Top row */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ fontSize:".65rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:1.2 }}>
-            Admin · Leads
-          </div>
-        </div>
-
-      </div>
-
       {/* ── BODY ── */}
       <div
         ref={bodyRef}
@@ -972,7 +955,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"absolute", bottom:100, right:20,
+        position:"fixed", bottom:"calc(88px + env(safe-area-inset-bottom, 0px))", right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
