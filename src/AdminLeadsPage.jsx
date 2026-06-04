@@ -898,7 +898,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"absolute", bottom:20, right:20,
+        position:"absolute", bottom:90, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
