@@ -62,6 +62,7 @@ const STYLES = `
   ::placeholder { color:${C.gray} !important; opacity:1 }
   select option { background:${C.cardAlt}; color:${C.white} }
   body { overflow:hidden; }
+  @keyframes spin { to { transform:rotate(360deg) } }
 `;
 
 const inputBase = {
@@ -709,14 +710,38 @@ export default function AdminLeadsPage() {
   const [selectedLead, setSelected] = useState(null);
   const [detailOpen, setDetail] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [pullY, setPullY]       = useState(0);
+  const [pulling, setPulling]   = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const touchStartY = useRef(0);
+  const bodyRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const [leadsData, teamData] = await Promise.all([fetchLeads(), fetchTeam()]);
-      setLeads(leadsData); setTeam(teamData); setLoading(false);
-    })();
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    const [leadsData, teamData] = await Promise.all([fetchLeads(), fetchTeam()]);
+    setLeads(leadsData); setTeam(teamData); setLoading(false);
   }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleTouchStart = useCallback(e => {
+    if (bodyRef.current?.scrollTop === 0) touchStartY.current = e.touches[0].clientY;
+    else touchStartY.current = 0;
+  }, []);
+
+  const handleTouchMove = useCallback(e => {
+    if (!touchStartY.current) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0 && delta < 90) { setPulling(true); setPullY(delta); }
+  }, []);
+
+  const handleTouchEnd = useCallback(async () => {
+    if (pullY > 60) {
+      setRefreshing(true); setPullY(0); setPulling(false);
+      await loadData(); setRefreshing(false);
+    } else { setPullY(0); setPulling(false); }
+    touchStartY.current = 0;
+  }, [pullY, loadData]);
 
   const handleAddLead = async data => {
     const newLead = await dbAddLead({ ...data, status:"new", priority:"medium", assignedTo:null, callbackDate:"", callbackTime:"", clientInfo:{ type:"", budget:"" } });
@@ -813,7 +838,28 @@ export default function AdminLeadsPage() {
       </div>
 
       {/* ── BODY ── */}
-      <div style={{ flex:1, overflowY:"auto", padding:"12px 14px 0", display:"flex", flexDirection:"column", gap:9, WebkitOverflowScrolling:"touch" }}>
+      <div
+        ref={bodyRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ flex:1, overflowY:"auto", padding:"12px 14px 0", display:"flex", flexDirection:"column", gap:9, WebkitOverflowScrolling:"touch" }}
+      >
+        {/* Pull-to-refresh indicator */}
+        <div style={{
+          height: pulling || refreshing ? Math.min(pullY, 60) : 0,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          overflow:"hidden", transition: pulling ? "none" : "height .25s ease",
+          marginBottom: pulling || refreshing ? 4 : 0,
+        }}>
+          <div style={{
+            width:28, height:28, borderRadius:"50%",
+            border:`2.5px solid ${C.red}`, borderTopColor:"transparent",
+            animation: refreshing ? "spin .7s linear infinite" : "none",
+            transform: !refreshing ? `rotate(${pullY * 3}deg)` : undefined,
+            opacity: Math.min(pullY / 60, 1),
+          }} />
+        </div>
 
         {/* Search */}
         <div style={{ position:"relative" }}>
