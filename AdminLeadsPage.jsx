@@ -163,14 +163,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       <style>{STYLES}</style>
       {/* Overlay */}
       <div onClick={onClose} style={{
-        position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:200,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:200,
         background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)",
         opacity: open?1:0, pointerEvents: open?"all":"none", transition:"opacity .25s",
       }} />
 
       {/* Sheet */}
       <div style={{
-        position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:201,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
       }}>
@@ -218,7 +218,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px 8px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"12px 16px calc(8px + env(safe-area-inset-bottom, 80px))", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <Div label="Actions" />
@@ -390,10 +390,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 // ─── Assign Modal ─────────────────────────────────────────────────
 function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
   return (
-    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", maxHeight:"70vh", overflowY:"auto" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"calc(32px + env(safe-area-inset-bottom, 80px))", maxHeight:"70vh", overflowY:"auto" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>توزيع: {lead.name}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -529,10 +529,10 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 // ─── Modals ───────────────────────────────────────────────────────
 function ModalWrap({ onClose, title, children }) {
   return (
-    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 32px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px calc(32px + env(safe-area-inset-bottom, 80px))", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{title}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -697,10 +697,10 @@ function FabChooserModal({ onClose, onChoose }) {
     };
   }, []);
   return (
-    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 90px" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px calc(90px + env(safe-area-inset-bottom, 80px))" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>إضافة ليد جديد</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
