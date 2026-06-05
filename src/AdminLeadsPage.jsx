@@ -155,27 +155,26 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
     setDeleting(true); await onDelete(local.id); setDeleting(false); onClose();
   }, [confirmDel, local, onDelete, onClose]);
 
-  if (!local) return null;
+  if (!open || !local) return null;
 
   const meta       = STATUS_META[local.status] || STATUS_META.new;
   const isCallback = local.status === "callback";
   const agent      = team.find(t => t.id === local.assignedTo);
 
-  return (
+  return createPortal(
     <>
       <style>{STYLES}</style>
       {/* Overlay */}
       <div onClick={onClose} style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:200,
         background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)",
-        opacity: open?1:0, pointerEvents: open?"all":"none", transition:"opacity .25s",
+        opacity: 1,
       }} />
 
       {/* Sheet */}
       <div onClick={onClose} style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
-        pointerEvents: open?"all":"none",
       }}>
         <div onClick={e=>e.stopPropagation()} style={{
           width:"100%", maxWidth:430,
@@ -183,8 +182,6 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
           display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 80px)",
-          transform: open?"translateY(0)":"translateY(110%)",
-          transition:"transform .32s cubic-bezier(.32,0,.16,1)",
           overflow:"hidden",
         }}>
           {/* Handle */}
@@ -442,7 +439,8 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 }
 
