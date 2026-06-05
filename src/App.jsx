@@ -297,16 +297,20 @@ export default function App() {
       agent:         project.agent        || {},
     };
 
-    // Check if it's an existing DB row (uuid) or new
-    const isUuid = typeof project.id === "string" && project.id.length === 36;
+    // editProject له id من Supabase (uuid string بطول 36)
+    // project جديد له id من Date.now() (رقم أو string قصير)
+    const isExisting = editProject && typeof editProject.id === "string" && editProject.id.length === 36;
 
-    if (isUuid) {
-      await supabase.from("projects").update(row).eq("id", project.id);
+    if (isExisting) {
+      const { error } = await supabase.from("projects").update(row).eq("id", editProject.id);
+      if (error) console.error("Update error:", error.message);
     } else {
-      await supabase.from("projects").insert(row);
+      const { error } = await supabase.from("projects").insert(row);
+      if (error) console.error("Insert error:", error.message);
     }
 
-    // Realtime will trigger fetchProjects automatically
+    // fetchProjects manually (+ realtime as backup)
+    await fetchProjects();
     setEditProject(null);
     setShowAddProject(false);
     sessionStorage.setItem("showAddProject", "false");
