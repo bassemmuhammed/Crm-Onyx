@@ -299,14 +299,40 @@ export default function App() {
 
     // editProject له id من Supabase (uuid string بطول 36)
     // project جديد له id من Date.now() (رقم أو string قصير)
+    const showDebugToast = (msg, color) => {
+      const el = document.createElement("div");
+      el.innerText = msg;
+      Object.assign(el.style, {
+        position:"fixed", bottom:"90px", left:"16px", right:"16px",
+        background: color || "#253ff6", color:"#fff", padding:"12px 16px",
+        borderRadius:"12px", fontSize:"12px", fontWeight:"700",
+        zIndex:"99999", whiteSpace:"pre-wrap", wordBreak:"break-all",
+        boxShadow:"0 4px 20px rgba(0,0,0,0.5)", fontFamily:"monospace",
+      });
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 12000);
+    };
+
     const isExisting = editProject && typeof editProject.id === "string" && editProject.id.length === 36;
 
+    const { data: sessionData } = await supabase.auth.getSession();
+    const uid = sessionData?.session?.user?.id;
+    showDebugToast("User: " + (uid ? uid.slice(0,8)+"..." : "NO SESSION") + "\nMode: " + (isExisting ? "UPDATE" : "INSERT"));
+
     if (isExisting) {
-      const { error } = await supabase.from("projects").update(row).eq("id", editProject.id);
-      if (error) console.error("Update error:", error.message);
+      const { data, error } = await supabase.from("projects").update(row).eq("id", editProject.id).select();
+      if (error) {
+        showDebugToast("INSERT ERROR:\n" + error.message + "\n" + (error.details||"") + "\n" + (error.hint||""), "#cc1515");
+      } else {
+        showDebugToast("UPDATE OK - ID: " + (data?.[0]?.id?.slice(0,8)||"?"), "#10b981");
+      }
     } else {
-      const { error } = await supabase.from("projects").insert(row);
-      if (error) console.error("Insert error:", error.message);
+      const { data, error } = await supabase.from("projects").insert(row).select();
+      if (error) {
+        showDebugToast("INSERT ERROR:\n" + error.message + "\n" + (error.details||"") + "\n" + (error.hint||""), "#cc1515");
+      } else {
+        showDebugToast("INSERT OK - ID: " + (data?.[0]?.id?.slice(0,8)||"?"), "#10b981");
+      }
     }
 
     // fetchProjects manually (+ realtime as backup)
