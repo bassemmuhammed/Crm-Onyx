@@ -676,11 +676,11 @@ function ExcelModal({ onClose, onAdd }) {
     <ModalWrap onClose={onClose} title="Upload Excel File">
       {!done ? (
         <>
-          <div onClick={() => fileRef.current.click()} style={{ border:`2px dashed ${C.red}44`, borderRadius:12, padding:"24px 16px", textAlign:"center", cursor:"pointer", marginBottom:12, background:`${C.red}08` }}>
+          <div onClick={() => fileRef.current.click()} style={{ border:`1px dashed ${C.border}`, borderRadius:12, padding:"24px 16px", textAlign:"center", cursor:"pointer", marginBottom:12, background:C.cardAlt }}>
             <div style={{ display:"flex", justifyContent:"center", marginBottom:8 }}>
-              <svg width="28" height="28" viewBox="0 0 256 256" fill={C.red}><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-45.54-48.87L136,195.31l-18.46-28.18a8,8,0,1,0-13.08,9.18L124.69,208l-20.23,31.69a8,8,0,1,0,13.08,9.18L136,220.69l18.46,28.18a8,8,0,0,0,13.08-9.18L147.31,208l20.23-31.69a8,8,0,0,0-13.08-9.18Z"/></svg>
+              <svg width="28" height="28" viewBox="0 0 256 256" fill={C.white}><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-45.54-48.87L136,195.31l-18.46-28.18a8,8,0,1,0-13.08,9.18L124.69,208l-20.23,31.69a8,8,0,1,0,13.08,9.18L136,220.69l18.46,28.18a8,8,0,0,0,13.08-9.18L147.31,208l20.23-31.69a8,8,0,0,0-13.08-9.18Z"/></svg>
             </div>
-            <div style={{ fontSize:".72rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Tap to upload CSV</div>
+            <div style={{ fontSize:".72rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif" }}>Tap to upload CSV</div>
             <div style={{ fontSize:".58rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>CSV (name, phone, project)</div>
           </div>
           <input ref={fileRef} type="file" accept=".csv" style={{ display:"none" }} onChange={handleFile} />
@@ -713,7 +713,7 @@ function ExcelModal({ onClose, onAdd }) {
 function FacebookModal({ onClose }) {
   return (
     <ModalWrap onClose={onClose} title="Facebook Leads">
-      <div style={{ background:`${C.red}08`, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"18px 16px", textAlign:"center", marginBottom:16 }}>
+      <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"18px 16px", textAlign:"center", marginBottom:16 }}>
         <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}>
           <div style={{ width:44, height:44, borderRadius:12, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
             <svg width="22" height="22" viewBox="0 0 256 256" fill={C.white}><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>
@@ -825,6 +825,7 @@ export default function AdminLeadsPage({ onModalChange }) {
   const [statusFilter, setStatus] = useState("all");
   const [showFilters, setFilters] = useState(false);
   const [filterAgent, setFilterAgent] = useState("all");
+  const [agentPickerOpen, setAgentPickerOpen] = useState(false);
   const [modal, setModal]       = useState(null);
   const [selectedLead, setSelected] = useState(null);
   const [detailOpen, setDetail] = useState(false);
@@ -1026,17 +1027,61 @@ export default function AdminLeadsPage({ onModalChange }) {
                 );
               })}
             </div>
-            <select value={filterAgent} onChange={e=>setFilterAgent(e.target.value)}
-              style={{ ...inputBase, appearance:"none", cursor:"pointer" }}>
-              <option value="all">All Sales</option>
-              <option value="unassigned">Unassigned</option>
-              {team.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-            </select>
+            {/* Agent picker button */}
+            <div onClick={() => setAgentPickerOpen(true)} className="tap-btn" style={{
+              display:"flex", alignItems:"center", gap:10,
+              background:C.cardAlt, borderRadius:12, padding:"10px 14px",
+              border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`,
+              cursor:"pointer",
+            }}>
+              <div style={{ width:28, height:28, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <svg width="14" height="14" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
+              </div>
+              <span style={{ flex:1, fontSize:".73rem", fontWeight:700, color: filterAgent==="all" ? C.gray : C.silver, fontFamily:"Archivo,sans-serif" }}>
+                {filterAgent==="all" ? "All Sales" : filterAgent==="unassigned" ? "Unassigned" : team.find(t=>t.id===filterAgent)?.name || "All Sales"}
+              </span>
+              <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
+            </div>
+
+            {/* Agent picker modal — centered */}
+            {agentPickerOpen && (
+              <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:400, background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)", display:"flex", alignItems:"center", justifyContent:"center", padding:"0 24px" }}
+                onClick={e => { if (e.target===e.currentTarget) setAgentPickerOpen(false); }}
+              >
+                <div onClick={e=>e.stopPropagation()} style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:20, padding:"20px 16px", width:"100%", maxWidth:360, boxShadow:`0 8px 40px rgba(204,21,21,.2)` }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                    <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Filter by Sales</div>
+                    <div onClick={() => setAgentPickerOpen(false)} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
+                  </div>
+                  <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                    {[
+                      { id:"all", name:"All Sales" },
+                      { id:"unassigned", name:"Unassigned" },
+                      ...team,
+                    ].map(opt => {
+                      const active = filterAgent === opt.id;
+                      return (
+                        <div key={opt.id} className="chip-btn" onClick={() => { setFilterAgent(opt.id); setAgentPickerOpen(false); }} style={{
+                          display:"flex", alignItems:"center", gap:5,
+                          padding:"5px 10px", borderRadius:6,
+                          background: active ? `${C.red}18` : C.cardAlt,
+                          border: active ? `1px solid ${C.red}66` : `1px solid ${C.border}`,
+                          cursor:"pointer",
+                        }}>
+                          {active && <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />}
+                          <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{opt.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:80 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:120 }}>
           {loading
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
