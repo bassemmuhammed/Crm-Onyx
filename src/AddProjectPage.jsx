@@ -59,6 +59,7 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 const STYLES = `
   @import url('${FONT_URL}');
   :root { color-scheme: dark only; }
+  html, body { margin:0; padding:0; border:none; outline:none; background:#0A0A0A; overflow-x:hidden; }
   *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
