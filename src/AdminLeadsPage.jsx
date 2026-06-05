@@ -142,7 +142,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
     const entry = { text, by:"Admin", time: new Date().toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}) };
     const saved = await dbAddComment(local.id, entry);
     if (saved) setLocal(l => ({ ...l, comments:[{ id:saved.id, text:saved.text, by:saved.by, time:saved.time }, ...l.comments] }));
-    setComment(""); setCommentOpen(false);
+    setComment(""); inputRef.current?.focus();
   }, [comment, local]);
 
   const handleSave = useCallback(async () => {
@@ -221,7 +221,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"10px 16px 12px", display:"flex", flexDirection:"column", gap:6, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
@@ -324,24 +324,27 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             {/* ── COMMENTS SECTION ── */}
             <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Comments" />
-
-            {/* Tap to add comment */}
-            <div onClick={() => { setCommentOpen(true); setComment(""); }} className="tap-btn" style={{
-              display:"flex", alignItems:"center", gap:8,
-              background:C.cardAlt, borderRadius:10, padding:"8px 12px",
-              cursor:"pointer", border:`1px solid ${C.border}`,
-              borderTop:`1.5px solid ${C.red}44`,
-            }}>
-              <div style={{ width:26, height:26, borderRadius:7, background:`${C.white}10`, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".75rem" }}>✎</div>
-              <span style={{ fontSize:".72rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>Add a comment…</span>
-              <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
+            <div style={{ display:"flex", gap:8 }}>
+              <input ref={inputRef} value={comment} onChange={e => setComment(e.target.value)}
+                onKeyDown={e => e.key==="Enter" && handleAddComment()}
+                placeholder="Write a comment…"
+                style={{ ...inputBase, flex:1 }}
+              />
+              <button className="tap-btn" onClick={handleAddComment} style={{
+                width:42, height:42, borderRadius:10, border:"none", flexShrink:0,
+                background: comment.trim() ? C.red : C.cardAlt,
+                color: comment.trim() ? "#fff" : C.gray,
+                cursor: comment.trim() ? "pointer" : "default",
+                display:"flex", alignItems:"center", justifyContent:"center", fontSize:".9rem",
+                boxShadow: comment.trim() ? `0 3px 12px ${C.red}44` : "none",
+              }}>➤</button>
             </div>
 
             {local.comments.length > 0
               ? local.comments.map(c => (
-                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"7px 10px" }}>
-                    <div style={{ fontSize:".72rem", color:C.silver, fontWeight:600, lineHeight:1.5, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".55rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"6px 10px" }}>
+                    <div style={{ fontSize:".7rem", color:C.silver, fontWeight:600, lineHeight:1.45, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
+                    <div style={{ fontSize:".54rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
                       <span>{c.by}</span><span>{c.time}</span>
                     </div>
                   </div>
@@ -444,35 +447,44 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 // ─── Assign Modal ─────────────────────────────────────────────────
 function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
   return (
-    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"24px", maxHeight:"70vh", overflowY:"auto" }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Assign: {lead.name}</div>
-          <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"50vh", overflowY:"auto", boxShadow:`0 -8px 40px rgba(204,21,21,.15)` }}>
+        {/* Handle */}
+        <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 0" }}>
+          <div style={{ width:32, height:3, borderRadius:99, background:C.border }} />
         </div>
-        {team.map(agent => {
-          const active = lead.assignedTo === agent.id;
-          return (
-            <div key={agent.id} className="tap-btn" onClick={() => active ? onUnassign() : onAssign(agent.id)} style={{
-              display:"flex", alignItems:"center", gap:10,
-              padding:"10px 12px", borderRadius:12, marginBottom:6,
-              background: active ? agent.color+"20" : C.cardAlt,
-              border: active ? `1.5px solid ${agent.color}` : `1px solid ${C.border}`,
-              cursor:"pointer",
-            }}>
-              <div style={{ width:32, height:32, borderRadius:9, background:agent.color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".72rem", fontWeight:900, color:"#fff", fontFamily:"Archivo,sans-serif" }}>{agent.name.charAt(0)}</div>
-              <div style={{ flex:1, fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{agent.name}</div>
-              {active && <div style={{ fontSize:".6rem", color:agent.color, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>✓ Assigned</div>}
-            </div>
-          );
-        })}
-        {lead.assignedTo && (
-          <div onClick={onUnassign} style={{ textAlign:"center", fontSize:".65rem", color:C.red, fontWeight:700, cursor:"pointer", padding:"8px 0", fontFamily:"Archivo,sans-serif" }}>
-            Remove Assignment ✕
+        <div style={{ padding:"12px 16px 24px", display:"flex", flexDirection:"column", gap:8 }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:2 }}>
+            <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Assign Sales</div>
+            <div onClick={onClose} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
           </div>
-        )}
+          {/* Agent chips — same style as status chips */}
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+            {team.map(agent => {
+              const active = lead.assignedTo === agent.id;
+              return (
+                <div key={agent.id} className="chip-btn" onClick={() => active ? onUnassign() : onAssign(agent.id)} style={{
+                  display:"flex", alignItems:"center", gap:6,
+                  padding:"6px 12px", borderRadius:8,
+                  background: active ? agent.color+"22" : C.cardAlt,
+                  border: active ? `1.5px solid ${agent.color}66` : `1px solid ${C.border}`,
+                  cursor:"pointer",
+                }}>
+                  {active && <div style={{ width:5, height:5, borderRadius:"50%", background:agent.color, flexShrink:0 }} />}
+                  <div style={{ width:20, height:20, borderRadius:6, background:agent.color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".6rem", fontWeight:900, color:"#fff", fontFamily:"Archivo,sans-serif", flexShrink:0 }}>{agent.name.charAt(0)}</div>
+                  <span style={{ fontSize:".68rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{agent.name}</span>
+                </div>
+              );
+            })}
+          </div>
+          {lead.assignedTo && (
+            <div onClick={onUnassign} style={{ textAlign:"center", fontSize:".62rem", color:C.red, fontWeight:700, cursor:"pointer", padding:"4px 0", fontFamily:"Archivo,sans-serif" }}>
+              Remove Assignment ✕
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
