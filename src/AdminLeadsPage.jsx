@@ -169,7 +169,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       }} />
 
       {/* Sheet */}
-      <div onClick={onClose} style={{
+      <div style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
@@ -179,7 +179,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           background:C.card, borderRadius:"22px 22px 0 0",
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 62px)",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 126px)",
           transform: open?"translateY(0)":"translateY(100%)",
           transition:"transform .32s cubic-bezier(.32,0,.16,1)",
         }}>
@@ -218,7 +218,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px calc(8px + env(safe-area-inset-bottom, 80px))", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"12px 16px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <Div label="Actions" />
@@ -248,11 +248,11 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
                 return (
                   <button key={s} className="chip-btn" onClick={() => set("status", s)} style={{
                     padding:"6px 11px", borderRadius:99,
-                    border:`1px solid ${active ? m.color : "#333"}`,
+                    border:`1px solid ${active ? m.color : C.border}`,
                     cursor:"pointer", fontFamily:"Archivo,sans-serif",
                     fontSize:".65rem", fontWeight:700,
-                    background: active ? m.color : C.black,
-                    color: active ? "#fff" : C.white,
+                    background: active ? m.color : C.cardAlt,
+                    color: active ? "#fff" : C.gray,
                     boxShadow: active ? `0 3px 10px ${m.color}40` : "none",
                     display:"flex", alignItems:"center", gap:3,
                   }}>{m.icon} {m.label}</button>
@@ -393,7 +393,7 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
     <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"calc(32px + env(safe-area-inset-bottom, 80px))", maxHeight:"70vh", overflowY:"auto" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"24px", maxHeight:"70vh", overflowY:"auto" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>توزيع: {lead.name}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -513,6 +513,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           </div>
           {agent ? (
             <div style={{ fontSize:".58rem", color:C.white, fontWeight:700, background:C.black, padding:"3px 8px", borderRadius:6, border:`1px solid #333`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:3 }}>
+              <div style={{ width:10, height:10, borderRadius:3, background:C.white, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".36rem", fontWeight:900, color:C.black }}>{agent.name.charAt(0)}</div>
               {agent.name.split(" ")[0]}
             </div>
           ) : (
@@ -531,7 +532,7 @@ function ModalWrap({ onClose, title, children }) {
     <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px calc(32px + env(safe-area-inset-bottom, 80px))", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 24px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{title}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -659,7 +660,7 @@ function FacebookModal({ onClose }) {
 // ─── Delete Confirm Popup ─────────────────────────────────────────
 function DeletePopup({ lead, onConfirm, onCancel }) {
   return (
-    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:80, zIndex:400, background:"rgba(0,0,0,.85)", backdropFilter:"blur(12px)", display:"flex", alignItems:"center", justifyContent:"center", padding:"0 24px" }}
+    <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:400, background:"rgba(0,0,0,.85)", backdropFilter:"blur(12px)", display:"flex", alignItems:"center", justifyContent:"center", padding:"0 24px" }}
       onClick={onCancel}
     >
       <div onClick={e=>e.stopPropagation()} style={{
@@ -699,7 +700,7 @@ function FabChooserModal({ onClose, onChoose }) {
     <div style={{ position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px calc(90px + env(safe-area-inset-bottom, 80px))" }}>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>إضافة ليد جديد</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -954,7 +955,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:72, right:20,
+        position:"fixed", bottom:70, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
