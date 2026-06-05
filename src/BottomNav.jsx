@@ -57,21 +57,23 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
       `}</style>
 
       <div style={{
-        position: "fixed", bottom: 16, left: "50%", transform: "translateX(-50%)",
-        zIndex: 100, width: "calc(100% - 32px)", maxWidth: 420,
+        position: "fixed", bottom: 0, left: 0, right: 0,
+        zIndex: 100,
         overflow: "visible",
         fontFamily: "'Archivo', sans-serif",
       }}>
         {/* Bar */}
         <div style={{
           background: "#111111",
-          borderRadius: 32,
+          borderRadius: 0,
           height: 62,
           display: "flex",
-          border: "1px solid #1e1e1e",
+          borderTop: "1px solid #1e1e1e",
           position: "relative",
           overflow: "visible",
-          boxShadow: "0 -1px 0 0 #cc1515 inset, 0 16px 48px rgba(0,0,0,.85)",
+          boxShadow: "0 -1px 0 0 #cc1515 inset, 0 -8px 32px rgba(0,0,0,.6)",
+          maxWidth: 430,
+          margin: "0 auto",
         }}>
 
           {/* Active tab red underline indicator */}

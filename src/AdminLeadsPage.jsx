@@ -169,7 +169,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       }} />
 
       {/* Sheet */}
-      <div onClick={onClose} style={{
+      <div style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
@@ -218,7 +218,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"12px 16px 8px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"12px 16px calc(8px + env(safe-area-inset-bottom, 80px))", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
             <Div label="Actions" />
@@ -345,7 +345,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Footer */}
-          <div style={{ padding:"10px 16px", paddingBottom:"calc(20px + env(safe-area-inset-bottom, 70px))", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+          <div style={{ padding:"10px 16px 28px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>تأكيد الحذف النهائي؟</span>
@@ -470,21 +470,21 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           {/* Call icon */}
           <a href={`tel:${lead.phone}`} onClick={e=>e.stopPropagation()} style={{
             width:32, height:32, borderRadius:8, flexShrink:0,
-            background:`#10b98118`, border:`1px solid #10b98144`,
+            background:C.black, border:`1px solid #333`,
             display:"flex", alignItems:"center", justifyContent:"center",
             textDecoration:"none",
           }}>
-            <svg width="14" height="14" viewBox="0 0 256 256" fill="#10b981"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 256 256" fill="#ffffff"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
           </a>
 
           {/* WhatsApp icon */}
           <a href={`https://wa.me/${(lead.phone||"").replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{
             width:32, height:32, borderRadius:8, flexShrink:0,
-            background:`#25d36618`, border:`1px solid #25d36644`,
+            background:C.black, border:`1px solid #333`,
             display:"flex", alignItems:"center", justifyContent:"center",
             textDecoration:"none",
           }}>
-            <svg width="14" height="14" viewBox="0 0 256 256" fill="#25d366"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 256 256" fill="#ffffff"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
           </a>
         </div>
 
@@ -492,14 +492,14 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
         {hasCallback && (
           <div style={{
             display:"flex", alignItems:"center", justifyContent:"space-between",
-            background:`#f59e0b14`, border:`1px solid #f59e0b28`,
+            background:C.black, border:`1px solid #333`,
             borderRadius:8, padding:"5px 10px", marginBottom:8,
           }}>
-            <span style={{ fontSize:".6rem", fontWeight:800, color:"#f59e0b", fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
-              <svg width="9" height="9" viewBox="0 0 256 256" fill="#f59e0b"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
+            <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
+              <svg width="9" height="9" viewBox="0 0 256 256" fill="#ffffff"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
               CALL BACK
             </span>
-            <span style={{ fontSize:".6rem", color:"#f59e0b", fontFamily:"Archivo,sans-serif" }}>
+            <span style={{ fontSize:".6rem", color:C.white, fontFamily:"Archivo,sans-serif" }}>
               📅 {new Date(`${lead.callbackDate}T${lead.callbackTime}`).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"})}
             </span>
           </div>
@@ -512,8 +512,8 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             {lead.project}
           </div>
           {agent ? (
-            <div style={{ fontSize:".58rem", color:agent.color, fontWeight:700, background:agent.color+"18", padding:"3px 8px", borderRadius:6, border:`1px solid ${agent.color}28`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:3 }}>
-              <div style={{ width:10, height:10, borderRadius:3, background:agent.color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".36rem", fontWeight:900, color:"#fff" }}>{agent.name.charAt(0)}</div>
+            <div style={{ fontSize:".58rem", color:C.white, fontWeight:700, background:C.black, padding:"3px 8px", borderRadius:6, border:`1px solid #333`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:3 }}>
+              <div style={{ width:10, height:10, borderRadius:3, background:C.white, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".36rem", fontWeight:900, color:C.black }}>{agent.name.charAt(0)}</div>
               {agent.name.split(" ")[0]}
             </div>
           ) : (
@@ -955,7 +955,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:96, right:20,
+        position:"fixed", bottom:78, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
