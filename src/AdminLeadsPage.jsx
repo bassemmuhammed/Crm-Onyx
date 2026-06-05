@@ -56,13 +56,14 @@ const STYLES = `
   .lead-item  { animation: fadeInUp .2s ease both }
   input[type=date]::-webkit-calendar-picker-indicator,
   input[type=time]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer; filter:invert(1) }
-  ::-webkit-scrollbar { width:3px }
+  ::-webkit-scrollbar { width:0px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:${C.red}; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:transparent }
   input,select { color-scheme:dark }
   ::placeholder { color:${C.gray} !important; opacity:1 }
   select option { background:${C.cardAlt}; color:${C.white} }
   body { overflow:hidden; }
+  body[data-modal-open] .bottom-nav { display:none !important; }
   @keyframes spin { to { transform:rotate(360deg) } }
 `;
 
@@ -165,14 +166,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       <style>{STYLES}</style>
       {/* Overlay */}
       <div onClick={onClose} style={{
-        position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:200,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:200,
         background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)",
         opacity: open?1:0, pointerEvents: open?"all":"none", transition:"opacity .25s",
       }} />
 
       {/* Sheet */}
       <div onClick={onClose} style={{
-        position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:201,
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
       }}>
@@ -181,9 +182,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           background:C.card, borderRadius:"22px 22px 0 0",
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 126px)",
-          transform: open?"translateY(0)":"translateY(100%)",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 80px)",
+          transform: open?"translateY(0)":"translateY(110%)",
           transition:"transform .32s cubic-bezier(.32,0,.16,1)",
+          overflow:"hidden",
         }}>
           {/* Handle */}
           <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 0" }}>
@@ -520,7 +522,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
           {/* Name + phone */}
           <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"left" }}>{lead.name}</div>
             <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
@@ -817,7 +819,7 @@ function FabChooserModal({ onClose, onChoose }) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────
-export default function AdminLeadsPage({ onModalChange }) {
+export default function AdminLeadsPage({ onModalChange, externalModalOpen = false }) {
   const [leads, setLeads]       = useState([]);
   const [team, setTeam]         = useState([]);
   const [loading, setLoading]   = useState(true);
@@ -845,7 +847,7 @@ export default function AdminLeadsPage({ onModalChange }) {
   useEffect(() => { loadData(); }, [loadData]);
 
   // Hide BottomNav when any modal is open
-  const anyModalOpen = detailOpen || !!modal || !!deleteTarget;
+  const anyModalOpen = detailOpen || !!modal || !!deleteTarget || externalModalOpen;
   useEffect(() => {
     if (anyModalOpen) {
       document.body.setAttribute("data-modal-open", "true");
@@ -918,7 +920,7 @@ export default function AdminLeadsPage({ onModalChange }) {
     <div style={{
       fontFamily:"Archivo, sans-serif",
       background:C.surface, height:"100dvh",
-      color:C.white, maxWidth:430, margin:"0 auto",
+      color:C.white,
       colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column", overflow:"hidden",

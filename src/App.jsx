@@ -307,7 +307,7 @@ export default function App() {
             />
           );
         case TAB_LEADS:
-          return <AdminLeadsPage onTabChange={handleAdminTabChange} />;
+          return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} />;
         case TAB_ADDPROJECT:
           return null;
         case TAB_SETTINGS:
