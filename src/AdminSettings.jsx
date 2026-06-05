@@ -285,6 +285,16 @@ export async function distributeLeadsToTeam() {
   return { distributed: updates.length };
 }
 
+// ─── Settings Defaults (outside component) ───────────────────────
+const SETTINGS_DEFAULTS = {
+  notifications:  true,
+  autoDistribute: false,
+  facebookSync:   true,
+  weeklyReport:   true,
+  leadReminders:  true,
+  soundAlerts:    false,
+};
+
 // ─── MAIN ─────────────────────────────────────────────────────────
 export default function AdminSettings({ onTabChange, onSignOut }) {
   const [team,           setTeam]           = useState([]);
@@ -294,15 +304,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   const [confirm,        setConfirm]        = useState(null);
   const [loadingTeam,    setLoadingTeam]    = useState(true);
   const [distributing,   setDistributing]   = useState(false);
-
-  const SETTINGS_DEFAULTS = {
-    notifications:  true,
-    autoDistribute: false,
-    facebookSync:   true,
-    weeklyReport:   true,
-    leadReminders:  true,
-    soundAlerts:    false,
-  };
 
   const [settings, setSettings] = useState(() => {
     try {
