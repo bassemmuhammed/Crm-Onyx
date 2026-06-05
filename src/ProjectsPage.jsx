@@ -194,31 +194,113 @@ function StatChip({ icon, value, label, color }) {
   );
 }
 
+// ─── ONYX Design Tokens ──────────────────────────────────────
+const C = {
+  black:   "#000000",
+  surface: "#0A0A0A",
+  card:    "#111111",
+  border:  "#1E1E1E",
+  cardAlt: "#252525",
+  gray:    "#595A5F",
+  silver:  "#CECECE",
+  white:   "#FFFFFF",
+  red:     "#CC1515",
+  redLight:"#FF2020",
+};
+
+const ONYX_STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap');
+  :root { color-scheme: dark only; }
+  html,body { margin:0; padding:0; background:#0A0A0A; }
+  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:dark; }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.12);opacity:1} }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  .onyx-empty-icon { animation: float 3s ease-in-out infinite; }
+  .onyx-empty-wrap  { animation: fadeInUp .4s ease both; }
+`;
+
 // ─── Empty State ─────────────────────────────────────────────
 function EmptyState() {
   return (
-    <div style={{
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-      minHeight: "60vh", padding: "40px 24px", textAlign: "center",
-    }}>
-      <div style={{
-        width: 80, height: 80, borderRadius: "50%",
-        background: "linear-gradient(135deg,#ede9fe,#e0e7ff)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        marginBottom: 20,
-        boxShadow: "0 8px 32px rgba(79,70,229,.12)",
+    <>
+      <style>{ONYX_STYLES}</style>
+      <div className="onyx-empty-wrap" style={{
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        minHeight: "62vh", padding: "40px 28px", textAlign: "center",
+        fontFamily: "Archivo, sans-serif",
       }}>
-        <svg width="36" height="36" viewBox="0 0 256 256" fill="#4f46e5">
-          <path d="M240,208H224V96a16,16,0,0,0-16-16H144V48a16,16,0,0,0-16-16H32A16,16,0,0,0,16,48V208H8a8,8,0,0,0,0,16H240a8,8,0,0,0,0-16ZM144,208H112V168a8,8,0,0,1,8-8h16a8,8,0,0,1,8,8Zm64,0H160V168a24,24,0,0,0-24-24H120a24,24,0,0,0-24,24v40H32V48H128V96h0a16,16,0,0,0,16,16h64Z"/>
-        </svg>
+
+        {/* Icon container */}
+        <div className="onyx-empty-icon" style={{ marginBottom: 28, position: "relative" }}>
+          {/* Outer pulse ring */}
+          <div style={{
+            position: "absolute", inset: -14, borderRadius: "50%",
+            border: `1px solid ${C.red}33`,
+            animation: "pulse-ring 2.8s ease-in-out infinite",
+          }} />
+          {/* Inner ring */}
+          <div style={{
+            position: "absolute", inset: -6, borderRadius: "50%",
+            border: `1px solid ${C.border}`,
+          }} />
+          {/* Icon circle */}
+          <div style={{
+            width: 80, height: 80, borderRadius: "50%",
+            background: C.card,
+            border: `1.5px solid ${C.border}`,
+            borderLeft: `2px solid ${C.red}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: `0 0 32px ${C.red}22, 0 8px 32px rgba(0,0,0,.5)`,
+          }}>
+            <svg width="32" height="32" viewBox="0 0 256 256" fill={C.red}>
+              <path d="M240,208H224V96a16,16,0,0,0-16-16H144V48a16,16,0,0,0-16-16H32A16,16,0,0,0,16,48V208H8a8,8,0,0,0,0,16H240a8,8,0,0,0,0-16ZM144,208H112V168a8,8,0,0,1,8-8h16a8,8,0,0,1,8,8Zm64,0H160V168a24,24,0,0,0-24-24H120a24,24,0,0,0-24,24v40H32V48H128V96h0a16,16,0,0,0,16,16h64Z"/>
+            </svg>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div style={{
+          fontSize: "1.15rem", fontWeight: 900, color: C.white,
+          letterSpacing: 0.2, marginBottom: 10,
+        }}>
+          No Project Added Yet
+        </div>
+
+        {/* Subtitle */}
+        <div style={{
+          fontSize: ".78rem", color: C.gray, fontWeight: 600,
+          lineHeight: 1.7, maxWidth: 250, marginBottom: 28,
+        }}>
+          أضف مشروعك الأول من صفحة{" "}
+          <span style={{ color: C.silver, fontWeight: 700 }}>"Add Project"</span>
+          {" "}وسيظهر هنا تلقائياً
+        </div>
+
+        {/* Divider hint */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 10, width: "100%", maxWidth: 220,
+        }}>
+          <div style={{ flex: 1, height: 1, background: C.border }} />
+          <div style={{ fontSize: ".55rem", fontWeight: 700, color: C.gray, letterSpacing: 1, textTransform: "uppercase" }}>
+            waiting
+          </div>
+          <div style={{ flex: 1, height: 1, background: C.border }} />
+        </div>
+
+        {/* Dots indicator */}
+        <div style={{ display: "flex", gap: 6, marginTop: 20 }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{
+              width: i === 1 ? 18 : 6, height: 6, borderRadius: 99,
+              background: i === 1 ? C.red : C.border,
+              transition: "all .3s ease",
+            }} />
+          ))}
+        </div>
+
       </div>
-      <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#1e1b4b", marginBottom: 8 }}>
-        No Project Added Yet
-      </div>
-      <div style={{ fontSize: ".82rem", color: "#94a3b8", fontWeight: 500, lineHeight: 1.6, maxWidth: 260 }}>
-        أضف مشروعك الأول من صفحة "Add Project" وسيظهر هنا تلقائياً
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -257,8 +339,8 @@ export default function ProjectsPage({ project, onTabChange, onSignOut }) {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "#f5f7ff",
-      fontFamily: "Inter, sans-serif",
+      background: C.surface,
+      fontFamily: "Archivo, sans-serif",
       paddingBottom: 100,
     }}>
       {/* Header */}
