@@ -96,7 +96,9 @@ export default function App() {
   // ── Shared state ──
   const [projects,       setProjects]       = useState([]);
   const [editProject,    setEditProject]    = useState(null);
-  const [showAddProject, setShowAddProject] = useState(false);
+  const [showAddProject, setShowAddProject] = useState(
+    () => localStorage.getItem("showAddProject") === "true"
+  );
 
   // ── Admin UI state ──
   const [activeAdminTab, setActiveAdminTab] = useState(hashToTab);
@@ -220,17 +222,21 @@ export default function App() {
     });
     setEditProject(null);
     setShowAddProject(false);
+    localStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
   const openAddProject = (project = null) => {
     setEditProject(project);
     setShowAddProject(true);
+    localStorage.setItem("adminTab", TAB_ADDPROJECT);
+    localStorage.setItem("showAddProject", "true");
   };
 
   const cancelAddProject = () => {
     setEditProject(null);
     setShowAddProject(false);
+    localStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
