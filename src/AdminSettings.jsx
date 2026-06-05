@@ -257,8 +257,7 @@ export async function distributeLeadsToTeam() {
   // 1. Fetch all unassigned leads
   const { data: leads, error: leadsErr } = await supabase
     .from("leads")
-    .select("id")
-    .is("assigned_to", null);
+    .select("id");
 
   if (leadsErr || !leads?.length) return { distributed: 0 };
 
@@ -296,17 +295,55 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   const [loadingTeam,    setLoadingTeam]    = useState(true);
   const [distributing,   setDistributing]   = useState(false);
 
-  const [settings, setSettings] = useState({
-    notifications:    true,
-    autoDistribute:   false,   // ← NEW: Auto Distribute Leads
-    facebookSync:     true,
-    weeklyReport:     true,
-    leadReminders:    true,
-    soundAlerts:      false,
+  const SETTINGS_DEFAULTS = {
+    notifications:  true,
+    autoDistribute: false,
+    facebookSync:   true,
+    weeklyReport:   true,
+    leadReminders:  true,
+    soundAlerts:    false,
+  };
+
+  const [settings, setSettings] = useState(() => {
+    try {
+      const stored = localStorage.getItem("onyx_settings");
+      return stored ? { ...SETTINGS_DEFAULTS, ...JSON.parse(stored) } : SETTINGS_DEFAULTS;
+    } catch { return SETTINGS_DEFAULTS; }
   });
 
   const flash = (msg) => { setSaved(msg); setTimeout(() => setSaved(""), 2500); };
 
+  // ── Persist settings to localStorage ──
+  useEffect(() => {
+    try { localStorage.setItem("onyx_settings", JSON.stringify(settings)); } catch {}
+  }, [settings]);
+
+  // ── Toggle setting — with distribute logic ──
+  const toggleSetting = async (key) => {
+    const newVal = !settings[key];
+    const updated = { ...settings, [key]: newVal };
+    setSettings(updated);
+    try { localStorage.setItem("onyx_settings", JSON.stringify(updated)); } catch {}
+
+    if (key === "autoDistribute" && newVal) {
+      setDistributing(true);
+      try {
+        const { distributed } = await distributeLeadsToTeam();
+        flash(distributed > 0
+          ? `✓ ${distributed} lead${distributed !== 1 ? "s" : ""} distributed to team`
+          : "✓ Auto Distribute enabled — all leads already assigned"
+        );
+      } catch (e) {
+        flash("✗ " + (e?.message || "Distribution failed"));
+        const reverted = { ...updated, [key]: false };
+        setSettings(reverted);
+        try { localStorage.setItem("onyx_settings", JSON.stringify(reverted)); } catch {}
+      }
+      setDistributing(false);
+    } else {
+      flash("✓ Saved");
+    }
+  };
   // ── Load team ──
   useEffect(() => {
     const fetchTeam = async () => {
@@ -321,31 +358,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
     };
     fetchTeam();
   }, []);
-
-  // ── Toggle setting — with distribute logic ──
-  const toggleSetting = async (key) => {
-    const newVal = !settings[key];
-    setSettings(s => ({ ...s, [key]: newVal }));
-
-    // When autoDistribute is turned ON → run distribution immediately
-    if (key === "autoDistribute" && newVal) {
-      setDistributing(true);
-      try {
-        const { distributed } = await distributeLeadsToTeam();
-        flash(distributed > 0
-          ? `✓ ${distributed} lead${distributed !== 1 ? "s" : ""} distributed`
-          : "✓ Auto Distribute enabled — no unassigned leads found"
-        );
-      } catch {
-        flash("✗ Distribution failed, please try again");
-        // Revert toggle on failure
-        setSettings(s => ({ ...s, [key]: false }));
-      }
-      setDistributing(false);
-    } else {
-      flash("✓ Saved");
-    }
-  };
 
   // ── Toggle member active ──
   const toggleMember = async (id) => {
@@ -412,14 +424,16 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       message: "This will reset all settings to default values.",
       onConfirm: () => {
         setConfirm(null);
-        setSettings({
+        const defaults = {
           notifications:  true,
           autoDistribute: false,
           facebookSync:   true,
           weeklyReport:   true,
           leadReminders:  true,
           soundAlerts:    false,
-        });
+        };
+        setSettings(defaults);
+        try { localStorage.setItem("onyx_settings", JSON.stringify(defaults)); } catch {}
         flash("✓ System reset to defaults");
       },
     });
