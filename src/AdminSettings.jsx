@@ -254,7 +254,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
 // ─── Auto-Distribute Logic ────────────────────────────────────────
 // Distributes leads round-robin to active team members
 export async function distributeLeadsToTeam() {
-  // 1. Fetch all unassigned leads
+  // 1. Fetch all leads (distribute all, round-robin)
   const { data: leads, error: leadsErr } = await supabase
     .from("leads")
     .select("id");
@@ -270,13 +270,13 @@ export async function distributeLeadsToTeam() {
 
   if (membersErr || !members?.length) return { distributed: 0 };
 
-  // 3. Round-robin assignment
+  // 3. Round-robin assignment — column name matches sharedLeadsData: "assignedTo"
   const updates = leads.map((lead, i) => ({
     id: lead.id,
-    assigned_to: members[i % members.length].id,
+    assignedTo: members[i % members.length].id,
   }));
 
-  // 4. Batch update (upsert by id)
+  // 4. Batch upsert
   const { error: updateErr } = await supabase
     .from("leads")
     .upsert(updates, { onConflict: "id" });

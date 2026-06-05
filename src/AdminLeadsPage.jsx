@@ -854,7 +854,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   const handleTouchMove = useCallback(e => {
     if (!touchStartY.current) return;
     const delta = e.touches[0].clientY - touchStartY.current;
-    if (delta > 0 && delta < 90) { setPulling(true); setPullY(delta); }
+    // Only activate pull indicator after intentional downward drag (>12px) at the very top
+    if (delta > 12 && delta < 90) { setPulling(true); setPullY(delta); }
   }, []);
 
   const handleTouchEnd = useCallback(async () => {
@@ -945,7 +946,14 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        style={{ flex:1, overflowY:"auto", padding:"12px 14px 0", display:"flex", flexDirection:"column", gap:9, WebkitOverflowScrolling:"touch" }}
+        style={{
+          flex:1, overflowY:"auto", padding:"12px 14px 0",
+          display:"flex", flexDirection:"column", gap:9,
+          WebkitOverflowScrolling:"touch",
+          overscrollBehavior:"contain",
+          scrollBehavior:"smooth",
+          willChange:"scroll-position",
+        }}
       >
         {/* Pull-to-refresh indicator */}
         <div style={{
@@ -1070,7 +1078,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         )}
 
         {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:120 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
           {loading
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
@@ -1095,17 +1103,21 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   return (
     <>
       {page}
-      {!anyModalOpen && createPortal(
-        <div onClick={() => setModal("fab")} className="tap-btn" style={{
-          position:"fixed", bottom:78, right:20,
-          width:54, height:54, borderRadius:"50%",
-          background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          cursor:"pointer", zIndex:9999,
-        }}>
+      {!anyModalOpen && (
+        <div
+          onClick={() => setModal("fab")}
+          className="tap-btn"
+          style={{
+            position:"fixed", bottom:88, right:20,
+            width:54, height:54, borderRadius:"50%",
+            background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            cursor:"pointer", zIndex:200,
+            touchAction:"none",
+          }}
+        >
           <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
-        </div>,
-        document.body
+        </div>
       )}
     </>
   );
