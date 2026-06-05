@@ -1,26 +1,32 @@
-// ── ProfileModal.jsx ──────────────────────────────────────
-// الملف الشخصي - bottom sheet قابل للتعديل
-//
-// Props:
-//   open    {boolean}  - هل الـ modal مفتوح؟
-//   onClose {function} - لما يغلق
-//
-// Example usage:
-//   import ProfileModal from "./ProfileModal";
-//
-//   const [profileOpen, setProfileOpen] = useState(false);
-//   <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
+// ── ProfileModal.jsx — ONYX Design System ────────────────────────────
+// بروفايل المستخدم - bottom sheet بـ ONYX dark UI
+// بيجيب اسم اليوزر من Supabase
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "./lib/supabase";
 import Icons from "./Icons";
 
-const DEFAULT_FORM = {
-  name:   "Ahmed Hassan",
-  email:  "ahmed@onyxcrm.com",
-  phone:  "+20 101 234 5678",
-  region: "Cairo — New Capital",
-  title:  "Senior Broker",
+const C = {
+  surface: "#0A0A0A", card: "#111111", border: "#1E1E1E",
+  cardAlt: "#1A1A1A", cardHover: "#252525", gray: "#595A5F",
+  silver: "#CECECE", white: "#FFFFFF", red: "#CC1515", redLight: "#FF2020",
 };
+
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap');
+  @keyframes sheet-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .profile-sheet {
+    animation: sheet-up .3s cubic-bezier(.4,0,.2,1) both;
+    font-family: 'Archivo', sans-serif;
+  }
+  .profile-field { transition: background .15s; }
+  .profile-field:active { background: #1e1e1e !important; }
+  .signout-btn { transition: all .15s; }
+  .signout-btn:active { transform: scale(.97); }
+`;
 
 const FIELDS = [
   { label: "Full Name",  key: "name",   icon: "user"      },
@@ -31,185 +37,190 @@ const FIELDS = [
 ];
 
 export default function ProfileModal({ open, onClose, onSignOut }) {
-  const [editing, setEditing] = useState(false);
-  const [form, setForm]       = useState(DEFAULT_FORM);
-  const [saved, setSaved]     = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [loading,  setLoading]  = useState(true);
 
-  const handleSave = () => {
-    setEditing(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  useEffect(() => {
+    if (!open) return;
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data } = await supabase
+          .from("users")
+          .select("name, email, phone, region, title, role")
+          .eq("id", user.id)
+          .single();
+
+        setUserData(data || { name: user.email, email: user.email });
+      } catch (_) {
+        // fail silently
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [open]);
+
+  const initial = userData?.name?.charAt(0)?.toUpperCase() || "?";
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 200,
-      display: "flex", alignItems: "flex-end", justifyContent: "center",
-      opacity: open ? 1 : 0,
-      pointerEvents: open ? "all" : "none",
-      transition: "opacity .25s",
-      fontFamily: "Inter,sans-serif",
-    }}>
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        style={{
-          position: "absolute", inset: 0,
-          background: "rgba(30,27,75,.45)", backdropFilter: "blur(6px)",
-        }}
-      />
+    <>
+      <style>{STYLES}</style>
 
-      {/* Sheet */}
       <div style={{
-        position: "relative", zIndex: 1,
-        width: "100%", maxWidth: 430,
-        background: "#fff", borderRadius: "24px 24px 0 0",
-        boxShadow: "0 -8px 48px rgba(79,70,229,.18)",
-        display: "flex", flexDirection: "column",
-        maxHeight: "90vh", overflow: "hidden",
+        position: "fixed", inset: 0, zIndex: 200,
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
+        opacity: open ? 1 : 0,
+        pointerEvents: open ? "all" : "none",
+        transition: "opacity .25s",
       }}>
-        {/* Drag handle */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
-          <div style={{ width: 40, height: 4, borderRadius: 99, background: "#e8eaf6" }} />
-        </div>
+        {/* Backdrop */}
+        <div
+          onClick={onClose}
+          style={{
+            position: "absolute", inset: 0,
+            background: "rgba(0,0,0,.7)", backdropFilter: "blur(6px)",
+          }}
+        />
 
-        {/* Avatar card */}
-        <div style={{
-          background: "linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%)",
-          padding: "20px 22px 24px", margin: "10px 16px 0", borderRadius: 18,
-          display: "flex", alignItems: "center", gap: 16,
-        }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 20,
-            background: "rgba(255,255,255,.2)",
-            border: "2px solid rgba(255,255,255,.35)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1.6rem", fontWeight: 900, color: "#fff", flexShrink: 0,
+        {/* Sheet */}
+        {open && (
+          <div className="profile-sheet" style={{
+            position: "relative", zIndex: 1,
+            width: "100%", maxWidth: 430,
+            background: C.card,
+            borderRadius: "20px 20px 0 0",
+            border: `1px solid ${C.border}`,
+            borderBottom: "none",
+            boxShadow: "0 -8px 48px rgba(0,0,0,.6)",
+            display: "flex", flexDirection: "column",
+            maxHeight: "88vh", overflow: "hidden",
           }}>
-            {form.name.charAt(0)}
-          </div>
-          <div>
-            <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#fff" }}>
-              {form.name}
-            </div>
-            <div style={{ fontSize: ".72rem", color: "rgba(255,255,255,.7)", marginTop: 2 }}>
-              {form.title}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 6 }}>
-              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80" }} />
-              <span style={{ fontSize: ".65rem", color: "rgba(255,255,255,.75)" }}>Active now</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Fields */}
-        <div style={{
-          overflowY: "auto", padding: "16px 16px 0",
-          display: "flex", flexDirection: "column", gap: 10,
-        }}>
-          {FIELDS.map(({ label, key, icon }) => (
-            <div key={key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{
-                fontSize: ".65rem", fontWeight: 700, color: "#94a3b8",
-                textTransform: "uppercase", letterSpacing: 0.5,
-              }}>
-                {label}
-              </div>
-              {editing ? (
-                <input
-                  value={form[key]}
-                  onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
-                  style={{
-                    padding: "10px 14px", borderRadius: 12,
-                    fontSize: ".88rem", fontWeight: 600,
-                    border: "1.5px solid #c7d2fe", outline: "none",
-                    color: "#1e1b4b", fontFamily: "Inter,sans-serif",
-                    background: "#f5f7ff",
-                  }}
-                />
-              ) : (
-                <div style={{
-                  padding: "10px 14px", borderRadius: 12,
-                  fontSize: ".88rem", fontWeight: 600,
-                  background: "#f8f9ff", border: "1px solid #e8eaf6",
-                  color: "#1e1b4b", display: "flex", alignItems: "center", gap: 10,
-                }}>
-                  <span style={{ color: "#4f46e5", flexShrink: 0 }}>{Icons[icon]}</span>
-                  {form[key]}
-                </div>
-              )}
+            {/* Drag handle */}
+            <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
+              <div style={{ width: 36, height: 4, borderRadius: 99, background: C.border }} />
             </div>
-          ))}
-        </div>
 
-        {/* Actions */}
-        <div style={{ padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-          {saved && (
+            {/* Avatar card */}
             <div style={{
-              textAlign: "center", fontSize: ".78rem",
-              color: "#10b981", fontWeight: 700, padding: "4px 0",
+              margin: "12px 16px 0",
+              background: C.cardAlt,
+              border: `1px solid ${C.border}`,
+              borderLeft: `3px solid ${C.red}`,
+              borderRadius: 14,
+              padding: "16px",
+              display: "flex", alignItems: "center", gap: 14,
             }}>
-              ✓ Profile saved successfully
-            </div>
-          )}
+              {/* Avatar circle */}
+              <div style={{
+                width: 56, height: 56, borderRadius: 16,
+                background: `${C.red}18`,
+                border: `1.5px solid ${C.red}44`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.4rem", fontWeight: 900, color: C.red, flexShrink: 0,
+                fontFamily: "Archivo, sans-serif",
+              }}>
+                {loading ? "…" : initial}
+              </div>
 
-          {editing ? (
-            <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  fontSize: ".95rem", fontWeight: 800, color: C.white,
+                  fontFamily: "Archivo, sans-serif",
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                }}>
+                  {loading ? "Loading..." : (userData?.name || "—")}
+                </div>
+                {userData?.title && (
+                  <div style={{
+                    fontSize: ".65rem", color: C.gray, fontWeight: 600,
+                    marginTop: 2, fontFamily: "Archivo, sans-serif",
+                  }}>
+                    {userData.title}
+                  </div>
+                )}
+                {/* Role badge */}
+                {userData?.role && (
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                    marginTop: 6, padding: "2px 8px", borderRadius: 4,
+                    border: `1px solid ${C.red}44`,
+                    background: `${C.red}10`,
+                  }}>
+                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red }} />
+                    <span style={{
+                      fontSize: ".52rem", fontWeight: 800, color: C.red,
+                      textTransform: "uppercase", letterSpacing: 1,
+                      fontFamily: "Archivo, sans-serif",
+                    }}>
+                      {userData.role}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Fields */}
+            <div style={{
+              overflowY: "auto", padding: "12px 16px 0",
+              display: "flex", flexDirection: "column", gap: 8,
+            }}>
+              {FIELDS.map(({ label, key, icon }) => (
+                <div key={key} className="profile-field" style={{
+                  padding: "10px 14px", borderRadius: 12,
+                  background: C.cardAlt, border: `1px solid ${C.border}`,
+                  display: "flex", alignItems: "center", gap: 12,
+                }}>
+                  <span style={{ color: C.red, flexShrink: 0, opacity: .8 }}>
+                    {Icons[icon]}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontSize: ".55rem", fontWeight: 700, color: C.gray,
+                      textTransform: "uppercase", letterSpacing: .6,
+                      fontFamily: "Archivo, sans-serif", marginBottom: 2,
+                    }}>
+                      {label}
+                    </div>
+                    <div style={{
+                      fontSize: ".82rem", fontWeight: 600, color: C.white,
+                      fontFamily: "Archivo, sans-serif",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {loading ? "—" : (userData?.[key] || "—")}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Sign Out */}
+            <div style={{ padding: 16 }}>
               <button
-                onClick={() => setEditing(false)}
+                className="signout-btn"
+                onClick={() => { onClose(); onSignOut?.(); }}
                 style={{
-                  flex: 1, padding: 12, borderRadius: 12,
-                  border: "1px solid #e8eaf6", background: "#f8f9ff",
-                  color: "#94a3b8", fontFamily: "Inter,sans-serif",
-                  fontSize: ".88rem", fontWeight: 700, cursor: "pointer",
+                  width: "100%", padding: "13px", borderRadius: 12, border: "none",
+                  background: `${C.red}15`,
+                  color: C.red,
+                  fontSize: ".82rem", fontWeight: 800, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  fontFamily: "Archivo, sans-serif",
+                  letterSpacing: .3,
+                  border: `1px solid ${C.red}30`,
                 }}
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                style={{
-                  flex: 2, padding: 12, borderRadius: 12, border: "none",
-                  background: "linear-gradient(135deg,#4f46e5,#7c3aed)",
-                  color: "#fff", fontFamily: "Inter,sans-serif",
-                  fontSize: ".88rem", fontWeight: 700, cursor: "pointer",
-                }}
-              >
-                Save Changes
+                {Icons.signOut} Sign Out
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setEditing(true)}
-              style={{
-                width: "100%", padding: 12, borderRadius: 12, border: "none",
-                background: "linear-gradient(135deg,#4f46e5,#7c3aed)",
-                color: "#fff", fontFamily: "Inter,sans-serif",
-                fontSize: ".88rem", fontWeight: 700, cursor: "pointer",
-              }}
-            >
-              Edit Profile
-            </button>
-          )}
 
-          <button
-            onClick={() => {
-              sessionStorage.setItem("loggedIn", "false");
-              onClose();
-              onSignOut?.();
-            }}
-            style={{
-              width: "100%", padding: 12, borderRadius: 12,
-              background: "#fee2e2", border: "1px solid rgba(239,68,68,.2)",
-              color: "#ef4444", fontFamily: "Inter,sans-serif",
-              fontSize: ".88rem", fontWeight: 700, cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            }}
-          >
-            {Icons.signOut} Sign Out
-          </button>
-        </div>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
