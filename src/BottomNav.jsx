@@ -15,10 +15,19 @@ const DEFAULT_ITEMS = [
 
 export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_ITEMS }) {
   const [animKey, setAnimKey] = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     setAnimKey(k => k + 1);
   }, [activeTab]);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setModalOpen(document.body.hasAttribute("data-modal-open"));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["data-modal-open"] });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -61,6 +70,9 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
         zIndex: 100,
         overflow: "visible",
         fontFamily: "'Archivo', sans-serif",
+        visibility: modalOpen ? "hidden" : "visible",
+        pointerEvents: modalOpen ? "none" : "auto",
+        transition: "visibility 0s",
       }}>
         {/* Bar */}
         <div style={{
