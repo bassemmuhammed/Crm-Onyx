@@ -1029,18 +1029,16 @@ export default function AdminLeadsPage({ onModalChange }) {
             </div>
             {/* Agent picker button */}
             <div onClick={() => setAgentPickerOpen(true)} className="tap-btn" style={{
-              display:"flex", alignItems:"center", gap:10,
-              background:C.cardAlt, borderRadius:12, padding:"10px 14px",
-              border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`,
-              cursor:"pointer",
+              display:"flex", alignItems:"center", gap:5,
+              background: filterAgent!=="all" ? `${C.red}12` : C.card,
+              borderRadius:9, padding:"6px 12px",
+              border:`1px solid ${filterAgent!=="all" ? C.red+"44" : C.border}`,
+              cursor:"pointer", alignSelf:"flex-start",
             }}>
-              <div style={{ width:28, height:28, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <svg width="14" height="14" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
-              </div>
-              <span style={{ flex:1, fontSize:".73rem", fontWeight:700, color: filterAgent==="all" ? C.gray : C.silver, fontFamily:"Archivo,sans-serif" }}>
+              <svg width="10" height="10" viewBox="0 0 256 256" fill={filterAgent!=="all" ? C.red : C.gray}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
+              <span style={{ fontSize:".65rem", fontWeight:700, color: filterAgent!=="all" ? C.red : C.gray, fontFamily:"Archivo,sans-serif" }}>
                 {filterAgent==="all" ? "All Sales" : filterAgent==="unassigned" ? "Unassigned" : team.find(t=>t.id===filterAgent)?.name || "All Sales"}
               </span>
-              <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
             </div>
 
             {/* Agent picker modal — centered */}
