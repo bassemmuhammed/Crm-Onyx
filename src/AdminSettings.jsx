@@ -270,10 +270,10 @@ export async function distributeLeadsToTeam() {
 
   if (membersErr || !members?.length) return { distributed: 0 };
 
-  // 3. Round-robin assignment — column name matches sharedLeadsData: "assignedTo"
+  // 3. Round-robin assignment
   const updates = leads.map((lead, i) => ({
     id: lead.id,
-    assignedTo: members[i % members.length].id,
+    assigned_to: members[i % members.length].id,
   }));
 
   // 4. Batch upsert
