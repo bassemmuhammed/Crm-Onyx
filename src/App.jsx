@@ -70,7 +70,7 @@ const INIT_NOTIFS = [
 ];
 
 const hashToTab = () => {
-  const saved = parseInt(localStorage.getItem("adminTab") || "0");
+  const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
   // TAB_ADDPROJECT (2) is a modal state, not a real tab — on refresh go to HOME
   if (saved === TAB_ADDPROJECT) return TAB_HOME;
   return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
@@ -97,18 +97,22 @@ export default function App() {
   const [projects,       setProjects]       = useState([]);
   const [editProject,    setEditProject]    = useState(null);
   const [showAddProject, setShowAddProject] = useState(
-    () => localStorage.getItem("showAddProject") === "true"
+    () => sessionStorage.getItem("showAddProject") === "true"
   );
 
   // ── Admin UI state ──
-  const [activeAdminTab, setActiveAdminTab] = useState(hashToTab);
+  const [activeAdminTab, setActiveAdminTab] = useState(() => {
+    const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
+    if (saved === TAB_ADDPROJECT) return TAB_HOME;
+    return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
+  });
   const [notifOpen,      setNotifOpen]      = useState(false);
   const [profileOpen,    setProfileOpen]    = useState(false);
   const [notifs,         setNotifs]         = useState(INIT_NOTIFS);
 
   // ── Sales tab ──
   const [activeSalesTab, setActiveSalesTab] = useState(
-    () => parseInt(localStorage.getItem("activeTab") || "0")
+    () => parseInt(sessionStorage.getItem("activeTab") || "0")
   );
 
   // ── Supabase auth listener ────────────────────────────────────
@@ -185,11 +189,11 @@ export default function App() {
 
   // ── Tab persistence (sales) ──
   useEffect(() => {
-    localStorage.setItem("activeTab", activeSalesTab);
+    sessionStorage.setItem("activeTab", activeSalesTab);
   }, [activeSalesTab]);
 
   const handleAdminTabChange = (tab) => {
-    localStorage.setItem("adminTab", tab);
+    sessionStorage.setItem("adminTab", tab);
     setActiveAdminTab(tab);
   };
 
@@ -222,21 +226,21 @@ export default function App() {
     });
     setEditProject(null);
     setShowAddProject(false);
-    localStorage.setItem("showAddProject", "false");
+    sessionStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
   const openAddProject = (project = null) => {
     setEditProject(project);
     setShowAddProject(true);
-    localStorage.setItem("adminTab", TAB_ADDPROJECT);
-    localStorage.setItem("showAddProject", "true");
+    sessionStorage.setItem("adminTab", TAB_ADDPROJECT);
+    sessionStorage.setItem("showAddProject", "true");
   };
 
   const cancelAddProject = () => {
     setEditProject(null);
     setShowAddProject(false);
-    localStorage.setItem("showAddProject", "false");
+    sessionStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
