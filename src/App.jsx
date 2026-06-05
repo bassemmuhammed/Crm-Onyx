@@ -70,8 +70,9 @@ const INIT_NOTIFS = [
 ];
 
 const hashToTab = () => {
-  const map = { "#home": TAB_HOME, "#leads": TAB_LEADS, "#add": TAB_ADDPROJECT, "#settings": TAB_SETTINGS };
-  return map[window.location.hash] ?? TAB_HOME;
+  // Use localStorage instead of URL hash to avoid refresh navigation issues
+  const saved = parseInt(localStorage.getItem("adminTab") || "0");
+  return [TAB_HOME, TAB_LEADS, TAB_ADDPROJECT, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
 };
 
 // ─── App ──────────────────────────────────────────────────────────
@@ -184,16 +185,8 @@ export default function App() {
     localStorage.setItem("activeTab", activeSalesTab);
   }, [activeSalesTab]);
 
-  // ── Hash change listener (admin tabs) ──
-  useEffect(() => {
-    const onChange = () => setActiveAdminTab(hashToTab());
-    window.addEventListener("hashchange", onChange);
-    return () => window.removeEventListener("hashchange", onChange);
-  }, []);
-
   const handleAdminTabChange = (tab) => {
-    const tabToHash = ["#home", "#leads", "#add", "#settings"];
-    window.location.hash = tabToHash[tab] || "#home";
+    localStorage.setItem("adminTab", tab);
     setActiveAdminTab(tab);
   };
 
