@@ -208,7 +208,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:".92rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
-                <div style={{ fontSize:".65rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>{local.project}</div>
+                <div style={{ fontSize:".65rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
               </div>
 
               {/* Status pill */}
@@ -223,28 +223,31 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           <div style={{ overflowY:"auto", padding:"12px 16px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
+            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Actions" />
 
             {/* Assign */}
             <div onClick={() => setAssignOpen(true)} className="tap-btn" style={{
-              display:"flex", alignItems:"center", gap:10,
-              background:C.cardAlt, borderRadius:12, padding:"11px 14px",
+              display:"flex", alignItems:"center", gap:8,
+              background:C.cardAlt, borderRadius:10, padding:"8px 12px",
               cursor:"pointer", border:`1px solid ${C.border}`,
+              borderTop:`1.5px solid ${C.red}44`,
             }}>
-              <div style={{ width:32, height:32, borderRadius:9, background:`${C.blue}18`, border:`1px solid ${C.blue}33`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <svg width="15" height="15" viewBox="0 0 256 256" fill={C.blue}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
+              <div style={{ width:26, height:26, borderRadius:7, background:`${C.white}10`, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <svg width="13" height="13" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
               </div>
-              <span style={{ fontSize:".75rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
-                {agent ? `${agent.name}` : "توزيع على سيلز"}
+              <span style={{ fontSize:".72rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
+                {agent ? `${agent.name}` : "Assign Sales"}
               </span>
-              {agent && <span style={{ fontSize:".6rem", color:C.blue, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>تغيير →</span>}
-              {!agent && <svg width="12" height="12" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>}
+              {agent && <span style={{ fontSize:".58rem", color:C.silver, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>Change →</span>}
+              {!agent && <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>}
             </div>
 
             {/* ── STATUS SECTION ── */}
+            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Status" />
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-              {STATUS_ORDER.map(s => {
+              {STATUS_ORDER.filter(s => s !== "new").map(s => {
                 const m = STATUS_META[s];
                 const active = local.status === s;
                 return (
@@ -290,21 +293,22 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             )}
 
             {/* ── BUDGET SECTION ── */}
+            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Client" />
             <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
               {/* Property type */}
               <div style={{ display:"flex", gap:6 }}>
                 {[
-                  { key:"residential", label:"سكني"  },
-                  { key:"commercial",  label:"تجاري"  },
-                  { key:"admin",       label:"إداري"  },
+                  { key:"residential", label:"Residential" },
+                  { key:"commercial",  label:"Commercial"  },
+                  { key:"admin",       label:"Admin"       },
                 ].map(t => {
                   const active = local.clientInfo?.type === t.key;
                   return (
                     <button key={t.key} className="chip-btn" onClick={() => set("clientInfo",{...local.clientInfo, type:t.key})} style={{
-                      flex:1, padding:"8px 4px", borderRadius:9,
+                      flex:1, padding:"7px 4px", borderRadius:9,
                       border:`1px solid ${active ? C.red+"66" : C.border}`, cursor:"pointer",
-                      fontFamily:"Archivo,sans-serif", fontSize:".7rem", fontWeight:700,
+                      fontFamily:"Archivo,sans-serif", fontSize:".68rem", fontWeight:700,
                       background: active ? `${C.red}18` : C.cardAlt,
                       color: active ? C.white : C.gray,
                       transition:"all .15s",
@@ -317,6 +321,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             </div>
 
             {/* ── COMMENTS SECTION ── */}
+            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Comments" />
             <div style={{ display:"flex", gap:8 }}>
               <input ref={inputRef} value={comment} onChange={e => setComment(e.target.value)}
@@ -350,11 +355,11 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           </div>
 
           {/* Footer */}
-          <div style={{ padding:"10px 16px 28px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+          <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>تأكيد الحذف النهائي؟</span>
-                <button onClick={() => setConfirmDel(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif", fontWeight:700 }}>إلغاء ✕</button>
+                <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Confirm permanent delete?</span>
+                <button onClick={() => setConfirmDel(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif", fontWeight:700 }}>Cancel ✕</button>
               </div>
             )}
             <div style={{ display:"flex", gap:7, alignItems:"center" }}>
@@ -375,14 +380,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
                 flex:1, padding:"9px 0", borderRadius:9,
                 border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray,
                 fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
-              }}>إغلاق</button>
+              }}>Close</button>
               {/* Save */}
               <button className="tap-btn" onClick={handleSave} disabled={saving} style={{
                 flex:2, padding:"9px 0", borderRadius:9, border:"none",
                 background: saving ? C.gray : C.red,
                 color:"#fff", boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
                 fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
-              }}>{saving ? "جاري الحفظ..." : "حفظ التغييرات"}</button>
+              }}>{saving ? "Saving..." : "Save Changes"}</button>
             </div>
           </div>
         </div>
@@ -407,7 +412,7 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
     >
       <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px", paddingBottom:"24px", maxHeight:"70vh", overflowY:"auto" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>توزيع: {lead.name}</div>
+          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Assign: {lead.name}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
         </div>
         {team.map(agent => {
@@ -422,13 +427,13 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
             }}>
               <div style={{ width:32, height:32, borderRadius:9, background:agent.color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".72rem", fontWeight:900, color:"#fff", fontFamily:"Archivo,sans-serif" }}>{agent.name.charAt(0)}</div>
               <div style={{ flex:1, fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{agent.name}</div>
-              {active && <div style={{ fontSize:".6rem", color:agent.color, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>✓ موزع</div>}
+              {active && <div style={{ fontSize:".6rem", color:agent.color, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>✓ Assigned</div>}
             </div>
           );
         })}
         {lead.assignedTo && (
           <div onClick={onUnassign} style={{ textAlign:"center", fontSize:".65rem", color:C.red, fontWeight:700, cursor:"pointer", padding:"8px 0", fontFamily:"Archivo,sans-serif" }}>
-            سحب التوزيع ✕
+            Remove Assignment ✕
           </div>
         )}
       </div>
@@ -955,8 +960,8 @@ export default function AdminLeadsPage({ onModalChange }) {
             </div>
             <select value={filterAgent} onChange={e=>setFilterAgent(e.target.value)}
               style={{ ...inputBase, appearance:"none", cursor:"pointer" }}>
-              <option value="all">كل السيلز</option>
-              <option value="unassigned">غير موزع</option>
+              <option value="all">All Sales</option>
+              <option value="unassigned">Unassigned</option>
               {team.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
             </select>
           </div>
@@ -965,7 +970,7 @@ export default function AdminLeadsPage({ onModalChange }) {
         {/* Lead list */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:80 }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ جاري التحميل...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
               ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif" }}>No leads found 🔍</div>
               : filtered.map((lead,i) => (
