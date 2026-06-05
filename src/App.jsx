@@ -394,10 +394,9 @@ export default function App() {
           />
         ) : (
           <ProjectsPage
-            activeTab={activeSalesTab}
+            projects={projects}
             onTabChange={setActiveSalesTab}
             onSignOut={handleSignOut}
-            projects={projects}
             onEditProject={(p) => { setEditProject(p); setShowAddProject(true); }}
             onAddProject={() => { setEditProject(null); setShowAddProject(true); }}
           />
@@ -409,13 +408,15 @@ export default function App() {
 
   return (
     <div style={{
-      fontFamily: "Inter,sans-serif",
-      background: "#f5f7ff",
+      fontFamily: "'Archivo', sans-serif",
+      background: "#0a0a0a",
       minHeight: "100vh",
       width: "100%",
       position: "relative",
+      color: "#ffffff",
     }}>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+      <OnyxGlobalStyles />
+      <TopLoadingBar />
       {renderSalesPage()}
     </div>
   );

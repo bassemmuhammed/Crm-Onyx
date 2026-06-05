@@ -320,16 +320,18 @@ function EmptyState() {
 //   stats: { leads, deals },
 // }
 
-export default function ProjectsPage({ project, onTabChange, onSignOut }) {
+export default function ProjectsPage({ projects = [], onTabChange, onSignOut, onEditProject, onAddProject }) {
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifs,      setNotifs]      = useState(DEFAULT_NOTIFICATIONS);
   const [storyOpen,   setStoryOpen]   = useState(false);
   const [videoOpen,   setVideoOpen]   = useState(false);
   const [activeTab,   setActiveTab]   = useState(3); // Projects tab
+  const [selectedIdx, setSelectedIdx] = useState(0);
 
   const unread = notifs.filter(n => n.unread).length;
-  const p = project; // data comes from parent (AddProjectPage)
+  // Pick the currently selected project from the array
+  const p = projects.length > 0 ? (projects[selectedIdx] ?? projects[0]) : null;
 
   const handleTabChange = (i) => {
     setActiveTab(i);
@@ -349,6 +351,33 @@ export default function ProjectsPage({ project, onTabChange, onSignOut }) {
         onBellClick={() => setNotifOpen(true)}
         onProfileClick={() => setProfileOpen(true)}
       />
+
+      {/* ── PROJECT TABS (if multiple projects) ── */}
+      {projects.length > 1 && (
+        <div style={{
+          display: "flex", gap: 6, overflowX: "auto", padding: "10px 16px",
+          borderBottom: `1px solid ${C.border}`,
+          scrollbarWidth: "none",
+        }}>
+          {projects.map((proj, i) => {
+            const active = i === selectedIdx;
+            return (
+              <button key={proj.id ?? i} onClick={() => setSelectedIdx(i)} style={{
+                flexShrink: 0, padding: "5px 13px", borderRadius: 6,
+                border: `1px solid ${active ? C.red + "66" : C.border}`,
+                background: active ? `${C.red}18` : C.cardAlt,
+                color: active ? C.white : C.gray,
+                fontSize: ".63rem", fontWeight: 700, cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 5,
+                fontFamily: "Archivo, sans-serif",
+              }}>
+                {active && <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red }} />}
+                {proj.name || `Project ${i + 1}`}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── NO PROJECT → Empty State ── */}
       {!p ? (
@@ -415,6 +444,27 @@ export default function ProjectsPage({ project, onTabChange, onSignOut }) {
                 }}>
                   {p.status}
                 </div>
+              )}
+
+              {/* Edit button — top left, only if handler exists */}
+              {onEditProject && (
+                <button
+                  onClick={e => { e.stopPropagation(); onEditProject(p); }}
+                  style={{
+                    position: "absolute", top: 12, left: 12,
+                    background: "rgba(0,0,0,.55)", border: `1px solid ${C.border}`,
+                    backdropFilter: "blur(6px)",
+                    color: C.silver, borderRadius: 8,
+                    padding: "5px 10px", cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 5,
+                    fontSize: ".6rem", fontWeight: 700, fontFamily: "Archivo, sans-serif",
+                  }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 256 256" fill="currentColor">
+                    <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/>
+                  </svg>
+                  Edit
+                </button>
               )}
 
               {/* Tap to watch label */}
