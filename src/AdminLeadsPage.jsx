@@ -640,17 +640,11 @@ function AddManualModal({ onClose, onAdd }) {
   const [loading, setLoading] = useState(false);
   const set = (k, v) => setForm(f => ({ ...f, [k]:v }));
   return (
-    <ModalWrap onClose={onClose} title="إضافة ليد يدوي">
-      <Field label="الاسم"    value={form.name}  onChange={v=>set("name",v)}  placeholder="محمد أحمد" />
-      <Field label="التليفون" value={form.phone} onChange={v=>set("phone",v)} placeholder="010XXXXXXXX" type="tel" />
-      <div style={{ marginBottom:10 }}>
-        <div style={{ fontSize:".6rem", fontWeight:700, color:C.gray, marginBottom:4, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>المشروع</div>
-        <select value={form.project} onChange={e=>set("project",e.target.value)} style={{ ...inputBase, appearance:"none", cursor:"pointer" }}>
-          {PROJECTS.map(p => <option key={p}>{p}</option>)}
-        </select>
-      </div>
-      <Field label="ملاحظة (اختياري)" value={form.note} onChange={v=>set("note",v)} placeholder="..." />
-      <PrimaryBtn label={loading ? "جاري الإضافة..." : "إضافة ليد"} disabled={loading} onClick={async () => {
+    <ModalWrap onClose={onClose} title="Add Lead Manually">
+      <Field label="Name"    value={form.name}  onChange={v=>set("name",v)}  placeholder="Full name" />
+      <Field label="Phone"   value={form.phone} onChange={v=>set("phone",v)} placeholder="010XXXXXXXX" type="tel" />
+      <Field label="Note (optional)" value={form.note} onChange={v=>set("note",v)} placeholder="..." />
+      <PrimaryBtn label={loading ? "Adding..." : "Add Lead"} disabled={loading} onClick={async () => {
         if (!form.name || !form.phone) return;
         setLoading(true); await onAdd({ ...form, source:"manual" }); setLoading(false); onClose();
       }} />
@@ -679,23 +673,25 @@ function ExcelModal({ onClose, onAdd }) {
   };
 
   return (
-    <ModalWrap onClose={onClose} title="رفع ملف Excel">
+    <ModalWrap onClose={onClose} title="Upload Excel File">
       {!done ? (
         <>
           <div onClick={() => fileRef.current.click()} style={{ border:`2px dashed ${C.red}44`, borderRadius:12, padding:"24px 16px", textAlign:"center", cursor:"pointer", marginBottom:12, background:`${C.red}08` }}>
-            <div style={{ fontSize:"1.6rem", marginBottom:6 }}>📊</div>
-            <div style={{ fontSize:".72rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>اضغط لرفع ملف CSV</div>
+            <div style={{ display:"flex", justifyContent:"center", marginBottom:8 }}>
+              <svg width="28" height="28" viewBox="0 0 256 256" fill={C.red}><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-45.54-48.87L136,195.31l-18.46-28.18a8,8,0,1,0-13.08,9.18L124.69,208l-20.23,31.69a8,8,0,1,0,13.08,9.18L136,220.69l18.46,28.18a8,8,0,0,0,13.08-9.18L147.31,208l20.23-31.69a8,8,0,0,0-13.08-9.18Z"/></svg>
+            </div>
+            <div style={{ fontSize:".72rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Tap to upload CSV</div>
             <div style={{ fontSize:".58rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>CSV (name, phone, project)</div>
           </div>
           <input ref={fileRef} type="file" accept=".csv" style={{ display:"none" }} onChange={handleFile} />
           {rows.length > 0 && (
             <>
-              <div style={{ fontSize:".62rem", color:"#10b981", fontWeight:700, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>✓ تم قراءة {rows.length} ليد</div>
+              <div style={{ fontSize:".62rem", color:C.red, fontWeight:700, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>✓ {rows.length} leads ready</div>
               {rows.slice(0,4).map((r,i) => (
-                <div key={i} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderRadius:8, padding:"7px 10px", marginBottom:5, fontSize:".62rem", color:C.silver, fontFamily:"Archivo,sans-serif" }}>{r.name} — {r.phone} — {r.project}</div>
+                <div key={i} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"7px 10px", marginBottom:5, fontSize:".62rem", color:C.silver, fontFamily:"Archivo,sans-serif" }}>{r.name} — {r.phone}</div>
               ))}
-              {rows.length > 4 && <div style={{ fontSize:".58rem", color:C.gray, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>و {rows.length - 4} أكتر...</div>}
-              <PrimaryBtn label={loading ? "جاري الاستيراد..." : `استيراد ${rows.length} ليد`} disabled={loading} onClick={async () => {
+              {rows.length > 4 && <div style={{ fontSize:".58rem", color:C.gray, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>and {rows.length - 4} more...</div>}
+              <PrimaryBtn label={loading ? "Importing..." : `Import ${rows.length} Leads`} disabled={loading} onClick={async () => {
                 setLoading(true); for (const r of rows) await onAdd({...r,source:"excel"}); setLoading(false); setDone(true);
               }} />
             </>
@@ -703,9 +699,11 @@ function ExcelModal({ onClose, onAdd }) {
         </>
       ) : (
         <div style={{ textAlign:"center", padding:"20px 0" }}>
-          <div style={{ fontSize:"2rem", marginBottom:8 }}>✅</div>
-          <div style={{ fontSize:".8rem", fontWeight:800, color:"#10b981", fontFamily:"Archivo,sans-serif", marginBottom:14 }}>تم الاستيراد بنجاح!</div>
-          <PrimaryBtn label="إغلاق" onClick={onClose} />
+          <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}>
+            <svg width="36" height="36" viewBox="0 0 256 256" fill={C.red}><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>
+          </div>
+          <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", marginBottom:14 }}>Import successful!</div>
+          <PrimaryBtn label="Close" onClick={onClose} />
         </div>
       )}
     </ModalWrap>
@@ -714,13 +712,17 @@ function ExcelModal({ onClose, onAdd }) {
 
 function FacebookModal({ onClose }) {
   return (
-    <ModalWrap onClose={onClose} title="استيراد من Facebook">
-      <div style={{ background:"#1877f212", border:"1px solid #1877f230", borderRadius:12, padding:"18px 16px", textAlign:"center", marginBottom:16 }}>
-        <div style={{ fontSize:"1.4rem", marginBottom:8 }}>📘</div>
-        <div style={{ fontSize:".75rem", fontWeight:800, color:"#60a5fa", fontFamily:"Archivo,sans-serif", marginBottom:4 }}>Facebook Lead Ads</div>
-        <div style={{ fontSize:".62rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>الربط مع Facebook API قيد التطوير</div>
+    <ModalWrap onClose={onClose} title="Facebook Leads">
+      <div style={{ background:`${C.red}08`, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"18px 16px", textAlign:"center", marginBottom:16 }}>
+        <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}>
+          <div style={{ width:44, height:44, borderRadius:12, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <svg width="22" height="22" viewBox="0 0 256 256" fill={C.white}><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>
+          </div>
+        </div>
+        <div style={{ fontSize:".75rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", marginBottom:4 }}>Facebook Lead Ads</div>
+        <div style={{ fontSize:".62rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>Facebook API integration coming soon</div>
       </div>
-      <PrimaryBtn label="إغلاق" onClick={onClose} />
+      <PrimaryBtn label="Close" onClick={onClose} />
     </ModalWrap>
   );
 }
@@ -764,30 +766,48 @@ function FabChooserModal({ onClose, onChoose }) {
       document.body.style.width = "";
     };
   }, []);
+
+  const options = [
+    {
+      key:"facebook", label:"Facebook Leads",
+      icon: <svg width="16" height="16" viewBox="0 0 256 256" fill={C.white}><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>,
+    },
+    {
+      key:"excel", label:"Excel / CSV",
+      icon: <svg width="16" height="16" viewBox="0 0 256 256" fill={C.white}><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-45.54-48.87L136,195.31l-18.46-28.18a8,8,0,1,0-13.08,9.18L124.69,208l-20.23,31.69a8,8,0,1,0,13.08,9.18L136,220.69l18.46,28.18a8,8,0,0,0,13.08-9.18L147.31,208l20.23-31.69a8,8,0,0,0-13.08-9.18Z"/></svg>,
+    },
+    {
+      key:"manual", label:"Add Manually",
+      icon: <svg width="16" height="16" viewBox="0 0 256 256" fill={C.white}><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>,
+    },
+  ];
+
   return (
     <div style={{ position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"20px 16px 32px" }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:18 }}>
-          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>إضافة ليد جديد</div>
-          <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
+      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"16px 16px 28px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
+        {/* Handle */}
+        <div style={{ display:"flex", justifyContent:"center", marginBottom:12 }}>
+          <div style={{ width:32, height:3, borderRadius:99, background:C.border }} />
         </div>
-        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-          {[
-            { label:"+ Facebook", key:"facebook", color:"#60a5fa", bg:"#1877f215", bd:"#1877f228", icon:"📘" },
-            { label:"+ Excel",    key:"excel",    color:"#34d399", bg:"#10b98112", bd:"#10b98128", icon:"📊" },
-            { label:"+ يدوي",    key:"manual",   color:C.red,    bg:`${C.red}12`, bd:`${C.red}28`, icon:"✏️" },
-          ].map(b => (
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+          <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Add New Lead</div>
+          <div onClick={onClose} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+          {options.map(b => (
             <div key={b.key} className="tap-btn" onClick={() => { onClose(); onChoose(b.key); }} style={{
               display:"flex", alignItems:"center", gap:12,
-              background:b.bg, color:b.color,
-              border:`1px solid ${b.bd}`, borderRadius:12, padding:"13px 16px",
-              fontSize:".78rem", fontWeight:800, cursor:"pointer",
-              fontFamily:"Archivo,sans-serif",
+              background:C.cardAlt, borderRadius:12, padding:"11px 14px",
+              border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`,
+              cursor:"pointer",
             }}>
-              <span style={{ fontSize:"1.1rem" }}>{b.icon}</span>
-              {b.label}
+              <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                {b.icon}
+              </div>
+              <span style={{ fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif", flex:1 }}>{b.label}</span>
+              <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
             </div>
           ))}
         </div>
