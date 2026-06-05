@@ -463,7 +463,7 @@ export default function AddProjectPage({
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
               fontFamily:"Archivo,sans-serif",
             }}>
-              <span style={{fontSize:"1rem",color:C.blue}}>+</span> Add Payment Plan
+              <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Payment Plan</span>
             </button>
           </div>
         </Section>
@@ -556,7 +556,7 @@ export default function AddProjectPage({
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
               fontFamily:"Archivo,sans-serif",
             }}>
-              <span style={{fontSize:"1rem",color:C.red}}>+</span> Add Unit Type
+              <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Unit Type</span>
             </button>
           </div>
         </Section>
