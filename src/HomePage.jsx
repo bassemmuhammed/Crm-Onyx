@@ -26,8 +26,6 @@ function useCounter(target, active) {
 }
 
 // ── Task Due-Date Notification (1 hour before) ────────────
-// Parses due strings like "Today, 3:00 PM" / "Tomorrow, 10 AM"
-// and schedules a browser Notification 60 min before the task.
 function scheduleTaskNotifications(tasks) {
   if (!("Notification" in window)) return;
   if (Notification.permission === "denied") return;
@@ -35,14 +33,11 @@ function scheduleTaskNotifications(tasks) {
   const request = () => {
     tasks.forEach((task) => {
       if (task.done) return;
-
       const dueDate = parseDueDate(task.due);
       if (!dueDate) return;
-
       const notifyAt = new Date(dueDate.getTime() - 60 * 60 * 1000);
       const delay    = notifyAt.getTime() - Date.now();
-      if (delay <= 0) return; // already passed
-
+      if (delay <= 0) return;
       setTimeout(() => {
         new Notification("Task Reminder ⏰", {
           body: `"${task.title}" is due in 1 hour (${task.due})`,
@@ -66,7 +61,6 @@ function parseDueDate(due) {
   const now   = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // "Today, 3:00 PM" | "Today, 6:00 PM"
   const todayMatch = due.match(/^Today,?\s+(\d+):?(\d*)\s*(AM|PM)/i);
   if (todayMatch) {
     let h = parseInt(todayMatch[1]);
@@ -77,7 +71,6 @@ function parseDueDate(due) {
     return new Date(today.getFullYear(), today.getMonth(), today.getDate(), h, m);
   }
 
-  // "Tomorrow, 10 AM"
   const tmrMatch = due.match(/^Tomorrow,?\s+(\d+):?(\d*)\s*(AM|PM)/i);
   if (tmrMatch) {
     let h = parseInt(tmrMatch[1]);
@@ -90,7 +83,6 @@ function parseDueDate(due) {
     return new Date(tmr.getFullYear(), tmr.getMonth(), tmr.getDate(), h, m);
   }
 
-  // "Jun 1, 9:00 AM" | "May 31, 11:00 AM"
   const dateMatch = due.match(/^([A-Za-z]+)\s+(\d+),?\s+(\d+):?(\d*)\s*(AM|PM)/i);
   if (dateMatch) {
     const monthStr = dateMatch[1];
@@ -108,55 +100,97 @@ function parseDueDate(due) {
   return null;
 }
 
-// ── Data ──────────────────────────────────────────────────
-// NOTE: Replace these with real API/DB calls.
-// Stats shape: { label, target, pct, icon, color, bg, trend, up }
-// Tasks shape: { id, title, due, priority, done, color, bg }
-
+// ── Stats Definition ──────────────────────────────────────
+// "filter" matches the status key used in the Leads/Sales page.
+// All Leads → filter: null (show all), New Leads → filter: "New"
 const STATS = [
-  { label: "All Leads",      target: 0, pct: 0, icon: "sparkle",       color: "#4f46e5", bg: "#ede9fe", trend: "", up: null },
-  { label: "New Leads",      target: 0, pct: 0, icon: "sparkle",       color: "#10b981", bg: "#d1fae5", trend: "", up: null },
-  { label: "Call Back",      target: 0, pct: 0, icon: "phoneCall",     color: "#f59e0b", bg: "#fef3c7", trend: "", up: null },
-  { label: "Meetings",       target: 0, pct: 0, icon: "calendarCheck", color: "#10b981", bg: "#d1fae5", trend: "", up: null },
-  { label: "Deals",          target: 0, pct: 0, icon: "handshake",     color: "#ef4444", bg: "#fee2e2", trend: "", up: null },
-  { label: "Sent To",        target: 0, pct: 0, icon: "hourglass",     color: "#ec4899", bg: "#fce7f3", trend: "", up: null },
-  { label: "Not Interested", target: 0, pct: 0, icon: "snowflake",     color: "#0ea5e9", bg: "#e0f2fe", trend: "", up: null },
-  { label: "Duplicates",     target: 0, pct: 0, icon: "copy",          color: "#f97316", bg: "#fff3e8", trend: "", up: null },
+  { label: "All Leads",        filter: null,              target: 0, pct: 0, icon: "sparkle",       color: "#4f46e5", bg: "#ede9fe", trend: "", up: null },
+  { label: "New Leads",        filter: "New",             target: 0, pct: 0, icon: "sparkle",       color: "#10b981", bg: "#d1fae5", trend: "", up: null },
+  { label: "Call Back",        filter: "Call Back",       target: 0, pct: 0, icon: "phoneCall",     color: "#f59e0b", bg: "#fef3c7", trend: "", up: null },
+  { label: "Pending Meeting",  filter: "Pending Meeting", target: 0, pct: 0, icon: "calendarCheck", color: "#8b5cf6", bg: "#ede9fe", trend: "", up: null },
+  { label: "Meeting Done",     filter: "Meeting Done",    target: 0, pct: 0, icon: "calendarCheck", color: "#10b981", bg: "#d1fae5", trend: "", up: null },
+  { label: "Deal",             filter: "Deal",            target: 0, pct: 0, icon: "handshake",     color: "#ef4444", bg: "#fee2e2", trend: "", up: null },
+  { label: "On Going",         filter: "On Going",        target: 0, pct: 0, icon: "hourglass",     color: "#ec4899", bg: "#fce7f3", trend: "", up: null },
+  { label: "Low Budget",       filter: "Low Budget",      target: 0, pct: 0, icon: "bar",           color: "#f97316", bg: "#fff3e8", trend: "", up: null },
+  { label: "No Answer",        filter: "No Answer",       target: 0, pct: 0, icon: "phoneCall",     color: "#94a3b8", bg: "#f1f5f9", trend: "", up: null },
+  { label: "Not Interested",   filter: "Not Interested",  target: 0, pct: 0, icon: "snowflake",     color: "#0ea5e9", bg: "#e0f2fe", trend: "", up: null },
+  { label: "Competitor",       filter: "Competitor",      target: 0, pct: 0, icon: "flag",          color: "#dc2626", bg: "#fee2e2", trend: "", up: null },
+  { label: "Long Term",        filter: "Long Term",       target: 0, pct: 0, icon: "hourglass",     color: "#7c3aed", bg: "#f5f3ff", trend: "", up: null },
+  { label: "Closed",           filter: "Closed",          target: 0, pct: 0, icon: "checkSquare",   color: "#64748b", bg: "#f1f5f9", trend: "", up: null },
 ];
 
-// Tasks: empty array — populate from DB
-const TASKS = [];
-
+const TASKS         = [];
 const NOTIFICATIONS = [];
 
 const PRIORITY_COLOR = { high: "#ef4444", medium: "#f59e0b", low: "#0ea5e9" };
 const PRIORITY_BG    = { high: "#fee2e2", medium: "#fef3c7", low: "#e0f2fe" };
 
 // ── Stat Card ─────────────────────────────────────────────
+// onClick navigates to the Sales/Leads page with the status pre-filtered.
+// Pass onLeadsFilter(filterKey) from the parent to handle navigation.
 
-function StatCard({ s, animate }) {
-  const val = useCounter(s.target, animate);
+function StatCard({ s, animate, onLeadsFilter }) {
+  const val  = useCounter(s.target, animate);
   const [barW, setBarW] = useState("0%");
+  const [pressed, setPressed] = useState(false);
+
   useEffect(() => { if (animate) setTimeout(() => setBarW(s.pct + "%"), 400); }, [animate]);
+
   const TrendIcon = s.up === true ? Icons.trendUp : s.up === false ? Icons.trendDown : Icons.minus;
+
+  const handleClick = () => {
+    if (onLeadsFilter) onLeadsFilter(s.filter);
+  };
+
   return (
-    <div style={{ background: "#fff", border: "1px solid #e8eaf6", borderRadius: 18, padding: 16, cursor: "pointer", boxShadow: "0 2px 16px rgba(79,70,229,.07)" }}>
-      <div style={{ width: 38, height: 38, borderRadius: 11, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10, color: s.color }}>{Icons[s.icon]}</div>
-      <div style={{ fontSize: ".68rem", color: "#94a3b8", fontWeight: 600, marginBottom: 3 }}>{s.label}</div>
-      <div style={{ fontSize: "1.9rem", fontWeight: 900, color: s.color, lineHeight: 1 }}>{val}</div>
+    <div
+      onClick={handleClick}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
+      style={{
+        background: "#fff",
+        border: `1.5px solid ${pressed ? s.color + "66" : "#e8eaf6"}`,
+        borderRadius: 18,
+        padding: 16,
+        cursor: "pointer",
+        boxShadow: pressed
+          ? `0 4px 20px ${s.color}22`
+          : "0 2px 16px rgba(79,70,229,.07)",
+        transform: pressed ? "scale(.97)" : "scale(1)",
+        transition: "transform .15s, box-shadow .15s, border-color .15s",
+        userSelect: "none",
+      }}
+    >
+      <div style={{
+        width: 38, height: 38, borderRadius: 11, background: s.bg,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        marginBottom: 10, color: s.color,
+      }}>
+        {Icons[s.icon]}
+      </div>
+      <div style={{ fontSize: ".68rem", color: "#94a3b8", fontWeight: 600, marginBottom: 3 }}>
+        {s.label}
+      </div>
+      <div style={{ fontSize: "1.9rem", fontWeight: 900, color: s.color, lineHeight: 1 }}>
+        {val}
+      </div>
       {s.trend && (
         <div style={{ fontSize: ".6rem", color: s.color, fontWeight: 700, marginTop: 5, display: "flex", alignItems: "center", gap: 3 }}>
           <span>{TrendIcon}</span> {s.trend}
         </div>
       )}
       <div style={{ marginTop: 10, height: 4, borderRadius: 99, background: "#eef1fb", overflow: "hidden" }}>
-        <div style={{ height: "100%", borderRadius: 99, background: s.color, width: barW, transition: "width 1.2s cubic-bezier(.4,0,.2,1)" }} />
+        <div style={{
+          height: "100%", borderRadius: 99, background: s.color,
+          width: barW, transition: "width 1.2s cubic-bezier(.4,0,.2,1)",
+        }} />
       </div>
     </div>
   );
 }
 
-// ── Task Card (home preview) ───────────────────────────────
+// ── Task Card ─────────────────────────────────────────────
 
 function TaskCard({ t, onToggle }) {
   return (
@@ -206,7 +240,6 @@ function TaskCard({ t, onToggle }) {
 }
 
 // ── All Tasks Modal ───────────────────────────────────────
-// Tapping anywhere on a task row toggles it as done.
 
 function AllTasksModal({ open, onClose, tasks, onToggle }) {
   const [filter, setFilter] = useState("all");
@@ -232,12 +265,10 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         boxShadow: "0 -8px 48px rgba(79,70,229,.18)",
         display: "flex", flexDirection: "column", maxHeight: "88vh",
       }}>
-        {/* Drag handle */}
         <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
           <div style={{ width: 40, height: 4, borderRadius: 99, background: "#e8eaf6" }} />
         </div>
 
-        {/* Header */}
         <div style={{ padding: "14px 20px 12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#1e1b4b" }}>All Tasks</div>
@@ -248,7 +279,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
           <div onClick={onClose} style={{ fontSize: ".75rem", color: "#94a3b8", fontWeight: 600, cursor: "pointer" }}>✕ Close</div>
         </div>
 
-        {/* Progress bar */}
         <div style={{ height: 4, borderRadius: 99, background: "#eef1fb", overflow: "hidden", margin: "0 20px" }}>
           <div style={{
             height: "100%", borderRadius: 99,
@@ -258,7 +288,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
           }} />
         </div>
 
-        {/* Filter buttons */}
         <div style={{ display: "flex", gap: 6, padding: "12px 20px 0" }}>
           {["all", "pending", "done"].map(f => (
             <button key={f} onClick={() => setFilter(f)} style={{
@@ -274,7 +303,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
           ))}
         </div>
 
-        {/* Task list — full row is tappable */}
         <div style={{ overflowY: "auto", padding: "12px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
           {filtered.length === 0 && (
             <div style={{ textAlign: "center", padding: "32px 0", color: "#94a3b8", fontSize: ".85rem", fontWeight: 600 }}>
@@ -294,7 +322,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
                 opacity: t.done ? 0.65 : 1, transition: "all .2s", userSelect: "none",
               }}
             >
-              {/* Checkbox icon */}
               <div style={{
                 width: 28, height: 28, borderRadius: 8, flexShrink: 0,
                 background: t.done ? "#4f46e5" : "#eef1fb",
@@ -304,8 +331,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
               }}>
                 {t.done ? Icons.checkSquare : Icons.circle}
               </div>
-
-              {/* Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
                   fontWeight: 700, fontSize: ".88rem", color: "#1e1b4b",
@@ -333,8 +358,14 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
 }
 
 // ── Home Page ─────────────────────────────────────────────
+// Props:
+//   activeTab, onTabChange, onSignOut   — same as before
+//   onLeadsFilter(filterKey)            — NEW: called when a stat card is tapped.
+//     filterKey is null (All Leads) or a status string e.g. "Call Back".
+//     The parent (App.jsx) should navigate to the Sales/Leads tab and pass
+//     the filterKey down so the list pre-filters to that status.
 
-export default function HomePage({ activeTab = 0, onTabChange, onSignOut }) {
+export default function HomePage({ activeTab = 0, onTabChange, onSignOut, onLeadsFilter }) {
   const [animate, setAnimate]         = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [viewAllOpen, setViewAllOpen] = useState(false);
@@ -356,6 +387,7 @@ export default function HomePage({ activeTab = 0, onTabChange, onSignOut }) {
     scheduleTaskNotifications(tasks);
   }, [tasks]);
 
+  // Trigger counting animation on mount
   useEffect(() => {
     setTimeout(() => setAnimate(true), 200);
   }, []);
@@ -366,7 +398,13 @@ export default function HomePage({ activeTab = 0, onTabChange, onSignOut }) {
   const doneTasks   = tasks.filter(t => t.done).length;
   const totalTasks  = tasks.length;
 
-  // Pull-to-refresh removed
+  // ── Handle stat card tap → navigate to leads with filter ──
+  const handleLeadsFilter = (filterKey) => {
+    // Call parent handler first (navigate to Leads tab + set filter)
+    if (onLeadsFilter) onLeadsFilter(filterKey);
+    // Also switch tab to Leads (tab index 1 — adjust if different)
+    if (onTabChange) onTabChange(1);
+  };
 
   return (
     <div style={{
@@ -400,13 +438,19 @@ export default function HomePage({ activeTab = 0, onTabChange, onSignOut }) {
         onProfileClick={() => setProfileOpen(true)}
       />
 
-
       {/* ── Scroll Content ── */}
       <div style={{ padding: "22px 16px 110px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {/* Stats Grid */}
+        {/* Stats Grid — 2 columns, all statuses */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          {STATS.map((s, i) => <StatCard key={i} s={s} animate={animate} />)}
+          {STATS.map((s, i) => (
+            <StatCard
+              key={i}
+              s={s}
+              animate={animate}
+              onLeadsFilter={handleLeadsFilter}
+            />
+          ))}
         </div>
 
         {/* Tasks Header */}
