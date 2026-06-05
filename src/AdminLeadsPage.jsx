@@ -520,8 +520,8 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
           {/* Name + phone */}
           <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"left" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", direction:"ltr", unicodeBidi:"plaintext" }}>{lead.name}</div>
+            <div dir="ltr" style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
           {/* Call button */}
