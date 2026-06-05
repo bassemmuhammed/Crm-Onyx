@@ -93,7 +93,12 @@ export default function App() {
 
 
   // ── Shared state ──
-  const [projects,       setProjects]       = useState([]);
+  const [projects, setProjects] = useState(() => {
+    try {
+      const saved = localStorage.getItem("onyx_projects");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [editProject,    setEditProject]    = useState(null);
   const [showAddProject, setShowAddProject] = useState(
     () => sessionStorage.getItem("showAddProject") === "true"
@@ -203,6 +208,7 @@ export default function App() {
     setLoggedIn(false);
     setActiveSalesTab(TAB_HOME);
     setProjects([]);
+    localStorage.removeItem("onyx_projects");
     setEditProject(null);
     setShowAddProject(false);
   };
@@ -211,7 +217,11 @@ export default function App() {
   const handleProjectSaved = (project) => {
     setProjects(prev => {
       const exists = prev.find(p => p.id === project.id);
-      return exists ? prev.map(p => p.id === project.id ? project : p) : [...prev, project];
+      const updated = exists
+        ? prev.map(p => p.id === project.id ? project : p)
+        : [...prev, project];
+      try { localStorage.setItem("onyx_projects", JSON.stringify(updated)); } catch {}
+      return updated;
     });
     setEditProject(null);
     setShowAddProject(false);
