@@ -62,8 +62,7 @@ const STYLES = `
   input,select { color-scheme:dark }
   ::placeholder { color:${C.gray} !important; opacity:1 }
   select option { background:${C.cardAlt}; color:${C.white} }
-  body { overflow:hidden; }
-  body[data-modal-open] .bottom-nav { display:none !important; }
+
   @keyframes spin { to { transform:rotate(360deg) } }
 `;
 
@@ -121,17 +120,11 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
     } else {
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
     }
     return () => {
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
     };
   }, [open]);
 
@@ -519,9 +512,9 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           }}>{initial}</div>
 
           {/* Name + phone */}
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", direction:"ltr", unicodeBidi:"plaintext" }}>{lead.name}</div>
-            <div dir="ltr" style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
+          <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
           {/* Call button */}
@@ -757,13 +750,11 @@ function DeletePopup({ lead, onConfirm, onCancel }) {
 // ─── FAB Chooser Modal ────────────────────────────────────────────
 function FabChooserModal({ onClose, onChoose }) {
   useEffect(() => {
+    const y = window.scrollY;
     document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
     return () => {
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
+      window.scrollTo(0, y);
     };
   }, []);
 
