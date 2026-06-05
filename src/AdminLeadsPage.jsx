@@ -922,20 +922,23 @@ export default function AdminLeadsPage({ onModalChange }) {
 
         {/* Filter panel */}
         {showFilters && (
-          <div style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:"12px", display:"flex", flexDirection:"column", gap:9 }}>
+          <div style={{ background:C.card, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:14, padding:"12px", display:"flex", flexDirection:"column", gap:9 }}>
             <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
               {ALL_STATUSES.map(s => {
                 const m = s!=="all" ? STATUS_META[s] : null;
                 const active = statusFilter===s;
                 return (
                   <button key={s} className="chip-btn" onClick={()=>setStatus(s)} style={{
-                    padding:"5px 11px", borderRadius:99,
-                    border:`1px solid ${active ? (m?m.color:C.red) : C.border}`,
+                    padding:"5px 10px", borderRadius:6,
+                    border:`1px solid ${active ? C.red+"66" : C.border}`,
                     cursor:"pointer", fontFamily:"Archivo,sans-serif", fontSize:".62rem", fontWeight:700,
-                    background: active ? (m?m.color:C.red) : C.cardAlt,
-                    color: active ? "#fff" : (m?m.color:C.silver),
-                    boxShadow: active ? `0 2px 8px ${m?m.color:C.red}44` : "none",
-                  }}>{s==="all" ? `All (${counts.all})` : `${m.label} (${counts[s]})`}</button>
+                    background: active ? `${C.red}15` : C.cardAlt,
+                    color: active ? C.white : C.gray,
+                    display:"flex", alignItems:"center", gap:5,
+                  }}>
+                    {active && <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />}
+                    {s==="all" ? `All (${counts.all})` : `${m.label} (${counts[s]})`}
+                  </button>
                 );
               })}
             </div>
