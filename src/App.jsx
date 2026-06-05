@@ -1,5 +1,5 @@
 // ── App.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase }         from "./lib/supabase";
 import Login                from "./Login";
 import HomePage             from "./HomePage";
@@ -93,12 +93,8 @@ export default function App() {
 
 
   // ── Shared state ──
-  const [projects, setProjects] = useState(() => {
-    try {
-      const saved = localStorage.getItem("onyx_projects");
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-  });
+  const [projects,      setProjects]      = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(false);
   const [editProject,    setEditProject]    = useState(null);
   const [showAddProject, setShowAddProject] = useState(
     () => sessionStorage.getItem("showAddProject") === "true"
@@ -182,6 +178,65 @@ export default function App() {
     localStorage.setItem("userRole", role);
   };
 
+  // ── Fetch projects from Supabase ──
+  const fetchProjects = useCallback(async () => {
+    setProjectsLoading(true);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      // Map snake_case DB columns → camelCase for the UI
+      const mapped = data.map(r => ({
+        id:           r.id,
+        name:         r.name,
+        developer:    r.developer,
+        location:     r.location,
+        category:     r.category,
+        status:       r.status,
+        statusColor:  r.status_color,
+        isLaunch:     r.is_launch,
+        price:        r.price,
+        area:         r.area,
+        delivery:     r.delivery,
+        projectArea:  r.project_area,
+        prevWork:     r.prev_work,
+        maintenance:  r.maintenance,
+        parking:      r.parking,
+        description:  r.description,
+        coverVideo:   r.cover_video,
+        coverThumb:   r.cover_thumb,
+        profilePic:   r.profile_pic,
+        amenities:    r.amenities    || [],
+        units:        r.units        || [],
+        stories:      r.stories      || [],
+        paymentPlans: r.payment_plans|| [],
+        stats:        r.stats        || { leads: 0, deals: 0 },
+        agent:        r.agent        || {},
+      }));
+      setProjects(mapped);
+    }
+    setProjectsLoading(false);
+  }, []);
+
+  // Fetch on login
+  useEffect(() => {
+    if (loggedIn) fetchProjects();
+  }, [loggedIn, fetchProjects]);
+
+  // Realtime subscription — auto-update when admin adds/edits
+  useEffect(() => {
+    if (!loggedIn) return;
+    const channel = supabase
+      .channel("projects-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "projects" }, () => {
+        fetchProjects();
+      })
+      .subscribe();
+    return () => supabase.removeChannel(channel);
+  }, [loggedIn, fetchProjects]);
+
   // ── Tab persistence (sales) ──
   useEffect(() => {
     sessionStorage.setItem("activeTab", activeSalesTab);
@@ -208,21 +263,50 @@ export default function App() {
     setLoggedIn(false);
     setActiveSalesTab(TAB_HOME);
     setProjects([]);
-    localStorage.removeItem("onyx_projects");
     setEditProject(null);
     setShowAddProject(false);
   };
 
   // ── Project helpers ──
-  const handleProjectSaved = (project) => {
-    setProjects(prev => {
-      const exists = prev.find(p => p.id === project.id);
-      const updated = exists
-        ? prev.map(p => p.id === project.id ? project : p)
-        : [...prev, project];
-      try { localStorage.setItem("onyx_projects", JSON.stringify(updated)); } catch {}
-      return updated;
-    });
+  const handleProjectSaved = async (project) => {
+    // Map camelCase → snake_case for DB
+    const row = {
+      name:          project.name,
+      developer:     project.developer,
+      location:      project.location,
+      category:      project.category,
+      status:        project.status,
+      status_color:  project.statusColor,
+      is_launch:     project.isLaunch || false,
+      price:         project.price,
+      area:          project.area,
+      delivery:      project.delivery,
+      project_area:  project.projectArea,
+      prev_work:     project.prevWork,
+      maintenance:   project.maintenance,
+      parking:       project.parking,
+      description:   project.description,
+      cover_video:   project.coverVideo,
+      cover_thumb:   project.coverThumb,
+      profile_pic:   project.profilePic,
+      amenities:     project.amenities    || [],
+      units:         project.units        || [],
+      stories:       project.stories      || [],
+      payment_plans: project.paymentPlans || [],
+      stats:         project.stats        || { leads: 0, deals: 0 },
+      agent:         project.agent        || {},
+    };
+
+    // Check if it's an existing DB row (uuid) or new
+    const isUuid = typeof project.id === "string" && project.id.length === 36;
+
+    if (isUuid) {
+      await supabase.from("projects").update(row).eq("id", project.id);
+    } else {
+      await supabase.from("projects").insert(row);
+    }
+
+    // Realtime will trigger fetchProjects automatically
     setEditProject(null);
     setShowAddProject(false);
     sessionStorage.setItem("showAddProject", "false");
@@ -405,6 +489,7 @@ export default function App() {
         ) : (
           <ProjectsPage
             projects={projects}
+            loading={projectsLoading}
             onTabChange={setActiveSalesTab}
             onSignOut={handleSignOut}
             onEditProject={(p) => { setEditProject(p); setShowAddProject(true); }}

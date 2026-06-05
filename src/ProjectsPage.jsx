@@ -320,7 +320,7 @@ function EmptyState() {
 //   stats: { leads, deals },
 // }
 
-export default function ProjectsPage({ projects = [], onTabChange, onSignOut, onEditProject, onAddProject }) {
+export default function ProjectsPage({ projects = [], loading = false, onTabChange, onSignOut, onEditProject, onAddProject }) {
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifs,      setNotifs]      = useState(DEFAULT_NOTIFICATIONS);
@@ -379,8 +379,25 @@ export default function ProjectsPage({ projects = [], onTabChange, onSignOut, on
         </div>
       )}
 
-      {/* ── NO PROJECT → Empty State ── */}
-      {!p ? (
+      {/* ── LOADING ── */}
+      {loading ? (
+        <div style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          justifyContent: "center", minHeight: "60vh", gap: 16,
+          fontFamily: "Archivo, sans-serif",
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: "50%",
+            border: `3px solid ${C.border}`,
+            borderTop: `3px solid ${C.red}`,
+            animation: "spin 0.8s linear infinite",
+          }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <div style={{ fontSize: ".72rem", color: C.gray, fontWeight: 700, letterSpacing: 0.5 }}>
+            LOADING PROJECTS...
+          </div>
+        </div>
+      ) : !p ? (
         <EmptyState />
       ) : (
         <>
