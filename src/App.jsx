@@ -344,10 +344,10 @@ export default function App() {
 
     return (
       <div style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         background: "#0a0a0a",
         fontFamily: "'Archivo', sans-serif",
-        paddingBottom: 100,
+        paddingBottom: 62,
         color: "#ffffff",
         position: "relative",
         backgroundImage: `
