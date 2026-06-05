@@ -830,7 +830,7 @@ export default function AdminLeadsPage({ onModalChange }) {
       fontFamily:"Archivo, sans-serif",
       background:C.surface, height:"100dvh",
       color:C.white, maxWidth:430, margin:"0 auto",
-      position:"relative", colorScheme:"dark",
+      colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column", overflow:"hidden",
     }}>
@@ -966,7 +966,7 @@ export default function AdminLeadsPage({ onModalChange }) {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:74, right:20,
+        position:"fixed", bottom:78, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
