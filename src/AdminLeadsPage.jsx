@@ -342,9 +342,9 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 
             {local.comments.length > 0
               ? local.comments.map(c => (
-                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"6px 10px" }}>
-                    <div style={{ fontSize:".7rem", color:C.silver, fontWeight:600, lineHeight:1.45, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".54rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:7, padding:"5px 9px" }}>
+                    <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
+                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:2, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
                       <span>{c.by}</span><span>{c.time}</span>
                     </div>
                   </div>
@@ -466,15 +466,14 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
               const active = lead.assignedTo === agent.id;
               return (
                 <div key={agent.id} className="chip-btn" onClick={() => active ? onUnassign() : onAssign(agent.id)} style={{
-                  display:"flex", alignItems:"center", gap:6,
-                  padding:"6px 12px", borderRadius:8,
-                  background: active ? agent.color+"22" : C.cardAlt,
-                  border: active ? `1.5px solid ${agent.color}66` : `1px solid ${C.border}`,
+                  display:"flex", alignItems:"center", gap:5,
+                  padding:"5px 10px", borderRadius:6,
+                  background: active ? `${C.red}18` : C.cardAlt,
+                  border: active ? `1px solid ${C.red}66` : `1px solid ${C.border}`,
                   cursor:"pointer",
                 }}>
-                  {active && <div style={{ width:5, height:5, borderRadius:"50%", background:agent.color, flexShrink:0 }} />}
-                  <div style={{ width:20, height:20, borderRadius:6, background:agent.color, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".6rem", fontWeight:900, color:"#fff", fontFamily:"Archivo,sans-serif", flexShrink:0 }}>{agent.name.charAt(0)}</div>
-                  <span style={{ fontSize:".68rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{agent.name}</span>
+                  <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />
+                  <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{agent.name}</span>
                 </div>
               );
             })}
