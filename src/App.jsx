@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { supabase }         from "./lib/supabase";
 import Login                from "./Login";
-import SplashScreen         from "./SplashScreen";
 import HomePage             from "./HomePage";
 import LeadsPage            from "./LeadsPage";
 import TimelinePage         from "./TimelinePage";
@@ -85,13 +84,13 @@ export default function App() {
     window.location.hash.includes("type=recovery");
 
   // ── Auth state ──
-  const isReturningUser = localStorage.getItem("loggedIn") === "true";
+
   const [authLoading, setAuthLoading] = useState(true);
-  const [topLoading,  setTopLoading]  = useState(isReturningUser); // progress bar on refresh
+  const [topLoading,  setTopLoading]  = useState(true);
   const [loggedIn,    setLoggedIn]    = useState(false);
   const [userRole,    setUserRole]    = useState(null);
-  // splashDone: false only on first ever visit
-  const [splashDone,  setSplashDone]  = useState(isReturningUser);
+
+
 
   // ── Shared state ──
   const [projects,       setProjects]       = useState([]);
@@ -120,7 +119,6 @@ export default function App() {
     // Fallback timeout — if Supabase is slow on mobile, force unlock after 5s
     const timeout = setTimeout(() => {
       setAuthLoading(false);
-      setSplashDone(true);
       setTopLoading(false);
     }, 5000);
 
@@ -131,18 +129,12 @@ export default function App() {
         await resolveRole(session.user.id);
       } else {
         // No session → clear storage, go to login
-        setSplashDone(true);
         setTopLoading(false);
         localStorage.removeItem("loggedIn");
         localStorage.removeItem("userRole");
         setAuthLoading(false);
       }
     });
-
-    // First visit only: show splash for 2s
-    if (!isReturningUser) {
-      setTimeout(() => setSplashDone(true), 2000);
-    }
 
     // Listen for sign-in / sign-out events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -153,7 +145,6 @@ export default function App() {
           setLoggedIn(false);
           setUserRole(null);
           setTopLoading(false);
-          setSplashDone(true);
           setAuthLoading(false);
         }
       }
@@ -180,7 +171,6 @@ export default function App() {
     const role = data?.role || localStorage.getItem("userRole") || "sales";
     setUserRole(role);
     setLoggedIn(true);
-    setSplashDone(true);
     setTopLoading(false);
     setAuthLoading(false);
     localStorage.setItem("loggedIn", "true");
@@ -211,7 +201,6 @@ export default function App() {
     localStorage.setItem("loggedIn", "false");
     localStorage.removeItem("userRole");
     setLoggedIn(false);
-    setSplashDone(true);
     setActiveSalesTab(TAB_HOME);
     setProjects([]);
     setEditProject(null);
@@ -252,10 +241,7 @@ export default function App() {
 
   if (isResetPage) return <ResetPassword />;
 
-  // First visit only: show full splash screen
-  if (!splashDone) return <><OnyxGlobalStyles /><SplashScreen done={false} /></>;
-
-  // Refresh while logged in: show thin top progress bar over the app
+// Refresh while logged in: show thin top progress bar over the app
   // (don't block the whole screen)
   const TopLoadingBar = () => topLoading ? (
     <div style={{
@@ -276,9 +262,8 @@ export default function App() {
     </div>
   ) : null;
 
-  // Still checking session but user was logged in before → show nothing yet
-  // (TopLoadingBar handles the feedback)
-  if (authLoading && isReturningUser) return (
+  // Still checking session → show loading screen
+  if (authLoading) return (
     <>
       <OnyxGlobalStyles />
       <TopLoadingBar />
