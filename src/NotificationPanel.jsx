@@ -1,132 +1,178 @@
-// ── NotificationPanel.jsx ─────────────────────────────────
-// لوحة الإشعارات - بتنزلق من الشمال
-//
-// Props:
-//   open      {boolean}  - هل اللوحة مفتوحة؟
-//   onClose   {function} - لما يغلق
-//   notifs    {array}    - مصفوفة الإشعارات:
-//               [{ id, text, time, color, unread }]
-//   onMarkAll {function} - لما يضغط "Mark all as read"
-//
-// Example usage:
-//   import NotificationPanel from "./NotificationPanel";
-//
-//   const [notifOpen, setNotifOpen] = useState(false);
-//   const [notifs, setNotifs] = useState(NOTIFICATIONS);
-//   const markAllRead = () => setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
-//
-//   <NotificationPanel
-//     open={notifOpen}
-//     onClose={() => setNotifOpen(false)}
-//     notifs={notifs}
-//     onMarkAll={markAllRead}
-//   />
+// ── NotificationPanel.jsx — ONYX Design System ───────────────────────
+// إشعارات بتنزل من تحت الـ bell زي Facebook
+
+const C = {
+  surface: "#0A0A0A", card: "#111111", border: "#1E1E1E",
+  cardAlt: "#1A1A1A", gray: "#595A5F", silver: "#CECECE",
+  white: "#FFFFFF", red: "#CC1515",
+};
+
+const STYLES = `
+  @keyframes notif-drop {
+    from { opacity: 0; transform: translateY(-8px) scale(.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1);   }
+  }
+  .notif-panel {
+    animation: notif-drop .2s cubic-bezier(.4,0,.2,1) both;
+    font-family: 'Archivo', sans-serif;
+  }
+  .notif-item { transition: background .15s; }
+  .notif-item:active { background: #1e1e1e !important; }
+`;
 
 export default function NotificationPanel({ open, onClose, notifs = [], onMarkAll }) {
   const unread = notifs.filter(n => n.unread).length;
 
+  if (!open) return null;
+
   return (
     <>
-      {/* Backdrop */}
+      <style>{STYLES}</style>
+
+      {/* Backdrop — transparent, closes on tap */}
       <div
         onClick={onClose}
         style={{
-          position: "fixed", inset: 0, zIndex: 300,
-          background: "rgba(30,27,75,.35)", backdropFilter: "blur(6px)",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "all" : "none",
-          transition: "opacity .3s",
+          position: "fixed", inset: 0, zIndex: 400,
+          background: "transparent",
         }}
       />
 
-      {/* Panel */}
-      <div style={{
-        position: "fixed", top: 0,
-        left: open ? 0 : "-100%",
-        bottom: 0,
-        width: "min(320px, 88vw)", zIndex: 301,
-        background: "#fff", borderRight: "1px solid #e8eaf6",
-        boxShadow: "8px 0 40px rgba(79,70,229,.12)",
-        transition: "left .35s cubic-bezier(.4,0,.2,1)",
-        display: "flex", flexDirection: "column",
-        fontFamily: "Inter,sans-serif",
-      }}>
+      {/* Dropdown panel — تحت الهيدر بالظبط */}
+      <div
+        className="notif-panel"
+        style={{
+          position: "fixed",
+          top: 62, // height of AppHeader
+          right: 12,
+          width: "min(340px, calc(100vw - 24px))",
+          zIndex: 401,
+          background: C.card,
+          border: `1px solid ${C.border}`,
+          borderRadius: 16,
+          boxShadow: "0 8px 32px rgba(0,0,0,.6), 0 0 0 1px rgba(204,21,21,.08)",
+          overflow: "hidden",
+        }}
+      >
+        {/* Arrow pointer */}
+        <div style={{
+          position: "absolute", top: -7, right: 22,
+          width: 13, height: 13,
+          background: C.card,
+          border: `1px solid ${C.border}`,
+          borderBottom: "none", borderRight: "none",
+          transform: "rotate(45deg)",
+        }} />
+
         {/* Header */}
         <div style={{
-          padding: "48px 20px 18px",
-          background: "linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%)",
+          padding: "14px 16px 10px",
+          borderBottom: `1px solid ${C.border}`,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <div style={{ fontSize: "1.1rem", fontWeight: 900, color: "#fff" }}>
-            Notifications
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{
+              fontSize: ".78rem", fontWeight: 800, color: C.white,
+              textTransform: "uppercase", letterSpacing: .6,
+            }}>
+              Notifications
+            </span>
+            {unread > 0 && (
+              <div style={{
+                background: C.red, color: C.white,
+                fontSize: ".5rem", fontWeight: 900,
+                width: 16, height: 16, borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                {unread}
+              </div>
+            )}
           </div>
           {unread > 0 && (
-            <div style={{ fontSize: ".72rem", color: "rgba(255,255,255,.7)", marginTop: 4 }}>
-              {unread} unread &nbsp;·&nbsp;
-              <span
-                onClick={onMarkAll}
-                style={{ color: "#fde68a", cursor: "pointer", fontWeight: 700 }}
-              >
-                Mark all as read
-              </span>
-            </div>
+            <span
+              onClick={onMarkAll}
+              style={{
+                fontSize: ".62rem", fontWeight: 700, color: C.red,
+                cursor: "pointer", letterSpacing: .3,
+              }}
+            >
+              Mark all read
+            </span>
           )}
         </div>
 
         {/* List */}
         <div style={{
-          flex: 1, overflowY: "auto", padding: 12,
-          display: "flex", flexDirection: "column", gap: 8,
+          maxHeight: 320, overflowY: "auto",
+          display: "flex", flexDirection: "column",
         }}>
-          {notifs.length === 0 && (
+          {notifs.length === 0 ? (
             <div style={{
-              textAlign: "center", padding: "40px 0",
-              color: "#94a3b8", fontSize: ".85rem", fontWeight: 600,
+              textAlign: "center", padding: "32px 0",
+              color: C.gray, fontSize: ".78rem", fontWeight: 600,
             }}>
               No notifications 🎉
             </div>
-          )}
-          {notifs.map(n => (
-            <div key={n.id} style={{
-              padding: "12px 14px", borderRadius: 14,
-              background: n.unread ? "#f5f7ff" : "#fff",
-              border: `1px solid ${n.unread ? "#e0e7ff" : "#f1f5f9"}`,
-              display: "flex", gap: 10, alignItems: "flex-start",
-            }}>
+          ) : notifs.map((n, i) => (
+            <div
+              key={n.id}
+              className="notif-item"
+              style={{
+                padding: "12px 16px",
+                borderBottom: i < notifs.length - 1 ? `1px solid ${C.border}` : "none",
+                background: n.unread ? "#151515" : C.card,
+                display: "flex", gap: 12, alignItems: "flex-start",
+              }}
+            >
+              {/* Color dot */}
               <div style={{
                 width: 8, height: 8, borderRadius: "50%",
-                background: n.unread ? n.color : "transparent",
-                flexShrink: 0, marginTop: 5,
+                background: n.unread ? n.color : C.gray,
+                flexShrink: 0, marginTop: 4,
               }} />
-              <div style={{ flex: 1 }}>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontSize: ".8rem",
-                  fontWeight: n.unread ? 700 : 500,
-                  color: "#1e1b4b", lineHeight: 1.4,
+                  fontSize: ".78rem", fontWeight: n.unread ? 700 : 500,
+                  color: n.unread ? C.white : C.silver,
+                  lineHeight: 1.45,
                 }}>
                   {n.text}
                 </div>
-                <div style={{ fontSize: ".65rem", color: "#94a3b8", marginTop: 4 }}>
+                <div style={{
+                  fontSize: ".62rem", color: C.gray,
+                  fontWeight: 600, marginTop: 3,
+                }}>
                   {n.time}
                 </div>
               </div>
+
+              {/* Unread indicator */}
+              {n.unread && (
+                <div style={{
+                  width: 7, height: 7, borderRadius: "50%",
+                  background: C.red, flexShrink: 0, marginTop: 4,
+                }} />
+              )}
             </div>
           ))}
         </div>
 
         {/* Footer */}
-        <div style={{ padding: 16, borderTop: "1px solid #e8eaf6" }}>
-          <button
+        <div style={{
+          padding: "10px 16px",
+          borderTop: `1px solid ${C.border}`,
+          textAlign: "center",
+        }}>
+          <span
             onClick={onClose}
             style={{
-              width: "100%", padding: 12,
-              background: "#eef1fb", border: "none",
-              color: "#4f46e5", borderRadius: 12,
-              fontFamily: "Inter,sans-serif",
-              fontSize: ".88rem", fontWeight: 700, cursor: "pointer",
+              fontSize: ".65rem", fontWeight: 700,
+              color: C.gray, cursor: "pointer", letterSpacing: .3,
             }}
           >
             Close
-          </button>
+          </span>
         </div>
       </div>
     </>
