@@ -70,9 +70,10 @@ const INIT_NOTIFS = [
 ];
 
 const hashToTab = () => {
-  // Use localStorage instead of URL hash to avoid refresh navigation issues
   const saved = parseInt(localStorage.getItem("adminTab") || "0");
-  return [TAB_HOME, TAB_LEADS, TAB_ADDPROJECT, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
+  // TAB_ADDPROJECT (2) is a modal state, not a real tab — on refresh go to HOME
+  if (saved === TAB_ADDPROJECT) return TAB_HOME;
+  return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
 };
 
 // ─── App ──────────────────────────────────────────────────────────
