@@ -134,12 +134,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
           </div>
           <div
             onClick={onClose}
-            style={{
-              width: 28, height: 28, borderRadius: 8, background: C.cardAlt,
-              border: `1px solid ${C.border}`, display: "flex",
-              alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: C.gray, fontSize: ".8rem",
-            }}
+            style={{ cursor: "pointer", color: C.white, fontSize: "1rem", fontWeight: 700, padding: "4px 8px" }}
           >✕</div>
         </div>
 
@@ -203,84 +198,6 @@ function AddMemberModal({ onClose, onAdd, loading }) {
             boxShadow: valid ? `0 4px 20px ${C.red}44` : "none",
           }}
         >{loading ? "Sending invite..." : "Send Invite"}</div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Add Project Modal ────────────────────────────────────────────
-function AddProjectModal({ onClose, onAdd }) {
-  const [form, setForm] = useState({ name: "", location: "", units: "" });
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const valid = form.name.trim() && form.location.trim();
-
-  return (
-    <div
-      onContextMenu={e => e.preventDefault()}
-      style={{
-        position: "fixed", inset: 0, zIndex: 300,
-        background: "rgba(0,0,0,.75)", backdropFilter: "blur(8px)",
-        display: "flex", alignItems: "flex-end", justifyContent: "center",
-        userSelect: "none", WebkitUserSelect: "none",
-      }}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div style={{
-        background: C.card, borderRadius: "20px 20px 0 0", width: "100%",
-        maxWidth: 430, padding: "20px 18px 40px",
-        border: `1px solid ${C.border}`, borderBottom: "none",
-      }}>
-        {/* Handle bar */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <div style={{ width: 40, height: 4, borderRadius: 99, background: C.border }} />
-        </div>
-
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-          <div style={{ fontSize: ".9rem", fontWeight: 900, color: C.white, fontFamily: "Archivo,sans-serif" }}>
-            Add Project
-          </div>
-          <div
-            onClick={onClose}
-            style={{
-              width: 28, height: 28, borderRadius: 8, background: C.cardAlt,
-              border: `1px solid ${C.border}`, display: "flex",
-              alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: C.gray, fontSize: ".8rem",
-            }}
-          >✕</div>
-        </div>
-
-        {/* Fields */}
-        {[
-          { label: "Project Name", key: "name",     ph: "Nile Heights" },
-          { label: "Location",     key: "location", ph: "New Capital"  },
-          { label: "Total Units",  key: "units",    ph: "200"          },
-        ].map(f => (
-          <div key={f.key} style={{ marginBottom: 12 }}>
-            <span style={labelStyle}>{f.label}</span>
-            <input
-              value={form[f.key]}
-              onChange={e => set(f.key, e.target.value)}
-              placeholder={f.ph} style={inputStyle}
-            />
-          </div>
-        ))}
-
-        {/* Submit */}
-        <div
-          onClick={valid ? () => { onAdd(form); onClose(); } : undefined}
-          className={valid ? "tap-btn" : ""}
-          style={{
-            padding: "13px 0", marginTop: 4, borderRadius: 12, textAlign: "center",
-            background: valid ? C.red : C.cardAlt,
-            border: `1px solid ${valid ? C.red : C.border}`,
-            color: valid ? C.white : C.gray,
-            fontSize: ".85rem", fontWeight: 800, cursor: valid ? "pointer" : "default",
-            fontFamily: "Archivo,sans-serif",
-            boxShadow: valid ? `0 4px 20px ${C.red}44` : "none",
-          }}
-        >Add Project</div>
       </div>
     </div>
   );
@@ -372,9 +289,7 @@ export async function distributeLeadsToTeam() {
 // ─── MAIN ─────────────────────────────────────────────────────────
 export default function AdminSettings({ onTabChange, onSignOut }) {
   const [team,           setTeam]           = useState([]);
-  const [projects,       setProjects]       = useState([]);
   const [showAddMember,  setShowAddMember]  = useState(false);
-  const [showAddProject, setShowAddProject] = useState(false);
   const [saved,          setSaved]          = useState("");
   const [addingMember,   setAddingMember]   = useState(false);
   const [confirm,        setConfirm]        = useState(null);
@@ -491,23 +406,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
     setAddingMember(false);
   };
 
-  // ── Add / Delete project ──
-  const addProject = (data) => {
-    const colors = [C.red, C.green, "#f97316", "#ec4899"];
-    setProjects(p => [...p, {
-      id: Date.now(),
-      color: colors[p.length % colors.length],
-      units: parseInt(data.units) || 0,
-      ...data,
-    }]);
-    flash("✓ Project added");
-  };
-
-  const deleteProject = (id) => {
-    setProjects(p => p.filter(pr => pr.id !== id));
-    flash("✓ Project removed");
-  };
-
   // ── Reset System ──
   const handleResetSystem = () => {
     setConfirm({
@@ -585,8 +483,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
 
       {/* Modals */}
       {showAddMember  && <AddMemberModal  onClose={() => setShowAddMember(false)}  onAdd={addMember} loading={addingMember} />}
-      {showAddProject && <AddProjectModal onClose={() => setShowAddProject(false)} onAdd={addProject} />}
-      {confirm        && <ConfirmDialog   message={confirm.message} onConfirm={confirm.onConfirm} onCancel={() => setConfirm(null)} />}
+          {confirm        && <ConfirmDialog   message={confirm.message} onConfirm={confirm.onConfirm} onCancel={() => setConfirm(null)} />}
 
       {/* Page title */}
       <div style={{ marginBottom: 18 }}>
@@ -719,7 +616,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
             {/* Avatar */}
             <div style={{
               width: 36, height: 36, borderRadius: 11,
-              background: m.color, display: "flex", alignItems: "center",
+              background: C.black, border: `1px solid ${C.border}`, display: "flex", alignItems: "center",
               justifyContent: "center", fontSize: ".8rem", fontWeight: 900,
               color: C.white, flexShrink: 0, fontFamily: "Archivo,sans-serif",
             }}>
@@ -752,83 +649,9 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
               <div
                 onClick={() => deleteMember(m.id)}
                 className="tap-btn"
-                style={{
-                  width: 26, height: 26, borderRadius: 8,
-                  background: `${C.red}18`, border: `1px solid ${C.red}33`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", color: C.red, fontSize: ".75rem",
-                }}
+                style={{ cursor: "pointer", color: C.white, fontSize: ".9rem", fontWeight: 700, padding: "4px 6px" }}
               >✕</div>
             </div>
-          </div>
-        ))}
-      </Section>
-
-      {/* ── Projects ── */}
-      <Section title="Projects" icon="building" delay={120}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <div style={{ fontSize: ".7rem", color: C.gray, fontWeight: 600, fontFamily: "Archivo,sans-serif" }}>
-            {projects.length} project{projects.length !== 1 ? "s" : ""}
-          </div>
-          <div
-            onClick={() => setShowAddProject(true)}
-            className="tap-btn"
-            style={{
-              display: "flex", alignItems: "center", gap: 5,
-              background: C.red, border: `1px solid ${C.red}`,
-              color: C.white, padding: "6px 14px", borderRadius: 10,
-              fontSize: ".68rem", fontWeight: 800, cursor: "pointer",
-              fontFamily: "Archivo,sans-serif",
-              boxShadow: `0 3px 12px ${C.red}44`,
-            }}
-          >+ Add</div>
-        </div>
-
-        {projects.length === 0 && (
-          <div style={{ textAlign: "center", color: C.gray, fontSize: ".75rem", padding: "12px 0", fontFamily: "Archivo,sans-serif" }}>
-            No projects yet
-          </div>
-        )}
-
-        {projects.map((p, i) => (
-          <div
-            key={p.id}
-            style={{
-              display: "flex", alignItems: "center", gap: 10, padding: "10px 0",
-              borderBottom: i < projects.length - 1 ? `1px solid ${C.border}` : "none",
-            }}
-          >
-            {/* Icon */}
-            <div style={{
-              width: 36, height: 36, borderRadius: 11,
-              background: p.color + "22", border: `1.5px solid ${p.color}44`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: p.color, flexShrink: 0, fontSize: "1rem",
-            }}>
-              🏢
-            </div>
-
-            {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
-                {p.name}
-              </div>
-              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
-                {p.location} · {p.units} units
-              </div>
-            </div>
-
-            {/* Delete */}
-            <div
-              onClick={() => deleteProject(p.id)}
-              className="tap-btn"
-              style={{
-                width: 26, height: 26, borderRadius: 8,
-                background: `${C.red}18`, border: `1px solid ${C.red}33`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", color: C.red, flexShrink: 0, fontSize: ".75rem",
-              }}
-            >✕</div>
           </div>
         ))}
       </Section>
@@ -842,19 +665,19 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
             className="tap-btn"
             style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              background: `${C.red}10`, borderRadius: 12, padding: "12px 14px",
-              border: `1px solid ${C.red}22`, cursor: "pointer",
+              background: C.cardAlt, borderRadius: 12, padding: "12px 14px",
+              border: `1px solid ${C.border}`, cursor: "pointer",
             }}
           >
             <div>
-              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.red, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
                 Reset System
               </div>
-              <div style={{ fontSize: ".62rem", color: C.red, opacity: .7, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
                 Restore all settings to default
               </div>
             </div>
-            <div style={{ color: C.red, fontSize: ".8rem" }}>›</div>
+            <div style={{ color: C.gray, fontSize: ".8rem" }}>›</div>
           </div>
         </div>
       </Section>
@@ -865,8 +688,8 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
         className="tap-btn"
         style={{
           padding: "13px 0", borderRadius: 14, textAlign: "center",
-          background: `${C.red}10`, border: `1px solid ${C.red}22`,
-          color: C.red, fontSize: ".88rem", fontWeight: 800,
+          background: C.cardAlt, border: `1px solid ${C.border}`,
+          color: C.white, fontSize: ".88rem", fontWeight: 800,
           cursor: "pointer", display: "flex", alignItems: "center",
           justifyContent: "center", gap: 8, marginBottom: 10,
           fontFamily: "Archivo,sans-serif",
