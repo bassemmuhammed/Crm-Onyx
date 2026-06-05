@@ -971,7 +971,7 @@ export default function AdminLeadsPage({ onModalChange }) {
   return (
     <>
       {page}
-      {createPortal(
+      {!anyModalOpen && createPortal(
         <div onClick={() => setModal("fab")} className="tap-btn" style={{
           position:"fixed", bottom:78, right:20,
           width:54, height:54, borderRadius:"50%",
