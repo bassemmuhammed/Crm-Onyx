@@ -229,19 +229,19 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 
             {/* Assign */}
             <div onClick={() => setAssignOpen(true)} className="tap-btn" style={{
-              display:"flex", alignItems:"center", gap:8,
-              background:C.cardAlt, borderRadius:10, padding:"8px 12px",
+              display:"flex", alignItems:"center", gap:10,
+              background:C.cardAlt, borderRadius:12, padding:"10px 14px",
               cursor:"pointer", border:`1px solid ${C.border}`,
-              borderTop:`1.5px solid ${C.red}44`,
+              borderLeft:`3px solid ${C.red}`,
             }}>
-              <div style={{ width:26, height:26, borderRadius:7, background:`${C.white}10`, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                <svg width="13" height="13" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
+              <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <svg width="15" height="15" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
               </div>
-              <span style={{ fontSize:".72rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
-                {agent ? `${agent.name}` : "Assign Sales"}
+              <span style={{ fontSize:".75rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
+                {agent ? agent.name : "Assign Sales"}
               </span>
-              {agent && <span style={{ fontSize:".58rem", color:C.silver, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>Change →</span>}
-              {!agent && <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>}
+              {agent && <span style={{ fontSize:".6rem", color:C.gray, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>Change →</span>}
+              {!agent && <svg width="12" height="12" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>}
             </div>
 
             {/* ── STATUS SECTION ── */}
@@ -342,9 +342,9 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
 
             {local.comments.length > 0
               ? local.comments.map(c => (
-                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:7, padding:"5px 9px" }}>
+                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:7, padding:"5px 9px 3px" }}>
                     <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:2, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:1, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
                       <span>{c.by}</span><span>{c.time}</span>
                     </div>
                   </div>
