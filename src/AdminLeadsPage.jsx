@@ -192,28 +192,29 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           {/* Lead header */}
           <div style={{ padding:"14px 16px 0", flexShrink:0 }}>
             <div style={{
-              background:`linear-gradient(135deg, ${C.cardAlt}, ${C.card})`,
+              background:C.cardAlt,
               border:`1px solid ${C.border}`,
-              borderLeft:`3px solid ${meta.color}`,
-              borderRadius:14, padding:"14px 14px",
+              borderLeft:`3px solid ${C.red}`,
+              borderRadius:14, padding:"12px 14px",
               display:"flex", alignItems:"center", gap:12,
             }}>
               {/* Avatar */}
               <div style={{
-                width:46, height:46, borderRadius:12, flexShrink:0,
-                background:`${meta.color}18`, border:`1.5px solid ${meta.color}44`,
+                width:44, height:44, borderRadius:10, flexShrink:0,
+                background:"#1a1a1a", border:`1px solid ${C.border}`,
                 display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:"1.2rem", fontWeight:900, color:meta.color, fontFamily:"Archivo,sans-serif",
+                fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
               }}>{(local.name||"?").charAt(0)}</div>
 
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:".92rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
-                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>{local.project}</div>
+                <div style={{ fontSize:".65rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>{local.project}</div>
               </div>
 
               {/* Status pill */}
-              <div style={{ background:meta.bg, borderRadius:99, padding:"5px 11px", border:`1px solid ${meta.color}33`, flexShrink:0 }}>
-                <span style={{ fontSize:".6rem", fontWeight:700, color:meta.color, fontFamily:"Archivo,sans-serif" }}>{meta.icon} {meta.label}</span>
+              <div style={{ background:C.card, borderRadius:6, padding:"4px 10px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
+                <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />
+                <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{meta.label}</span>
               </div>
             </div>
           </div>
@@ -248,15 +249,17 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
                 const active = local.status === s;
                 return (
                   <button key={s} className="chip-btn" onClick={() => set("status", s)} style={{
-                    padding:"6px 11px", borderRadius:99,
-                    border:`1px solid ${active ? m.color : C.border}`,
+                    padding:"5px 10px", borderRadius:6,
+                    border:`1px solid ${active ? C.red+"66" : C.border}`,
                     cursor:"pointer", fontFamily:"Archivo,sans-serif",
-                    fontSize:".65rem", fontWeight:700,
-                    background: active ? m.color : C.cardAlt,
-                    color: active ? "#fff" : C.gray,
-                    boxShadow: active ? `0 3px 10px ${m.color}40` : "none",
-                    display:"flex", alignItems:"center", gap:3,
-                  }}>{m.icon} {m.label}</button>
+                    fontSize:".63rem", fontWeight:700,
+                    background: active ? `${C.red}18` : C.cardAlt,
+                    color: active ? C.white : C.gray,
+                    display:"flex", alignItems:"center", gap:5,
+                  }}>
+                    {active && <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />}
+                    {m.label}
+                  </button>
                 );
               })}
             </div>
@@ -265,20 +268,21 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             {isCallback && (
               <>
                 <Div label="Callback Schedule" />
-                <div style={{ background:`${C.cardAlt}`, border:`1px solid #f59e0b33`, borderLeft:`3px solid #f59e0b`, borderRadius:12, padding:"12px 14px" }}>
+                <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"12px 14px" }}>
                   <div style={{ display:"flex", gap:8 }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:"#f59e0b", fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif" }}>DATE</div>
-                      <input type="date" value={local.callbackDate||""} onChange={e => set("callbackDate", e.target.value)} style={{ ...inputBase, border:`1px solid #f59e0b33`, fontSize:".8rem" }} />
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>DATE</div>
+                      <input type="date" value={local.callbackDate||""} onChange={e => set("callbackDate", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:"#f59e0b", fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif" }}>TIME</div>
-                      <input type="time" value={local.callbackTime||""} onChange={e => set("callbackTime", e.target.value)} style={{ ...inputBase, border:`1px solid #f59e0b33`, fontSize:".8rem" }} />
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>TIME</div>
+                      <input type="time" value={local.callbackTime||""} onChange={e => set("callbackTime", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                   </div>
                   {local.callbackDate && local.callbackTime && (
-                    <div style={{ marginTop:8, fontSize:".7rem", color:"#f59e0b", fontWeight:700, fontFamily:"Archivo,sans-serif" }}>
-                      📅 {new Date(`${local.callbackDate}T${local.callbackTime}`).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
+                    <div style={{ marginTop:8, fontSize:".7rem", color:C.silver, fontWeight:700, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
+                      <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />
+                      {new Date(`${local.callbackDate}T${local.callbackTime}`).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
                     </div>
                   )}
                 </div>
@@ -291,19 +295,19 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
               {/* Property type */}
               <div style={{ display:"flex", gap:6 }}>
                 {[
-                  { key:"residential", label:"سكني",  color:"#10b981" },
-                  { key:"commercial",  label:"تجاري",  color:"#f59e0b" },
-                  { key:"admin",       label:"إداري",  color:C.blue    },
+                  { key:"residential", label:"سكني"  },
+                  { key:"commercial",  label:"تجاري"  },
+                  { key:"admin",       label:"إداري"  },
                 ].map(t => {
                   const active = local.clientInfo?.type === t.key;
                   return (
                     <button key={t.key} className="chip-btn" onClick={() => set("clientInfo",{...local.clientInfo, type:t.key})} style={{
-                      flex:1, padding:"8px 4px", borderRadius:10,
-                      border:`1px solid ${active ? t.color : C.border}`, cursor:"pointer",
+                      flex:1, padding:"8px 4px", borderRadius:9,
+                      border:`1px solid ${active ? C.red+"66" : C.border}`, cursor:"pointer",
                       fontFamily:"Archivo,sans-serif", fontSize:".7rem", fontWeight:700,
-                      background: active ? t.color : C.cardAlt,
-                      color: active ? "#fff" : C.gray,
-                      boxShadow: active ? `0 3px 10px ${t.color}40` : "none", transition:"all .15s",
+                      background: active ? `${C.red}18` : C.cardAlt,
+                      color: active ? C.white : C.gray,
+                      transition:"all .15s",
                     }}>{t.label}</button>
                   );
                 })}
@@ -348,29 +352,36 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           {/* Footer */}
           <div style={{ padding:"10px 16px 28px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
             {confirmDel && (
-              <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+              <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>تأكيد الحذف النهائي؟</span>
                 <button onClick={() => setConfirmDel(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif", fontWeight:700 }}>إلغاء ✕</button>
               </div>
             )}
-            <div style={{ display:"flex", gap:7 }}>
+            <div style={{ display:"flex", gap:7, alignItems:"center" }}>
+              {/* Trash button */}
               <button className="tap-btn" onClick={handleDelete} disabled={deleting} style={{
-                width:42, height:42, borderRadius:10, border:`1px solid ${confirmDel ? C.red : C.border}`,
-                background: confirmDel ? C.red : C.cardAlt,
-                color: confirmDel ? "#fff" : C.gray,
+                width:38, height:38, borderRadius:9,
+                border:`1px solid ${confirmDel ? C.red : C.border}`,
+                background: confirmDel ? `${C.red}18` : C.cardAlt,
                 display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:".85rem", cursor:"pointer", flexShrink:0, transition:"all .15s",
-              }}>🗑</button>
+                cursor:"pointer", flexShrink:0, transition:"all .15s",
+              }}>
+                <svg width="15" height="15" viewBox="0 0 256 256" fill={confirmDel ? C.red : C.gray}>
+                  <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM112,168a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm0-120H96V40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8Z"/>
+                </svg>
+              </button>
+              {/* Close */}
               <button onClick={onClose} style={{
-                flex:1, padding:"11px 0", borderRadius:10,
+                flex:1, padding:"9px 0", borderRadius:9,
                 border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray,
-                fontFamily:"Archivo,sans-serif", fontSize:".78rem", fontWeight:700, cursor:"pointer",
+                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
               }}>إغلاق</button>
+              {/* Save */}
               <button className="tap-btn" onClick={handleSave} disabled={saving} style={{
-                flex:2, padding:"11px 0", borderRadius:10, border:"none",
+                flex:2, padding:"9px 0", borderRadius:9, border:"none",
                 background: saving ? C.gray : C.red,
                 color:"#fff", boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
-                fontFamily:"Archivo,sans-serif", fontSize:".78rem", fontWeight:800, cursor:"pointer",
+                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
               }}>{saving ? "جاري الحفظ..." : "حفظ التغييرات"}</button>
             </div>
           </div>
