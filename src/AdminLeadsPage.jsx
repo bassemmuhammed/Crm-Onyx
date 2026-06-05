@@ -169,7 +169,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       }} />
 
       {/* Sheet */}
-      <div style={{
+      <div onClick={onClose} style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
@@ -179,7 +179,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           background:C.card, borderRadius:"22px 22px 0 0",
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 126px)",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 64px)",
           transform: open?"translateY(0)":"translateY(100%)",
           transition:"transform .32s cubic-bezier(.32,0,.16,1)",
         }}>
