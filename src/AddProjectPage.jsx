@@ -123,7 +123,7 @@ function UnitRow({ unit, index, onChange, onRemove }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:6, paddingBottom:10, borderBottom:`1px solid ${C.border}` }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ fontSize:".6rem", fontWeight:800, color:C.red, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Unit #{index + 1}</span>
+        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Unit #{index + 1}</span>
         <button onClick={() => onRemove(index)} style={{
           background:"none", border:"none", color:C.gray, cursor:"pointer",
           fontSize:".78rem", fontWeight:700, padding:"2px 4px", lineHeight:1,
@@ -161,7 +161,7 @@ function PaymentRow({ plan, index, onChange, onRemove }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:6, paddingBottom:10, borderBottom:`1px solid ${C.border}` }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ fontSize:".6rem", fontWeight:800, color:C.blue, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Plan #{index + 1}</span>
+        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Plan #{index + 1}</span>
         <button onClick={()=>onRemove(index)} style={{ background:"none", border:"none", color:C.gray, cursor:"pointer", fontSize:".78rem", fontWeight:700, padding:"2px 4px", lineHeight:1 }}>✕</button>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
@@ -510,7 +510,7 @@ export default function AddProjectPage({
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
               fontFamily:"Archivo,sans-serif",
             }}>
-              <span style={{fontSize:"1rem",color:C.red}}>+</span> Add Story Image
+              <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Story Image</span>
             </button>
           </div>
         </Section>
