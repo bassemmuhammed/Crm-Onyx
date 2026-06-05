@@ -104,6 +104,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
   const [confirmDel, setConfirmDel] = useState(false);
   const [deleting, setDeleting]     = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [commentOpen, setCommentOpen] = useState(false);
   const prevId  = useRef(null);
   const inputRef = useRef(null);
 
@@ -113,7 +114,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       setComment(""); setConfirmDel(false);
       prevId.current = lead.id;
     }
-    if (!open) { prevId.current = null; setAssignOpen(false); setConfirmDel(false); }
+    if (!open) { prevId.current = null; setAssignOpen(false); setCommentOpen(false); setConfirmDel(false); }
   }, [open, lead]);
 
   useEffect(() => {
@@ -141,7 +142,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
     const entry = { text, by:"Admin", time: new Date().toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"}) };
     const saved = await dbAddComment(local.id, entry);
     if (saved) setLocal(l => ({ ...l, comments:[{ id:saved.id, text:saved.text, by:saved.by, time:saved.time }, ...l.comments] }));
-    setComment(""); inputRef.current?.focus();
+    setComment(""); setCommentOpen(false);
   }, [comment, local]);
 
   const handleSave = useCallback(async () => {
@@ -323,35 +324,32 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             {/* ── COMMENTS SECTION ── */}
             <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
             <Div label="Comments" />
-            <div style={{ display:"flex", gap:8 }}>
-              <input ref={inputRef} value={comment} onChange={e => setComment(e.target.value)}
-                onKeyDown={e => e.key==="Enter" && handleAddComment()}
-                placeholder="Write a comment…"
-                style={{ ...inputBase, flex:1 }}
-              />
-              <button className="tap-btn" onClick={handleAddComment} style={{
-                width:42, height:42, borderRadius:10, border:"none", flexShrink:0,
-                background: comment.trim() ? C.red : C.cardAlt,
-                color: comment.trim() ? "#fff" : C.gray,
-                cursor: comment.trim() ? "pointer" : "default",
-                display:"flex", alignItems:"center", justifyContent:"center", fontSize:".9rem",
-                boxShadow: comment.trim() ? `0 3px 12px ${C.red}44` : "none",
-              }}>➤</button>
+
+            {/* Tap to add comment */}
+            <div onClick={() => { setCommentOpen(true); setComment(""); }} className="tap-btn" style={{
+              display:"flex", alignItems:"center", gap:8,
+              background:C.cardAlt, borderRadius:10, padding:"8px 12px",
+              cursor:"pointer", border:`1px solid ${C.border}`,
+              borderTop:`1.5px solid ${C.red}44`,
+            }}>
+              <div style={{ width:26, height:26, borderRadius:7, background:`${C.white}10`, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".75rem" }}>✎</div>
+              <span style={{ fontSize:".72rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>Add a comment…</span>
+              <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
             </div>
 
             {local.comments.length > 0
               ? local.comments.map(c => (
-                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderRadius:10, padding:"10px 12px" }}>
-                    <div style={{ fontSize:".78rem", color:C.silver, fontWeight:600, lineHeight:1.55, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".58rem", color:C.gray, marginTop:4, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                  <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"7px 10px" }}>
+                    <div style={{ fontSize:".72rem", color:C.silver, fontWeight:600, lineHeight:1.5, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
+                    <div style={{ fontSize:".55rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
                       <span>{c.by}</span><span>{c.time}</span>
                     </div>
                   </div>
                 ))
-              : <div style={{ textAlign:"center", padding:"6px 0", color:C.gray, fontSize:".72rem", fontFamily:"Archivo,sans-serif" }}>No comments yet</div>
+              : <div style={{ textAlign:"center", padding:"4px 0", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif" }}>No comments yet</div>
             }
 
-            <div style={{ height:6 }} />
+            <div style={{ height:2 }} />
           </div>
 
           {/* Footer */}
@@ -399,6 +397,45 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           onAssign={id => { set("assignedTo", id); setAssignOpen(false); }}
           onUnassign={() => { set("assignedTo", null); setAssignOpen(false); }}
         />
+      )}
+
+      {commentOpen && (
+        <div style={{ position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:300, background:"rgba(0,0,0,.7)", backdropFilter:"blur(8px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+          onClick={e => { if (e.target===e.currentTarget) { setCommentOpen(false); setComment(""); } }}
+        >
+          <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, padding:"16px 16px 28px", boxShadow:`0 -8px 40px rgba(204,21,21,.15)` }}>
+            {/* Handle */}
+            <div style={{ display:"flex", justifyContent:"center", marginBottom:14 }}>
+              <div style={{ width:32, height:3, borderRadius:99, background:C.border }} />
+            </div>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+              <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Add Comment</div>
+              <div onClick={() => { setCommentOpen(false); setComment(""); }} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
+            </div>
+            <textarea
+              ref={inputRef}
+              value={comment}
+              onChange={e => setComment(e.target.value)}
+              placeholder="Write a comment…"
+              rows={4}
+              style={{ ...inputBase, resize:"none", lineHeight:1.6, fontSize:".8rem", WebkitUserSelect:"text", userSelect:"text", borderRadius:12 }}
+              autoFocus
+            />
+            <div style={{ display:"flex", gap:8, marginTop:10 }}>
+              <button onClick={() => { setCommentOpen(false); setComment(""); }} style={{
+                flex:1, padding:"10px 0", borderRadius:10, border:`1px solid ${C.border}`,
+                background:C.cardAlt, color:C.gray, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
+              }}>Cancel</button>
+              <button className="tap-btn" onClick={handleAddComment} disabled={!comment.trim()} style={{
+                flex:2, padding:"10px 0", borderRadius:10, border:"none",
+                background: comment.trim() ? C.red : C.cardAlt,
+                color: comment.trim() ? "#fff" : C.gray,
+                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor: comment.trim() ? "pointer" : "default",
+                boxShadow: comment.trim() ? `0 4px 14px ${C.red}44` : "none",
+              }}>Add Comment</button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
