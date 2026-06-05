@@ -8,6 +8,7 @@
 //   - Shows empty state if no project is passed
 
 import { useState, useRef, useEffect } from "react";
+import { supabase } from "./lib/supabase";
 import AppHeader from "./AppHeader";
 import BottomNav from "./BottomNav";
 import NotificationPanel from "./NotificationPanel";
@@ -320,17 +321,68 @@ function EmptyState() {
 //   stats: { leads, deals },
 // }
 
-export default function ProjectsPage({ projects = [], loading = false, onTabChange, onSignOut, onEditProject, onAddProject }) {
+export default function ProjectsPage({ onTabChange, onSignOut, onEditProject, onAddProject }) {
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifs,      setNotifs]      = useState(DEFAULT_NOTIFICATIONS);
   const [storyOpen,   setStoryOpen]   = useState(false);
   const [videoOpen,   setVideoOpen]   = useState(false);
-  const [activeTab,   setActiveTab]   = useState(3); // Projects tab
+  const [activeTab,   setActiveTab]   = useState(3);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [projects,    setProjects]    = useState([]);
+  const [loading,     setLoading]     = useState(true);
+
+  // ── Fetch from Supabase ──────────────────────────────────────
+  const fetchProjects = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setProjects(data.map(r => ({
+        id:           r.id,
+        name:         r.name,
+        developer:    r.developer,
+        location:     r.location,
+        category:     r.category,
+        status:       r.status,
+        statusColor:  r.status_color,
+        isLaunch:     r.is_launch,
+        price:        r.price,
+        area:         r.area,
+        delivery:     r.delivery,
+        projectArea:  r.project_area,
+        prevWork:     r.prev_work,
+        maintenance:  r.maintenance,
+        parking:      r.parking,
+        description:  r.description,
+        coverVideo:   r.cover_video,
+        coverThumb:   r.cover_thumb,
+        profilePic:   r.profile_pic,
+        amenities:    r.amenities     || [],
+        units:        r.units         || [],
+        stories:      r.stories       || [],
+        paymentPlans: r.payment_plans || [],
+        stats:        r.stats         || { leads: 0, deals: 0 },
+        agent:        r.agent         || {},
+      })));
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProjects();
+    // Realtime — تحديث تلقائي لما الأدمن يضيف/يعدل
+    const channel = supabase
+      .channel("projects-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "projects" }, fetchProjects)
+      .subscribe();
+    return () => supabase.removeChannel(channel);
+  }, []);
 
   const unread = notifs.filter(n => n.unread).length;
-  // Pick the currently selected project from the array
   const p = projects.length > 0 ? (projects[selectedIdx] ?? projects[0]) : null;
 
   const handleTabChange = (i) => {
