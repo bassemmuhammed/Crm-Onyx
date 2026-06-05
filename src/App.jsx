@@ -262,25 +262,11 @@ export default function App() {
     </div>
   ) : null;
 
-  // Still checking session → show loading screen
   if (authLoading) return (
     <>
       <OnyxGlobalStyles />
       <TopLoadingBar />
-      <div style={{
-        minHeight: "100vh",
-        background: "#0a0a0a",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 16,
-      }}>
-        <OnyxLogo size={36} />
-        <div style={{ color: "#cc1515", fontSize: 13, opacity: 0.7, letterSpacing: 1 }}>
-          جاري التحميل...
-        </div>
-      </div>
+      <div style={{ minHeight: "100vh", background: "#0a0a0a" }} />
     </>
   );
 
