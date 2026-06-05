@@ -169,7 +169,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
       }} />
 
       {/* Sheet */}
-      <div style={{
+      <div onClick={onClose} style={{
         position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
         display:"flex", alignItems:"flex-end", justifyContent:"center",
         pointerEvents: open?"all":"none",
@@ -179,7 +179,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
           background:C.card, borderRadius:"22px 22px 0 0",
           borderTop:`2px solid ${C.red}`,
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 80px)",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 62px)",
           transform: open?"translateY(0)":"translateY(100%)",
           transition:"transform .32s cubic-bezier(.32,0,.16,1)",
         }}>
@@ -248,11 +248,11 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
                 return (
                   <button key={s} className="chip-btn" onClick={() => set("status", s)} style={{
                     padding:"6px 11px", borderRadius:99,
-                    border:`1px solid ${active ? m.color : C.border}`,
+                    border:`1px solid ${active ? m.color : "#333"}`,
                     cursor:"pointer", fontFamily:"Archivo,sans-serif",
                     fontSize:".65rem", fontWeight:700,
-                    background: active ? m.color : C.cardAlt,
-                    color: active ? "#fff" : C.gray,
+                    background: active ? m.color : C.black,
+                    color: active ? "#fff" : C.white,
                     boxShadow: active ? `0 3px 10px ${m.color}40` : "none",
                     display:"flex", alignItems:"center", gap:3,
                   }}>{m.icon} {m.label}</button>
@@ -513,7 +513,6 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           </div>
           {agent ? (
             <div style={{ fontSize:".58rem", color:C.white, fontWeight:700, background:C.black, padding:"3px 8px", borderRadius:6, border:`1px solid #333`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:3 }}>
-              <div style={{ width:10, height:10, borderRadius:3, background:C.white, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".36rem", fontWeight:900, color:C.black }}>{agent.name.charAt(0)}</div>
               {agent.name.split(" ")[0]}
             </div>
           ) : (
@@ -955,7 +954,7 @@ export default function AdminLeadsPage() {
 
       {/* ── FAB ── */}
       <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:78, right:20,
+        position:"fixed", bottom:72, right:20,
         width:54, height:54, borderRadius:"50%",
         background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
         display:"flex", alignItems:"center", justifyContent:"center",
