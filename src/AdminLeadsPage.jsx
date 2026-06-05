@@ -1,5 +1,6 @@
 // ── AdminLeadsPage.jsx — ONYX Design System ──────────────────────
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { PROJECTS, fetchTeam, fetchLeads, addLead as dbAddLead, updateLead as dbUpdateLead, deleteLead as dbDeleteLead, addComment as dbAddComment } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
@@ -825,7 +826,7 @@ export default function AdminLeadsPage({ onModalChange }) {
       return acc;
     }, {}), [leads]);
 
-  return (
+  const page = (
     <div style={{
       fontFamily:"Archivo, sans-serif",
       background:C.surface, height:"100dvh",
@@ -964,16 +965,24 @@ export default function AdminLeadsPage({ onModalChange }) {
         </div>
       </div>
 
-      {/* ── FAB ── */}
-      <div onClick={() => setModal("fab")} className="tap-btn" style={{
-        position:"fixed", bottom:78, right:20,
-        width:54, height:54, borderRadius:"50%",
-        background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
-        display:"flex", alignItems:"center", justifyContent:"center",
-        cursor:"pointer", zIndex:150,
-      }}>
-        <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
-      </div>
     </div>
+  );
+
+  return (
+    <>
+      {page}
+      {createPortal(
+        <div onClick={() => setModal("fab")} className="tap-btn" style={{
+          position:"fixed", bottom:78, right:20,
+          width:54, height:54, borderRadius:"50%",
+          background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          cursor:"pointer", zIndex:9999,
+        }}>
+          <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
