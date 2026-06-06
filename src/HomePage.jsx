@@ -196,58 +196,33 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
         boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
       }}
     >
-      {/* Corner accent lines — top-left and top-right only */}
-      <div style={{
-        position: "absolute", top: 0, left: 0,
-        width: 22, height: 3, borderRadius: "0 0 3px 0",
-        background: s.color,
-      }} />
-      <div style={{
-        position: "absolute", top: 0, left: 0,
-        width: 3, height: 22, borderRadius: "0 0 3px 0",
-        background: s.color,
-      }} />
-      <div style={{
-        position: "absolute", top: 0, right: 0,
-        width: 22, height: 3, borderRadius: "0 0 0 3px",
-        background: s.color,
-      }} />
-      <div style={{
-        position: "absolute", top: 0, right: 0,
-        width: 3, height: 22, borderRadius: "0 0 0 3px",
-        background: s.color,
-      }} />
-
-      {/* Icon + Label */}
-      <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:8 }}>
+      {/* Top row: big icon + number */}
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
+        {/* Big Icon Box */}
         <div style={{
-          width: 28, height: 28, borderRadius: 8,
-          background: `${s.color}22`,
-          border: `1px solid ${s.color}33`,
+          width: 46, height: 46, borderRadius: 12, flexShrink: 0,
+          background: C.black,
+          border: `1.5px solid ${C.border}`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: s.color, flexShrink: 0,
+          color: C.silver,
+          fontSize: "1.3rem",
         }}>
           {Icons[s.icon]}
         </div>
-        <span style={{ fontSize:".6rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.5 }}>
-          {s.label}
-        </span>
-      </div>
 
-      {/* Count */}
-      <div style={{ fontSize:"1.9rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1 }}>
-        {val}
-      </div>
-
-      {/* Trend */}
-      {s.trend && (
-        <div style={{ fontSize:".58rem", color:s.color, fontWeight:700, marginTop:4, display:"flex", alignItems:"center", gap:3 }}>
-          {s.trend}
+        {/* Number */}
+        <div style={{ fontSize:"2.2rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1.5 }}>
+          {val}
         </div>
-      )}
+      </div>
+
+      {/* Label below */}
+      <div style={{ fontSize:".62rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.7 }}>
+        {s.label}
+      </div>
 
       {/* Progress bar */}
-      <div style={{ marginTop:10, height:3, borderRadius:99, background:C.border, overflow:"hidden" }}>
+      <div style={{ marginTop:10, height:2, borderRadius:99, background:C.border, overflow:"hidden" }}>
         <div style={{
           height:"100%", borderRadius:99, background:s.color,
           width: barW, transition:"width 1.2s cubic-bezier(.4,0,.2,1)",
@@ -598,7 +573,7 @@ export default function HomePage({
                 display:"flex", flexDirection:"column", alignItems:"center", gap:8,
                 fontFamily:"Archivo,sans-serif",
               }}>
-                <div style={{ fontSize:"1.4rem" }}>🎉</div>
+                <div style={{ color:C.gray, fontSize:"1.2rem", display:"flex", alignItems:"center", justifyContent:"center" }}>{Icons.checkSquare}</div>
                 No tasks yet — you're all caught up!
               </div>
             )}
