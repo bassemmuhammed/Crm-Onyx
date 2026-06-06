@@ -94,16 +94,14 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
   const [saving, setSaving]   = useState(false);
   const prevId                = useRef(null);
   const inputRef              = useRef(null);
-  const [pendingComment, setPendingComment] = useState(""); // كومنت بيتبعت مع الـ Save
 
   useEffect(() => {
     if (open && lead && lead.id !== prevId.current) {
       setLocal({ ...lead, comments: [...lead.comments] });
       setComment("");
-      setPendingComment("");
       prevId.current = lead.id;
     }
-    if (!open) { prevId.current = null; setPendingComment(""); }
+    if (!open) { prevId.current = null; }
   }, [open, lead]);
 
   useEffect(() => {
@@ -143,24 +141,10 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
 
   const handleSave = useCallback(async () => {
     setSaving(true);
-    const commentText = pendingComment.trim();
-    // لو فيه كومنت، احفظه في lead_comments وابعته مع الـ changelog
-    if (commentText) {
-      const time = new Date().toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" });
-      const saved = await dbAddComment(local.id, { text: commentText, by: salesName, time });
-      const entry = saved
-        ? { id: saved.id, text: saved.text, by: saved.by, time: saved.time }
-        : { id: Date.now(), text: commentText, by: salesName, time };
-      // ضيف الكومنت في الـ local قبل الـ save عشان يتسجل في الـ changelog
-      const updatedLocal = { ...local, comments: [entry, ...local.comments] };
-      await onUpdate(updatedLocal, commentText);
-    } else {
-      await onUpdate(local, null);
-    }
+    await onUpdate(local, null);
     setSaving(false);
-    setPendingComment("");
     onClose();
-  }, [local, onUpdate, onClose, pendingComment, salesName]);
+  }, [local, onUpdate, onClose]);
 
   if (!open || !local) return null;
 
