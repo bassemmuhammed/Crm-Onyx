@@ -68,12 +68,7 @@ const INIT_NOTIFS = [
   { id: 3, text: "طلب تعديل على مشروع Nile Heights", time: "منذ 3 ساعات", color: "#595a5f", unread: false },
 ];
 
-const hashToTab = () => {
-  const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
-  // TAB_ADDPROJECT (2) is a modal state, not a real tab — on refresh go to HOME
-  if (saved === TAB_ADDPROJECT) return TAB_HOME;
-  return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
-};
+// Always start from HOME — no tab persistence across app opens
 
 // ─── App ──────────────────────────────────────────────────────────
 export default function App() {
@@ -106,9 +101,7 @@ export default function App() {
   const [projects,      setProjects]      = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [editProject,    setEditProject]    = useState(null);
-  const [showAddProject, setShowAddProject] = useState(
-    () => sessionStorage.getItem("showAddProject") === "true"
-  );
+  const [showAddProject, setShowAddProject] = useState(false);
 
   // ── Sales leads state ──
   const [leadsFilter,  setLeadsFilter]  = useState(null); // null = "all"
@@ -117,19 +110,13 @@ export default function App() {
   const [adminLeadsFilter, setAdminLeadsFilter] = useState(null); // { status, agent_id }
 
   // ── Admin UI state ──
-  const [activeAdminTab, setActiveAdminTab] = useState(() => {
-    const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
-    if (saved === TAB_ADDPROJECT) return TAB_HOME;
-    return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
-  });
+  const [activeAdminTab, setActiveAdminTab] = useState(TAB_HOME);
   const [notifOpen,      setNotifOpen]      = useState(false);
   const [profileOpen,    setProfileOpen]    = useState(false);
   const [notifs,         setNotifs]         = useState(INIT_NOTIFS);
 
   // ── Sales tab ──
-  const [activeSalesTab, setActiveSalesTab] = useState(
-    () => parseInt(sessionStorage.getItem("activeTab") || "0")
-  );
+  const [activeSalesTab, setActiveSalesTab] = useState(TAB_HOME);
 
   // ── Supabase auth listener ────────────────────────────────────
   useEffect(() => {
@@ -286,20 +273,18 @@ export default function App() {
     return () => supabase.removeChannel(channel);
   }, [loggedIn, fetchProjects]);
 
-  // ── Tab persistence (sales) ──
+  // Scroll to top whenever tab changes
   useEffect(() => {
-    sessionStorage.setItem("activeTab", activeSalesTab);
-  }, [activeSalesTab]);
+    window.scrollTo(0, 0);
+  }, [activeSalesTab, activeAdminTab]);
 
   const handleAdminTabChange = (tab, filter = null) => {
     if (tab === "leads") {
       setAdminLeadsFilter(filter);
-      sessionStorage.setItem("adminTab", TAB_LEADS);
       setActiveAdminTab(TAB_LEADS);
       return;
     }
     setAdminLeadsFilter(null);
-    sessionStorage.setItem("adminTab", tab);
     setActiveAdminTab(tab);
   };
 
@@ -396,21 +381,17 @@ export default function App() {
     await fetchProjects();
     setEditProject(null);
     setShowAddProject(false);
-    sessionStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
   const openAddProject = (project = null) => {
     setEditProject(project);
     setShowAddProject(true);
-    sessionStorage.setItem("adminTab", TAB_ADDPROJECT);
-    sessionStorage.setItem("showAddProject", "true");
   };
 
   const cancelAddProject = () => {
     setEditProject(null);
     setShowAddProject(false);
-    sessionStorage.setItem("showAddProject", "false");
     handleAdminTabChange(TAB_HOME);
   };
 
@@ -500,12 +481,13 @@ export default function App() {
 
     return (
       <div style={{
-        minHeight: "100dvh",
+        height: "100dvh",
         background: "#0a0a0a",
         fontFamily: "'Archivo', sans-serif",
-        paddingBottom: 62,
         color: "#ffffff",
-        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
         backgroundImage: `
           radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
           radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
@@ -514,22 +496,29 @@ export default function App() {
         <OnyxGlobalStyles />
         <TopLoadingBar />
 
-        {/* Red top accent */}
-        <div style={{
-          height: 2,
-          background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)",
-          position: "sticky", top: 0, zIndex: 100,
-        }} />
+        {/* ── FIXED HEADER AREA ── */}
+        <div style={{ flexShrink: 0, position: "relative", zIndex: 50 }}>
+          {/* Red top accent */}
+          <div style={{
+            height: 2,
+            background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)",
+          }} />
 
-        <AppHeader
-          unreadCount={unread}
-          onBellClick={()    => setNotifOpen(true)}
-          onProfileClick={() => setProfileOpen(true)}
-          logo={<OnyxLogo size={28} />}
-          avatarUrl={headerAvatarUrl}
-        />
+          <AppHeader
+            unreadCount={unread}
+            onBellClick={()    => setNotifOpen(true)}
+            onProfileClick={() => setProfileOpen(true)}
+            logo={<OnyxLogo size={28} />}
+            avatarUrl={headerAvatarUrl}
+          />
+        </div>
 
-        <div className="onyx-animate" key={activeAdminTab}>
+        {/* ── SCROLLABLE PAGE CONTENT ── */}
+        <div
+          key={activeAdminTab}
+          className="onyx-animate"
+          style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+        >
           {renderAdminPage()}
         </div>
 
@@ -545,6 +534,7 @@ export default function App() {
           onSignOut={handleSignOut}
         />
 
+        {/* ── FIXED BOTTOM NAV ── */}
         <BottomNav
           activeTab={activeAdminTab}
           onTabChange={(tab) => {
