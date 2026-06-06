@@ -532,7 +532,7 @@ export default function App() {
 
         {/* ── SCROLLABLE PAGE CONTENT ── */}
         <div
-          key={activeAdminTab}
+          key={showAddProject ? "add-project" : activeAdminTab}
           className="onyx-animate"
           style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
         >
@@ -553,9 +553,10 @@ export default function App() {
 
         {/* ── FIXED BOTTOM NAV ── */}
         <BottomNav
-          activeTab={activeAdminTab}
+          activeTab={showAddProject ? TAB_ADDPROJECT : activeAdminTab}
           onTabChange={(tab) => {
             if (tab === TAB_ADDPROJECT) { openAddProject(); return; }
+            cancelAddProject();
             handleAdminTabChange(tab);
           }}
           items={ADMIN_NAV}
@@ -653,7 +654,7 @@ export default function App() {
       <div
         key={activeSalesTab}
         className="onyx-animate"
-        style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+        style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", paddingBottom: 62 }}
       >
         {renderSalesPage()}
       </div>
@@ -670,7 +671,7 @@ export default function App() {
         onSignOut={handleSignOut}
       />
 
-      {/* ── FIXED BOTTOM NAV ── */}
+      {/* BottomNav is fixed-positioned so it renders outside the flex container */}
       <BottomNav
         activeTab={activeSalesTab}
         onTabChange={(tab) => {
