@@ -49,12 +49,11 @@ const LAUNCHES = [
     id: 1,
     project: "AMG — R7",
     developer: "AVA MINA Group",
+    logoUrl: null,
     location: "R7 — New Capital",
     date: "2026-06-15",
     time: "11:00 AM",
     tag: "Grand Launch",
-    tagColor: C.blue,
-    badge: "🔥",
     projectArea: "50 Acres",
     projectType: "Residential Compound",
     units: [
@@ -71,12 +70,11 @@ const LAUNCHES = [
     id: 2,
     project: "Nile Gate — Phase 2",
     developer: "Ora Developers",
+    logoUrl: null,
     location: "New Cairo — 5th Settlement",
     date: "2026-06-22",
     time: "2:00 PM",
     tag: "Phase Launch",
-    tagColor: C.green,
-    badge: "🚀",
     projectArea: "35 Acres",
     projectType: "Mixed Use — Residential & Commercial",
     units: [
@@ -92,12 +90,11 @@ const LAUNCHES = [
     id: 3,
     project: "Sky Residence",
     developer: "Emaar Misr",
+    logoUrl: null,
     location: "New Capital — R3",
     date: "2026-07-01",
     time: "10:00 AM",
     tag: "Soft Launch",
-    tagColor: C.amber,
-    badge: "⭐",
     projectArea: "70 Acres",
     projectType: "Luxury Residential Compound",
     units: [
@@ -116,10 +113,9 @@ const POSTS = [
   {
     id: 1,
     project: "AMG — R7",
-    postedAt: "اليوم، 10:30 ص",
+    postedAt: "Today, 10:30 AM",
     type: "unit_offer",
-    typeLabel: "عرض وحدة",
-    typeColor: C.blue,
+    typeLabel: "Unit Offer",
     content: `وصلنا في AMG ل 80% إنشاءات 💪🧘\nهات عميلك وتعالي يعاين على أرض الوقع 🏃‍♂️🔥 في أميز لوكيشن في الـ R7 🔥🤩\n\nتعالي امتلك وحدتك في أميز وأرقي مكان في الـ R7 دابل فيو على حي السفارات وحي المستثمرين من AVA MINA Group (AMG)\n\n*8C_ A32 (210)*\nدايركت على النادي`,
     unit: "A32 — 210m²",
     details: [
@@ -136,10 +132,9 @@ const POSTS = [
   {
     id: 2,
     project: "Nile Gate",
-    postedAt: "أمس، 3:15 م",
+    postedAt: "Yesterday, 3:15 PM",
     type: "promo",
-    typeLabel: "بروموشن",
-    typeColor: C.green,
+    typeLabel: "Promotion",
     content: `🏙️ Nile Gate Phase 2 — فرصة محدودة!\nوحدات تاور B متاحة بأسعار ما قبل الإطلاق 🔥\n\nمتشيلوش الفرصة دي — الأسعار هتتغير بعد الـ Launch رسمياً يوم 22 يونيو`,
     unit: "Tower B",
     details: [
@@ -149,6 +144,30 @@ const POSTS = [
     ],
   },
 ];
+
+// ─── Developer Avatar ─────────────────────────────────────────
+function DevAvatar({ name, logoUrl }) {
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  return (
+    <div style={{
+      width:          42,
+      height:         42,
+      borderRadius:   11,
+      background:     logoUrl ? "transparent" : C.cardAlt,
+      border:         `1px solid ${C.border}`,
+      display:        "flex",
+      alignItems:     "center",
+      justifyContent: "center",
+      flexShrink:     0,
+      overflow:       "hidden",
+    }}>
+      {logoUrl
+        ? <img src={logoUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        : <span style={{ fontSize: ".65rem", fontWeight: 900, color: C.silver }}>{initials}</span>
+      }
+    </div>
+  );
+}
 
 // ─── Launch Card ──────────────────────────────────────────────
 function LaunchCard({ item, index }) {
@@ -169,103 +188,81 @@ function LaunchCard({ item, index }) {
         boxShadow:     "0 4px 20px rgba(0,0,0,.45)",
       }}
     >
-      {/* Top accent — fades right, like AdminHomePage sections */}
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${C.red} 0%, ${C.redLight} 30%, transparent 100%)` }} />
-
-      {/* Left side accent bar — thick → thin gradient */}
+      {/* Left accent bar only — thick top, fades to transparent */}
       <div style={{
         position:     "absolute",
-        top:          3,
+        top:          0,
         left:         0,
         bottom:       0,
         width:        3,
-        background:   `linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.15) 100%)`,
-        borderRadius: "0 0 0 16px",
+        background:   `linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.06) 100%)`,
+        borderRadius: "16px 0 0 16px",
       }} />
 
       <div style={{ padding: "14px 14px 12px", paddingLeft: 18 }}>
 
-        {/* Header row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-              <span style={{ fontSize: "1.1rem" }}>{item.badge}</span>
-              <div style={{ fontSize: ".92rem", fontWeight: 900, color: C.white }}>{item.project}</div>
-            </div>
-            <div style={{ fontSize: ".68rem", color: C.gray, fontWeight: 600 }}>{item.developer}</div>
+        {/* Header: Avatar | Name+Dev | Tag · Days */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <DevAvatar name={item.developer} logoUrl={item.logoUrl} />
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: ".9rem", fontWeight: 900, color: C.white, lineHeight: 1.2 }}>{item.project}</div>
+            <div style={{ fontSize: ".62rem", color: C.gray, fontWeight: 600, marginTop: 2 }}>{item.developer}</div>
           </div>
 
-          {/* Days badge */}
-          <div style={{
-            background:  urgent ? `${C.red}22` : C.cardAlt,
-            color:       urgent ? C.red : C.silver,
-            fontSize:    ".6rem",
-            fontWeight:  800,
-            padding:     "4px 10px",
-            borderRadius: 99,
-            border:      `1px solid ${urgent ? C.red + "55" : C.border}`,
-            whiteSpace:  "nowrap",
-            flexShrink:  0,
-          }}>
-            {daysLeft <= 0 ? "Today!" : `${daysLeft} days`}
+          {/* Tag (plain text) + Days badge */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            <span style={{ fontSize: ".58rem", fontWeight: 700, color: C.gray }}>{item.tag}</span>
+            <div style={{
+              background:   urgent ? `${C.red}22` : C.cardAlt,
+              color:        urgent ? C.red : C.silver,
+              fontSize:     ".6rem",
+              fontWeight:   800,
+              padding:      "3px 9px",
+              borderRadius: 99,
+              border:       `1px solid ${urgent ? C.red + "55" : C.border}`,
+              whiteSpace:   "nowrap",
+            }}>
+              {daysLeft <= 0 ? "Today!" : `${daysLeft}d`}
+            </div>
           </div>
         </div>
 
-        {/* Tags row — Grand Launch | Location | Date */}
+        {/* Location + Date — same row */}
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12, alignItems: "center" }}>
-          {/* Launch tag */}
-          <div style={{
-            background:    `${C.red}18`,
-            color:         C.white,
-            fontSize:      ".58rem",
-            fontWeight:    700,
-            padding:       "3px 10px",
-            borderRadius:  6,
-            border:        `1px solid ${C.red}44`,
-            display:       "flex",
-            alignItems:    "center",
-            gap:           4,
-          }}>
-            <div style={{ width: 4, height: 4, borderRadius: "50%", background: C.red }} />
-            {item.tag}
-          </div>
-
-          {/* Location */}
           <div style={{
             background:   C.cardAlt,
             color:        C.silver,
             fontSize:     ".58rem",
             fontWeight:   600,
-            padding:      "3px 10px",
+            padding:      "4px 10px",
             borderRadius: 6,
             border:       `1px solid ${C.border}`,
             display:      "flex",
             alignItems:   "center",
             gap:          4,
           }}>
-            {Icons.house && <span style={{ opacity: .7 }}>{Icons.house}</span>}
+            {Icons.house && <span style={{ opacity: .6 }}>{Icons.house}</span>}
             {item.location}
           </div>
-
-          {/* Date */}
           <div style={{
             background:   C.cardAlt,
             color:        C.silver,
             fontSize:     ".58rem",
             fontWeight:   600,
-            padding:      "3px 10px",
+            padding:      "4px 10px",
             borderRadius: 6,
             border:       `1px solid ${C.border}`,
             display:      "flex",
             alignItems:   "center",
             gap:          4,
           }}>
-            {Icons.calendar && <span style={{ opacity: .7 }}>{Icons.calendar}</span>}
+            {Icons.calendar && <span style={{ opacity: .6 }}>{Icons.calendar}</span>}
             {new Date(item.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} — {item.time}
           </div>
         </div>
 
-        {/* Quick info */}
+        {/* Quick info — centered */}
         <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
           {[
             { label: "Project Area", value: item.projectArea },
@@ -277,14 +274,15 @@ function LaunchCard({ item, index }) {
               borderRadius: 10,
               padding:      "8px 10px",
               border:       `1px solid ${C.border}`,
+              textAlign:    "center",
             }}>
-              <div style={{ fontSize: ".52rem", color: C.gray, fontWeight: 700, marginBottom: 2, textTransform: "uppercase", letterSpacing: .4 }}>{d.label}</div>
+              <div style={{ fontSize: ".5rem", color: C.gray, fontWeight: 700, marginBottom: 3, textTransform: "uppercase", letterSpacing: .4 }}>{d.label}</div>
               <div style={{ fontSize: ".72rem", color: C.white, fontWeight: 700 }}>{d.value}</div>
             </div>
           ))}
         </div>
 
-        {/* Booking / Installment / Cash */}
+        {/* Booking / Installment / Cash — centered */}
         <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
           {[
             { label: "Booking",       value: item.booking,      color: C.blue  },
@@ -295,11 +293,12 @@ function LaunchCard({ item, index }) {
               flex:         1,
               background:   C.cardAlt,
               borderRadius: 10,
-              padding:      "8px 8px",
+              padding:      "8px 6px",
               border:       `1px solid ${C.border}`,
+              textAlign:    "center",
             }}>
-              <div style={{ fontSize: ".48rem", color: d.color, fontWeight: 800, marginBottom: 3, textTransform: "uppercase", letterSpacing: .3 }}>{d.label}</div>
-              <div style={{ fontSize: ".68rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
+              <div style={{ fontSize: ".44rem", color: d.color, fontWeight: 800, marginBottom: 3, textTransform: "uppercase", letterSpacing: .3 }}>{d.label}</div>
+              <div style={{ fontSize: ".66rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
             </div>
           ))}
         </div>
@@ -317,7 +316,7 @@ function LaunchCard({ item, index }) {
             borderTop:      `1px solid ${C.border}`,
           }}
         >
-          <span style={{ fontSize: ".65rem", fontWeight: 700, color: C.white }}>Unit Sizes &amp; Prices</span>
+          <span style={{ fontSize: ".65rem", fontWeight: 700, color: C.white }}>Unit Sizes & Prices</span>
           <span style={{ fontSize: ".6rem", color: C.gray, fontWeight: 700 }}>{expanded ? "▲ Hide" : "▼ Show"}</span>
         </div>
 
@@ -326,18 +325,19 @@ function LaunchCard({ item, index }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 4, padding: "0 4px" }}>
               {["Type", "Area", "Price"].map(h => (
-                <div key={h} style={{ fontSize: ".52rem", color: C.gray, fontWeight: 700, textTransform: "uppercase", letterSpacing: .4 }}>{h}</div>
+                <div key={h} style={{ fontSize: ".52rem", color: C.gray, fontWeight: 700, textTransform: "uppercase", letterSpacing: .4, textAlign: "center" }}>{h}</div>
               ))}
             </div>
             {item.units.map((u, i) => (
               <div key={i} style={{
-                display:              "grid",
-                gridTemplateColumns:  "1fr 1fr 1fr",
-                gap:                  4,
-                background:           i % 2 === 0 ? C.cardAlt : C.card,
-                padding:              "8px 10px",
-                borderRadius:         10,
-                border:               `1px solid ${C.border}`,
+                display:             "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap:                 4,
+                background:          i % 2 === 0 ? C.cardAlt : C.card,
+                padding:             "8px 10px",
+                borderRadius:        10,
+                border:              `1px solid ${C.border}`,
+                textAlign:           "center",
               }}>
                 <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.white }}>{u.type}</div>
                 <div style={{ fontSize: ".7rem", fontWeight: 600, color: C.silver }}>{u.area}</div>
@@ -354,6 +354,7 @@ function LaunchCard({ item, index }) {
 // ─── Post Card ────────────────────────────────────────────────
 function PostCard({ post, index }) {
   const [expanded, setExpanded] = useState(false);
+  const initials = post.project.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 
   return (
     <div
@@ -368,60 +369,52 @@ function PostCard({ post, index }) {
         boxShadow:     "0 4px 20px rgba(0,0,0,.45)",
       }}
     >
-      {/* Top accent */}
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${C.red} 0%, ${C.redLight} 30%, transparent 100%)` }} />
-
-      {/* Left accent bar — thick → thin */}
+      {/* Left accent bar only */}
       <div style={{
-        position:   "absolute",
-        top:        3,
-        left:       0,
-        bottom:     0,
-        width:      3,
-        background: `linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.15) 100%)`,
-        borderRadius: "0 0 0 16px",
+        position:     "absolute",
+        top:          0,
+        left:         0,
+        bottom:       0,
+        width:        3,
+        background:   `linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.06) 100%)`,
+        borderRadius: "16px 0 0 16px",
       }} />
 
       <div style={{ padding: "14px", paddingLeft: 18 }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            {/* Project avatar — initials, no red bg */}
             <div style={{
               width:          38,
               height:         38,
               borderRadius:   10,
-              background:     `${C.red}18`,
-              border:         `1px solid ${C.red}44`,
+              background:     C.cardAlt,
+              border:         `1px solid ${C.border}`,
               display:        "flex",
               alignItems:     "center",
               justifyContent: "center",
-              fontSize:       ".78rem",
+              fontSize:       ".65rem",
               fontWeight:     900,
-              color:          C.white,
+              color:          C.silver,
             }}>
-              {post.project.charAt(0)}
+              {initials}
             </div>
             <div>
               <div style={{ fontSize: ".82rem", fontWeight: 800, color: C.white }}>{post.project}</div>
               <div style={{ fontSize: ".6rem", color: C.gray }}>{post.postedAt}</div>
             </div>
           </div>
-          {/* Type badge */}
-          <div style={{
-            background:    `${C.red}18`,
-            color:         C.white,
-            fontSize:      ".58rem",
-            fontWeight:    700,
-            padding:       "3px 9px",
-            borderRadius:  6,
-            border:        `1px solid ${C.red}44`,
-            display:       "flex",
-            alignItems:    "center",
-            gap:           4,
+
+          {/* Type label — plain, no red background */}
+          <span style={{
+            fontSize:   ".58rem",
+            fontWeight: 700,
+            color:      C.gray,
+            letterSpacing: ".3px",
           }}>
-            <div style={{ width: 4, height: 4, borderRadius: "50%", background: C.red }} />
             {post.typeLabel}
-          </div>
+          </span>
         </div>
 
         {/* Post content */}
@@ -451,14 +444,14 @@ function PostCard({ post, index }) {
           className="tap-scale"
           style={{ fontSize: ".63rem", color: C.white, fontWeight: 700, cursor: "pointer", marginBottom: 10, display: "flex", alignItems: "center", gap: 4 }}
         >
-          {expanded ? "عرض أقل ▲" : "عرض المزيد ▼"}
+          {expanded ? "Show Less ▲" : "Show More ▼"}
         </div>
 
         {/* Details grid */}
         {expanded && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
             {post.details.map((d, i) => (
-              <div key={i} style={{ background: C.cardAlt, borderRadius: 10, padding: "8px 10px", border: `1px solid ${C.border}` }}>
+              <div key={i} style={{ background: C.cardAlt, borderRadius: 10, padding: "8px 10px", border: `1px solid ${C.border}`, textAlign: "center" }}>
                 <div style={{ fontSize: ".55rem", color: C.gray, fontWeight: 700, marginBottom: 2, textTransform: "uppercase", letterSpacing: .4 }}>{d.label}</div>
                 <div style={{ fontSize: ".75rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
               </div>
@@ -487,18 +480,13 @@ function SwipeableTabs({ tabs, activeIndex, onSwipe, children }) {
     const dx = e.changedTouches[0].clientX - startX.current;
     const dy = Math.abs(e.changedTouches[0].clientY - startY.current);
     dragging.current = false;
-    // only trigger if horizontal swipe dominates
     if (Math.abs(dx) < 50 || dy > Math.abs(dx)) return;
     if (dx < 0 && activeIndex < tabs.length - 1) onSwipe(activeIndex + 1);
     if (dx > 0 && activeIndex > 0)               onSwipe(activeIndex - 1);
   };
 
   return (
-    <div
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      style={{ flex: 1 }}
-    >
+    <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={{ flex: 1 }}>
       {children}
     </div>
   );
@@ -511,30 +499,29 @@ const TABS = [
 ];
 
 export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) {
-  const [tabIndex,     setTabIndex]     = useState(0);
-  const [profileOpen,  setProfileOpen]  = useState(false);
-  const [notifOpen,    setNotifOpen]    = useState(false);
-  const [notifs,       setNotifs]       = useState([
+  const [tabIndex,    setTabIndex]    = useState(0);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [notifOpen,   setNotifOpen]   = useState(false);
+  const [notifs,      setNotifs]      = useState([
     { id: 1, text: "Launch جديد: AMG R7 — 15 يونيو", time: "منذ ساعة", color: C.blue,  unread: true  },
     { id: 2, text: "بوست جديد من المانجر على Nile Gate", time: "أمس",  color: C.green, unread: false },
   ]);
 
-  const unread  = notifs.filter(n => n.unread).length;
-  const curTab  = TABS[tabIndex];
+  const unread = notifs.filter(n => n.unread).length;
 
   return (
     <div style={{ fontFamily: "Archivo,sans-serif", background: C.surface, minHeight: "100vh", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
       <NoSelect />
 
-      <ProfileModal    open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
-      <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} notifs={notifs} onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))} />
+      <ProfileModal     open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
+      <NotificationPanel open={notifOpen}  onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))} />
 
-      {/* Red top line */}
+      {/* App-level red top line */}
       <div style={{ height: 2, background: `linear-gradient(90deg,${C.red} 0%,${C.redLight} 40%,transparent 100%)`, position: "sticky", top: 0, zIndex: 100 }} />
 
       <AppHeader unreadCount={unread} onBellClick={() => setNotifOpen(true)} onProfileClick={() => setProfileOpen(true)} />
 
-      {/* ── Section header ── */}
+      {/* Section header */}
       <div style={{ padding: "14px 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ width: 3, height: 18, background: C.red, borderRadius: 99 }} />
         <span style={{ fontSize: ".72rem", fontWeight: 900, color: C.white, textTransform: "uppercase", letterSpacing: "2px" }}>
@@ -542,7 +529,7 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
         </span>
       </div>
 
-      {/* ── Tab indicator pills (display only, no buttons) ── */}
+      {/* Tab indicators */}
       <div style={{ padding: "10px 16px 0", display: "flex", gap: 6, alignItems: "center" }}>
         {TABS.map((t, i) => {
           const active = i === tabIndex;
@@ -568,27 +555,25 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
             >
               {t.label}
               <span style={{
-                background: active ? C.red : C.cardAlt,
-                color:      active ? C.white : C.gray,
-                fontSize:   ".55rem",
-                fontWeight: 800,
-                padding:    "1px 7px",
+                background:   active ? C.red : C.cardAlt,
+                color:        active ? C.white : C.gray,
+                fontSize:     ".55rem",
+                fontWeight:   800,
+                padding:      "1px 7px",
                 borderRadius: 99,
-                border:     `1px solid ${active ? C.red : C.border}`,
+                border:       `1px solid ${active ? C.red : C.border}`,
               }}>
                 {t.data.length}
               </span>
             </div>
           );
         })}
-
-        {/* Swipe hint */}
         <span style={{ fontSize: ".52rem", color: C.gray, marginLeft: "auto", fontWeight: 600, letterSpacing: ".5px" }}>
           ← swipe →
         </span>
       </div>
 
-      {/* ── Swipeable content ── */}
+      {/* Swipeable content */}
       <SwipeableTabs tabs={TABS} activeIndex={tabIndex} onSwipe={setTabIndex}>
         <div style={{ padding: "12px 16px 110px", display: "flex", flexDirection: "column", gap: 10 }}>
           {tabIndex === 0 && LAUNCHES.map((item, i) => (
