@@ -175,8 +175,9 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
         <div onClick={e=>e.stopPropagation()} style={{
           width:"100%", maxWidth:430,
           borderRadius:"22px 22px 0 0",
-          border:`2px solid transparent`,
-          backgroundImage:`linear-gradient(145deg,#1C1C22 0%,#141418 100%), linear-gradient(90deg, ${C.red} 0%, ${C.red} 40%, transparent 100%)`,
+          border:`1px solid ${C.border}`,
+          borderTop:`3px solid transparent`,
+          backgroundImage:`linear-gradient(145deg,#1C1C22 0%,#141418 100%), linear-gradient(90deg, ${C.red} 0%, 60%, transparent 100%)`,
           backgroundOrigin:"border-box",
           backgroundClip:"padding-box, border-box",
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
@@ -192,10 +193,17 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           <div style={{ padding:"16px 18px 0", flexShrink:0 }}>
             <div style={{
               background:C.cardAlt, border:`1px solid ${C.border}`,
-              borderLeft:`3px solid ${C.red}`,
               borderRadius:14, padding:"14px 16px",
               display:"flex", alignItems:"center", gap:14,
+              position:"relative", overflow:"hidden",
             }}>
+              {/* Gradient left border — thick top fades down */}
+              <div style={{
+                position:"absolute", left:0, top:0, bottom:0, width:3,
+                background:`linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
+                borderRadius:"14px 0 0 14px",
+              }} />
+
               {/* Avatar */}
               <div style={{
                 width:46, height:46, borderRadius:12, flexShrink:0,
@@ -204,7 +212,8 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
               }}>{(local.name||"?").charAt(0)}</div>
 
-              <div style={{ flex:1, minWidth:0 }}>
+              {/* Name + phone — CENTERED */}
+              <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
                 <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
                 <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
               </div>
@@ -228,8 +237,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               display:"flex", alignItems:"center", gap:10,
               background:C.cardAlt, borderRadius:12, padding:"10px 14px",
               cursor:"pointer", border:`1px solid ${C.border}`,
-              borderLeft:`3px solid ${C.red}`,
+              position:"relative", overflow:"hidden",
             }}>
+              {/* Gradient left border */}
+              <div style={{
+                position:"absolute", left:0, top:0, bottom:0, width:3,
+                background:`linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
+                borderRadius:"12px 0 0 12px",
+              }} />
               <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
               </div>
@@ -679,6 +694,19 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
               background:C.cardAlt, padding:"4px 10px", borderRadius:6,
               border:`1px dashed ${C.border}`, fontFamily:"Archivo,sans-serif",
             }}>غير موزع</div>
+          )}
+
+          {/* Budget badge */}
+          {lead.clientInfo?.budget && (
+            <div style={{
+              fontSize:".6rem", fontWeight:600, color:C.silver,
+              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
+              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              display:"flex", alignItems:"center", gap:5,
+            }}>
+              <svg width="9" height="9" viewBox="0 0 256 256" fill={C.gray}><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
+              {lead.clientInfo.budget}
+            </div>
           )}
         </div>
 
