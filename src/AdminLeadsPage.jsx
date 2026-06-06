@@ -5,20 +5,20 @@ import { PROJECTS, fetchTeam, fetchLeads, addLead as dbAddLead, updateLead as db
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
-  black:   "#000000",
-  surface: "#0A0A0A",
-  card:    "#111111",
-  border:  "#1E1E1E",
-  cardAlt: "#252525",
+  black:    "#000000",
+  surface:  "#0D0D0D",
+  card:     "#161618",
+  border:   "#2A2A2E",
+  cardAlt:  "#1E1E22",
   cardHover:"#2E2E2E",
-  gray:    "#595A5F",
-  silver:  "#CECECE",
-  white:   "#FFFFFF",
-  red:     "#CC1515",
-  redLight:"#FF2020",
-  blue:    "#253FF6",
-  cardGrad1: "linear-gradient(145deg,#1A1A1A 0%,#111111 100%)",
-  cardGrad2: "linear-gradient(145deg,#1C1C1C 0%,#141414 100%)",
+  gray:     "#6B6C73",
+  silver:   "#CECECE",
+  white:    "#FFFFFF",
+  red:      "#CC1515",
+  redLight: "#FF2020",
+  blue:     "#253FF6",
+  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
+  cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
 
 const STATUS_META = {
@@ -90,11 +90,11 @@ function LoadingBar({ show }) {
   );
 }
 
-// ─── Divider ──────────────────────────────────────────────────────
-const Div = ({ label }) => (
+// ─── Section Header (نفس LeadsPage بالظبط) ───────────────────────
+const SectionHeader = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-    {label && <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
-    <div style={{ flex:1, height:1, background:C.border }} />
+    <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>
+    <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
   </div>
 );
 
@@ -174,9 +174,9 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
       }}>
         <div onClick={e=>e.stopPropagation()} style={{
           width:"100%", maxWidth:430,
-          background:C.card, borderRadius:"22px 22px 0 0",
-          borderTop:`2px solid transparent`,
-          backgroundImage:`linear-gradient(${C.card}, ${C.card}), linear-gradient(90deg, ${C.red} 0%, ${C.red} 40%, transparent 100%)`,
+          borderRadius:"22px 22px 0 0",
+          border:`2px solid transparent`,
+          backgroundImage:`linear-gradient(145deg,#1C1C22 0%,#141418 100%), linear-gradient(90deg, ${C.red} 0%, ${C.red} 40%, transparent 100%)`,
           backgroundOrigin:"border-box",
           backgroundClip:"padding-box, border-box",
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
@@ -221,8 +221,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           <div style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
-            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
-            <Div label="Actions" />
+            <SectionHeader label="Actions" />
 
             {/* Assign */}
             <div onClick={() => setAssignOpen(true)} className="tap-btn" style={{
@@ -242,8 +241,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             </div>
 
             {/* ── STATUS SECTION ── */}
-            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
-            <Div label="Status" />
+            <SectionHeader label="Status" />
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
               {STATUS_ORDER.filter(s => s !== "new").map(s => {
                 const m = STATUS_META[s];
@@ -268,7 +266,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             {/* Callback schedule */}
             {isCallback && (
               <>
-                <Div label="Callback Schedule" />
+                <SectionHeader label="Callback Schedule" />
                 <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"12px 14px" }}>
                   <div style={{ display:"flex", gap:8 }}>
                     <div style={{ flex:1 }}>
@@ -291,8 +289,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             )}
 
             {/* ── BUDGET SECTION ── */}
-            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
-            <Div label="Client" />
+            <SectionHeader label="Client" />
             <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
               {/* Property type */}
               <div style={{ display:"flex", gap:6 }}>
@@ -315,12 +312,16 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 })}
               </div>
               {/* Budget */}
-              <input value={local.clientInfo?.budget||""} onChange={e => set("clientInfo",{...local.clientInfo, budget:e.target.value})} placeholder="💰 Budget e.g. 2,500,000 EGP" style={{ ...inputBase }} />
+              <div style={{ position:"relative" }}>
+                <div style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", display:"flex", alignItems:"center" }}>
+                  <svg width="13" height="13" viewBox="0 0 256 256" fill={C.gray}><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
+                </div>
+                <input value={local.clientInfo?.budget||""} onChange={e => set("clientInfo",{...local.clientInfo, budget:e.target.value})} placeholder="Budget e.g. 2,500,000 EGP" style={{ ...inputBase, paddingLeft:32 }} />
+              </div>
             </div>
 
             {/* ── COMMENTS SECTION ── */}
-            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
-            <Div label="Comments" />
+            <SectionHeader label="Comments" />
             <div style={{ display:"flex", gap:8 }}>
               <input ref={inputRef} value={comment} onChange={e => setComment(e.target.value)}
                 onKeyDown={e => e.key==="Enter" && handleAddComment()}
@@ -354,8 +355,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             {/* ── CHANGELOG SECTION ── */}
             {local.changelog && local.changelog.length > 0 && (
               <>
-                <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"6px 0 2px" }} />
-                <Div label="Edit History" />
+                <SectionHeader label="Edit History" />
                 <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
                   {local.changelog.map((entry, i) => {
                     const hasChanges = entry.changes && entry.changes.length > 0;
@@ -427,7 +427,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           </div>
 
           {/* Footer */}
-          <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+          <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:"#141418" }}>
             {/* Optional note with save */}
             <div style={{ marginBottom:8 }}>
               <input
@@ -646,12 +646,12 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
           {/* Status */}
           <div style={{
-            fontSize:".6rem", fontWeight:700, color:C.silver,
-            background:C.cardAlt, padding:"4px 10px", borderRadius:6,
+            fontSize:".68rem", fontWeight:700, color:C.white,
+            background:C.cardAlt, padding:"6px 12px", borderRadius:7,
             border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
-            display:"flex", alignItems:"center", gap:4,
+            display:"flex", alignItems:"center", gap:6,
           }}>
-            <div style={{ width:5, height:5, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
+            <div style={{ width:7, height:7, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
             {meta.label}
           </div>
 
