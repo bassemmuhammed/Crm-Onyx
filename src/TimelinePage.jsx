@@ -26,7 +26,7 @@ const C = {
   cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
 
-// ─── Global Styles — matched to AdminHomePage ────────────────
+// ─── Global Styles ────────────────────────────────────────────
 const NoSelect = () => <style>{`
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
   * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Archivo', sans-serif !important; }
@@ -54,7 +54,7 @@ const LAUNCHES = [
     date: "2026-06-15",
     time: "11:00 AM",
     tag: "Grand Launch",
-    projectArea: "50 Acres",
+    projectArea: "50 Faddan",
     projectType: "Residential Compound",
     units: [
       { type: "Studio",     area: "65 m²",  price: "3,200,000 EGP" },
@@ -62,7 +62,7 @@ const LAUNCHES = [
       { type: "2 Bedrooms", area: "145 m²", price: "7,400,000 EGP" },
       { type: "3 Bedrooms", area: "210 m²", price: "9,076,200 EGP" },
     ],
-    booking: "10% Down Payment",
+    downPayment: "10%",
     installment: "7 Years — Quarterly",
     cashDiscount: "40%",
   },
@@ -75,14 +75,14 @@ const LAUNCHES = [
     date: "2026-06-22",
     time: "2:00 PM",
     tag: "Phase Launch",
-    projectArea: "35 Acres",
+    projectArea: "35 Faddan",
     projectType: "Mixed Use — Residential & Commercial",
     units: [
       { type: "1 Bedroom",  area: "90 m²",  price: "3,420,000 EGP" },
       { type: "2 Bedrooms", area: "135 m²", price: "5,130,000 EGP" },
       { type: "3 Bedrooms", area: "190 m²", price: "7,220,000 EGP" },
     ],
-    booking: "15% Down Payment",
+    downPayment: "15%",
     installment: "8 Years — Quarterly",
     cashDiscount: "25%",
   },
@@ -95,7 +95,7 @@ const LAUNCHES = [
     date: "2026-07-01",
     time: "10:00 AM",
     tag: "Soft Launch",
-    projectArea: "70 Acres",
+    projectArea: "70 Faddan",
     projectType: "Luxury Residential Compound",
     units: [
       { type: "1 Bedroom",  area: "100 m²", price: "5,500,000 EGP" },
@@ -103,7 +103,7 @@ const LAUNCHES = [
       { type: "3 Bedrooms", area: "220 m²", price: "12,100,000 EGP" },
       { type: "Penthouse",  area: "340 m²", price: "21,000,000 EGP" },
     ],
-    booking: "20% Down Payment",
+    downPayment: "20%",
     installment: "10 Years — Semi-Annual",
     cashDiscount: "30%",
   },
@@ -117,7 +117,6 @@ const POSTS = [
     type: "unit_offer",
     typeLabel: "Unit Offer",
     content: `وصلنا في AMG ل 80% إنشاءات 💪🧘\nهات عميلك وتعالي يعاين على أرض الوقع 🏃‍♂️🔥 في أميز لوكيشن في الـ R7 🔥🤩\n\nتعالي امتلك وحدتك في أميز وأرقي مكان في الـ R7 دابل فيو على حي السفارات وحي المستثمرين من AVA MINA Group (AMG)\n\n*8C_ A32 (210)*\nدايركت على النادي`,
-    unit: "A32 — 210m²",
     details: [
       { label: "سعر قبل الخصم",  value: "9,076,200 ج" },
       { label: "خصم 10%",         value: "8,168,580 ج" },
@@ -136,7 +135,6 @@ const POSTS = [
     type: "promo",
     typeLabel: "Promotion",
     content: `🏙️ Nile Gate Phase 2 — فرصة محدودة!\nوحدات تاور B متاحة بأسعار ما قبل الإطلاق 🔥\n\nمتشيلوش الفرصة دي — الأسعار هتتغير بعد الـ Launch رسمياً يوم 22 يونيو`,
-    unit: "Tower B",
     details: [
       { label: "سعر المتر", value: "38,000 ج" },
       { label: "مقدم",      value: "15%"       },
@@ -188,7 +186,7 @@ function LaunchCard({ item, index }) {
         boxShadow:     "0 4px 20px rgba(0,0,0,.45)",
       }}
     >
-      {/* Left accent bar only — thick top, fades to transparent */}
+      {/* Left accent bar — thick top, fades down */}
       <div style={{
         position:     "absolute",
         top:          0,
@@ -201,7 +199,7 @@ function LaunchCard({ item, index }) {
 
       <div style={{ padding: "14px 14px 12px", paddingLeft: 18 }}>
 
-        {/* Header: Avatar | Name+Dev | Tag · Days */}
+        {/* Header: Avatar | Name+Dev | red dot · Tag · Days */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
           <DevAvatar name={item.developer} logoUrl={item.logoUrl} />
 
@@ -210,15 +208,16 @@ function LaunchCard({ item, index }) {
             <div style={{ fontSize: ".62rem", color: C.gray, fontWeight: 600, marginTop: 2 }}>{item.developer}</div>
           </div>
 
-          {/* Tag (plain text) + Days badge */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          {/* Red dot + Tag text + Days badge */}
+          <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, flexShrink: 0 }} />
             <span style={{ fontSize: ".58rem", fontWeight: 700, color: C.gray }}>{item.tag}</span>
             <div style={{
               background:   urgent ? `${C.red}22` : C.cardAlt,
               color:        urgent ? C.red : C.silver,
-              fontSize:     ".6rem",
+              fontSize:     ".58rem",
               fontWeight:   800,
-              padding:      "3px 9px",
+              padding:      "3px 8px",
               borderRadius: 99,
               border:       `1px solid ${urgent ? C.red + "55" : C.border}`,
               whiteSpace:   "nowrap",
@@ -240,9 +239,9 @@ function LaunchCard({ item, index }) {
             border:       `1px solid ${C.border}`,
             display:      "flex",
             alignItems:   "center",
-            gap:          4,
+            gap:          5,
           }}>
-            {Icons.house && <span style={{ opacity: .6 }}>{Icons.house}</span>}
+            <span style={{ color: C.gray, display: "flex", alignItems: "center" }}>{Icons.house}</span>
             {item.location}
           </div>
           <div style={{
@@ -255,9 +254,9 @@ function LaunchCard({ item, index }) {
             border:       `1px solid ${C.border}`,
             display:      "flex",
             alignItems:   "center",
-            gap:          4,
+            gap:          5,
           }}>
-            {Icons.calendar && <span style={{ opacity: .6 }}>{Icons.calendar}</span>}
+            <span style={{ color: C.gray, display: "flex", alignItems: "center" }}>{Icons.calendar}</span>
             {new Date(item.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} — {item.time}
           </div>
         </div>
@@ -282,10 +281,10 @@ function LaunchCard({ item, index }) {
           ))}
         </div>
 
-        {/* Booking / Installment / Cash — centered */}
+        {/* Down Payment / Installment / Cash — centered, no "Booking" label */}
         <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
           {[
-            { label: "Booking",       value: item.booking,      color: C.blue  },
+            { label: "Down Payment",  value: item.downPayment,  color: C.blue  },
             { label: "Installment",   value: item.installment,  color: C.green },
             { label: "Cash Discount", value: item.cashDiscount, color: C.amber },
           ].map((d, i) => (
@@ -298,7 +297,7 @@ function LaunchCard({ item, index }) {
               textAlign:    "center",
             }}>
               <div style={{ fontSize: ".44rem", color: d.color, fontWeight: 800, marginBottom: 3, textTransform: "uppercase", letterSpacing: .3 }}>{d.label}</div>
-              <div style={{ fontSize: ".66rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
+              <div style={{ fontSize: ".68rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
             </div>
           ))}
         </div>
@@ -384,7 +383,6 @@ function PostCard({ post, index }) {
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* Project avatar — initials, no red bg */}
             <div style={{
               width:          38,
               height:         38,
@@ -406,13 +404,8 @@ function PostCard({ post, index }) {
             </div>
           </div>
 
-          {/* Type label — plain, no red background */}
-          <span style={{
-            fontSize:   ".58rem",
-            fontWeight: 700,
-            color:      C.gray,
-            letterSpacing: ".3px",
-          }}>
+          {/* Type label — plain gray, no background */}
+          <span style={{ fontSize: ".58rem", fontWeight: 700, color: C.gray, letterSpacing: ".3px" }}>
             {post.typeLabel}
           </span>
         </div>
@@ -494,8 +487,8 @@ function SwipeableTabs({ tabs, activeIndex, onSwipe, children }) {
 
 // ─── Main Page ────────────────────────────────────────────────
 const TABS = [
-  { key: "launches", label: "🚀 Launches", data: LAUNCHES },
-  { key: "posts",    label: "📢 Posts",    data: POSTS    },
+  { key: "launches", label: "Launches", icon: "building", data: LAUNCHES },
+  { key: "posts",    label: "Posts",    icon: "send",     data: POSTS    },
 ];
 
 export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) {
@@ -513,8 +506,8 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
     <div style={{ fontFamily: "Archivo,sans-serif", background: C.surface, minHeight: "100vh", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
       <NoSelect />
 
-      <ProfileModal     open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
-      <NotificationPanel open={notifOpen}  onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))} />
+      <ProfileModal      open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
+      <NotificationPanel open={notifOpen}   onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))} />
 
       {/* App-level red top line */}
       <div style={{ height: 2, background: `linear-gradient(90deg,${C.red} 0%,${C.redLight} 40%,transparent 100%)`, position: "sticky", top: 0, zIndex: 100 }} />
@@ -529,7 +522,7 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
         </span>
       </div>
 
-      {/* Tab indicators */}
+      {/* Tab indicators — icon + label, no emoji, no colored bg */}
       <div style={{ padding: "10px 16px 0", display: "flex", gap: 6, alignItems: "center" }}>
         {TABS.map((t, i) => {
           const active = i === tabIndex;
@@ -545,7 +538,7 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
                 cursor:       "pointer",
                 fontSize:     ".72rem",
                 fontWeight:   700,
-                background:   active ? `${C.red}22` : C.cardAlt,
+                background:   active ? `${C.red}18` : C.cardAlt,
                 color:        active ? C.white : C.gray,
                 display:      "flex",
                 alignItems:   "center",
@@ -553,15 +546,23 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
                 transition:   "all .2s ease",
               }}
             >
+              {/* Lucide icon via Icons map */}
+              <span style={{
+                display:    "flex",
+                alignItems: "center",
+                color:      active ? C.red : C.gray,
+                transition: "color .2s ease",
+              }}>
+                {Icons[t.icon]}
+              </span>
               {t.label}
               <span style={{
-                background:   active ? C.red : C.cardAlt,
+                background:   active ? C.red : C.border,
                 color:        active ? C.white : C.gray,
                 fontSize:     ".55rem",
                 fontWeight:   800,
                 padding:      "1px 7px",
                 borderRadius: 99,
-                border:       `1px solid ${active ? C.red : C.border}`,
               }}>
                 {t.data.length}
               </span>
