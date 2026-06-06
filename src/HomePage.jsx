@@ -187,7 +187,7 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
         background: cardBg,
         border: `1px solid ${C.border}`,
         borderRadius: 14,
-        padding: "13px 13px 11px",
+        padding: "11px 11px 9px",
         cursor: "pointer",
         animationDelay: `${delay}ms`,
         fontFamily: "Archivo,sans-serif",
@@ -200,18 +200,18 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
         {/* Big Icon Box */}
         <div style={{
-          width: 46, height: 46, borderRadius: 12, flexShrink: 0,
+          width: 38, height: 38, borderRadius: 10, flexShrink: 0,
           background: C.black,
           border: `1.5px solid ${C.border}`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: C.silver,
-          fontSize: "1.3rem",
+          color: s.color,
+          fontSize: "1.1rem",
         }}>
           {Icons[s.icon]}
         </div>
 
         {/* Number */}
-        <div style={{ fontSize:"2.2rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1.5 }}>
+        <div style={{ fontSize:"1.6rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1 }}>
           {val}
         </div>
       </div>
