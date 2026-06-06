@@ -196,7 +196,7 @@ const OnyxMark = () => (
   </svg>
 );
 
-export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick }) {
+export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick, avatarUrl = null }) {
   return (
     <>
       <style>{styles}</style>
@@ -211,7 +211,6 @@ export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick
             </span>
             <span className="onyx-crm-label">CRM</span>
           </div>
-
         </div>
 
         {/* ── Actions ── */}
@@ -226,9 +225,17 @@ export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick
 
           <div className="onyx-btn-divider" />
 
-          {/* Profile */}
-          <div className="onyx-btn" onClick={onProfileClick}>
-            {Icons.user}
+          {/* Profile — shows avatar photo if available */}
+          <div className="onyx-btn" onClick={onProfileClick} style={{ overflow: "hidden", padding: 0 }}>
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="profile"
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%", display: "block" }}
+              />
+            ) : (
+              Icons.user
+            )}
           </div>
         </div>
 

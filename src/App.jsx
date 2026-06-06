@@ -90,6 +90,15 @@ export default function App() {
   const [loggedIn,    setLoggedIn]    = useState(false);
   const [userRole,    setUserRole]    = useState(null);
   const [currentUser, setCurrentUser] = useState(null); // { id, name, email, role }
+  const [headerAvatarUrl, setHeaderAvatarUrl] = useState(null);
+
+  // Refresh avatar from DB (called after ProfileModal closes)
+  const refreshAvatar = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase.from("users").select("avatar_url").eq("id", user.id).single();
+    if (data?.avatar_url) setHeaderAvatarUrl(data.avatar_url);
+  };
 
 
 
@@ -189,6 +198,9 @@ export default function App() {
     setAuthLoading(false);
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userRole", role);
+    // Load avatar for header
+    const { data: av } = await supabase.from("users").select("avatar_url").eq("id", userId).single();
+    if (av?.avatar_url) setHeaderAvatarUrl(av.avatar_url);
   };
 
   // ── Leads state خفيف للـ HomePage stats بس ──────────────────
@@ -514,6 +526,7 @@ export default function App() {
           onBellClick={()    => setNotifOpen(true)}
           onProfileClick={() => setProfileOpen(true)}
           logo={<OnyxLogo size={28} />}
+          avatarUrl={headerAvatarUrl}
         />
 
         <div className="onyx-animate" key={activeAdminTab}>
@@ -528,7 +541,7 @@ export default function App() {
         />
         <ProfileModal
           open={profileOpen}
-          onClose={() => setProfileOpen(false)}
+          onClose={() => { setProfileOpen(false); refreshAvatar(); }}
           onSignOut={handleSignOut}
         />
 
