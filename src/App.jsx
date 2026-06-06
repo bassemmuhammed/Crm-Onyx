@@ -442,37 +442,6 @@ export default function App() {
             <AdminHomePage
               onTabChange={handleAdminTabChange}
               projects={projects}
-              onAddProject={() => handleAdminTabChange(TAB_ADDPROJECT)}
-              onEditProject={(p) => { setEditProject(p); handleAdminTabChange(TAB_ADDPROJECT); }}
-            />
-          );
-        case TAB_LEADS:
-          return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} initialFilter={adminLeadsFilter} />;
-        case TAB_ADDPROJECT:
-          return (
-            <AddProjectPage
-              onProjectSaved={handleProjectSaved}
-              onTabChange={(tab) => handleAdminTabChange(tab === TAB_ADDPROJECT ? TAB_HOME : tab)}
-              onSignOut={handleSignOut}
-              editProject={editProject}
-              navItems={ADMIN_NAV}
-              activeTab={TAB_ADDPROJECT}
-              isAdmin={true}
-              projects={projects}
-              onDeleteProject={handleDeleteProject}
-            />
-          );
-        case TAB_SETTINGS:
-          return <AdminSettings onTabChange={handleAdminTabChange} onSignOut={handleSignOut} />;
-        default:
-          return null;
-      }
-    };
-        case TAB_HOME:
-          return (
-            <AdminHomePage
-              onTabChange={handleAdminTabChange}
-              projects={projects}
               onAddProject={() => openAddProject()}
               onEditProject={(p) => openAddProject(p)}
             />
