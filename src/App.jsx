@@ -27,9 +27,9 @@ const OnyxGlobalStyles = () => (
       --onyx-surface: #0a0a0a; --onyx-card: #111111; --onyx-border: #1e1e1e;
     }
     body, html { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--onyx-black); }
-    ::-webkit-scrollbar-thumb { background: var(--onyx-red); border-radius: 2px; }
+    ::-webkit-scrollbar { width: 0px; height: 0px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: transparent; }
     @keyframes onyx-fade-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .onyx-animate { animation: onyx-fade-up 0.35s ease both; }
   `}</style>
@@ -110,13 +110,21 @@ export default function App() {
   const [adminLeadsFilter, setAdminLeadsFilter] = useState(null); // { status, agent_id }
 
   // ── Admin UI state ──
-  const [activeAdminTab, setActiveAdminTab] = useState(TAB_HOME);
+  // sessionStorage = same browser session (tab open) → survives refresh but clears on app close
+  const [activeAdminTab, setActiveAdminTab] = useState(() => {
+    const saved = parseInt(sessionStorage.getItem("adminTab") ?? "-1");
+    if (saved === TAB_ADDPROJECT) return TAB_HOME;
+    return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
+  });
   const [notifOpen,      setNotifOpen]      = useState(false);
   const [profileOpen,    setProfileOpen]    = useState(false);
   const [notifs,         setNotifs]         = useState(INIT_NOTIFS);
 
   // ── Sales tab ──
-  const [activeSalesTab, setActiveSalesTab] = useState(TAB_HOME);
+  const [activeSalesTab, setActiveSalesTab] = useState(() => {
+    const saved = parseInt(sessionStorage.getItem("salesTab") ?? "-1");
+    return [TAB_HOME, TAB_LEADS, TAB_SCHEDULE, TAB_PROJECTS].includes(saved) ? saved : TAB_HOME;
+  });
 
   // ── Supabase auth listener ────────────────────────────────────
   useEffect(() => {
@@ -273,6 +281,10 @@ export default function App() {
     return () => supabase.removeChannel(channel);
   }, [loggedIn, fetchProjects]);
 
+  // Persist current tab to sessionStorage (survives refresh, clears on app close)
+  useEffect(() => { sessionStorage.setItem("salesTab",  String(activeSalesTab));  }, [activeSalesTab]);
+  useEffect(() => { sessionStorage.setItem("adminTab",  String(activeAdminTab));  }, [activeAdminTab]);
+
   // Scroll to top whenever tab changes
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -282,10 +294,12 @@ export default function App() {
     if (tab === "leads") {
       setAdminLeadsFilter(filter);
       setActiveAdminTab(TAB_LEADS);
+      sessionStorage.setItem("adminTab", String(TAB_LEADS));
       return;
     }
     setAdminLeadsFilter(null);
     setActiveAdminTab(tab);
+    sessionStorage.setItem("adminTab", String(tab));
   };
 
   // ── Login / SignOut handlers ──
@@ -293,6 +307,9 @@ export default function App() {
     setUserRole(role);
     setLoggedIn(true);
     setActiveSalesTab(TAB_HOME);
+    setActiveAdminTab(TAB_HOME);
+    sessionStorage.removeItem("adminTab");
+    sessionStorage.removeItem("salesTab");
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userRole", role);
   };
@@ -301,9 +318,12 @@ export default function App() {
     await supabase.auth.signOut();
     localStorage.setItem("loggedIn", "false");
     localStorage.removeItem("userRole");
+    sessionStorage.removeItem("adminTab");
+    sessionStorage.removeItem("salesTab");
     setLoggedIn(false);
     setCurrentUser(null);
     setActiveSalesTab(TAB_HOME);
+    setActiveAdminTab(TAB_HOME);
     setProjects([]);
     setEditProject(null);
     setShowAddProject(false);
@@ -437,11 +457,10 @@ export default function App() {
   // ── ADMIN / OWNER ──────────────────────────────────────────────
   if (userRole === "admin" || userRole === "owner") {
 
-    // Add Project screen (full-page takeover)
-    if (showAddProject) {
-      return (
-        <>
-          <OnyxGlobalStyles />
+    const renderAdminPage = () => {
+      // Add Project rendered inside layout (keeps fixed header)
+      if (showAddProject) {
+        return (
           <AddProjectPage
             onProjectSaved={handleProjectSaved}
             onTabChange={(tab) => {
@@ -453,11 +472,8 @@ export default function App() {
             navItems={ADMIN_NAV}
             activeTab={TAB_ADDPROJECT}
           />
-        </>
-      );
-    }
-
-    const renderAdminPage = () => {
+        );
+      }
       switch (activeAdminTab) {
         case TAB_HOME:
           return (
