@@ -82,7 +82,12 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
   const fileRef = useRef();
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Reset so next open always shows fresh data
+      setUserData(null);
+      setLoading(true);
+      return;
+    }
     const fetchUser = async () => {
       setLoading(true);
       try {
@@ -93,7 +98,8 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
           .from("users")
           .select("name, email, phone, region, title, role, avatar_url, color")
           .eq("id", user.id)
-          .single();
+          .single()
+          .throwOnError();
         setUserData(data || { name: user.email, email: user.email });
       } catch (_) {}
       finally { setLoading(false); }
