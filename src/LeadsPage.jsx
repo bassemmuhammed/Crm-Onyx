@@ -446,7 +446,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
       <div style={{ padding:"13px 14px 13px 17px", display:"flex", flexDirection:"column", gap:10 }}>
 
         {/* Row 1: Avatar + Name/Phone + Call + WA + Share */}
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, position:"relative" }}>
 
           {/* Avatar */}
           <div style={{
@@ -456,11 +456,18 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
           }}>{initial}</div>
 
-          {/* Name + phone — centered */}
-          <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.phone}</div>
+          {/* Name + phone — absolutely centered in the whole row */}
+          <div style={{
+            position:"absolute", left:0, right:0,
+            display:"flex", flexDirection:"column", alignItems:"center",
+            pointerEvents:"none",
+          }}>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, maxWidth:"55%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, maxWidth:"55%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.phone}</div>
           </div>
+
+          {/* Spacer */}
+          <div style={{ flex:1 }} />
 
           {/* Call */}
           <a href={`tel:${lead.phone}`} onClick={e => e.stopPropagation()} style={{
