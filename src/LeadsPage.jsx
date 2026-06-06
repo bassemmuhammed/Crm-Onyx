@@ -439,12 +439,12 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
 
           {/* Name + phone — absolutely centered in the whole row */}
           <div style={{
-            position:"absolute", left:0, right:0,
+            position:"absolute", left:50, right:120,
             display:"flex", flexDirection:"column", alignItems:"center",
             pointerEvents:"none",
           }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, maxWidth:"55%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, maxWidth:"55%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.phone}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.phone}</div>
           </div>
 
           {/* Spacer */}
