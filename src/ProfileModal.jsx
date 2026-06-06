@@ -41,8 +41,8 @@ const FIELDS = [
   { label: "Job Title",  key: "title",  icon: "chart"     },
 ];
 
-// ── Resize image and return base64 ────────────────────────────
-function resizeImage(file, maxSize = 400) {
+// ── Resize + compress image → small base64 JPEG ───────────────
+function resizeImage(file, maxSize = 256, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -50,12 +50,20 @@ function resizeImage(file, maxSize = 400) {
       img.onload = () => {
         const canvas = document.createElement("canvas");
         let w = img.width, h = img.height;
-        if (w > h) { if (w > maxSize) { h = (h * maxSize) / w; w = maxSize; } }
-        else       { if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; } }
+        if (w > h) { if (w > maxSize) { h = Math.round((h * maxSize) / w); w = maxSize; } }
+        else       { if (h > maxSize) { w = Math.round((w * maxSize) / h); h = maxSize; } }
         canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL("image/jpeg", 0.82));
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+        let b64 = canvas.toDataURL("image/jpeg", quality);
+        // If still >150KB, compress more aggressively
+        if (b64.length > 150000) {
+          const c2 = document.createElement("canvas");
+          const s = 180;
+          c2.width = s; c2.height = s;
+          c2.getContext("2d").drawImage(img, 0, 0, s, s);
+          b64 = c2.toDataURL("image/jpeg", 0.5);
+        }
+        resolve(b64);
       };
       img.onerror = reject;
       img.src = e.target.result;
@@ -112,18 +120,25 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
 
     setUploading(true);
     try {
-      // Resize to max 400px and convert to base64 JPEG
-      const base64 = await resizeImage(file, 400);
+      const base64 = await resizeImage(file, 256, 0.7);
 
-      const { error } = await supabase
+      // Save to DB
+      const { error, data } = await supabase
         .from("users")
         .update({ avatar_url: base64 })
-        .eq("id", userId);
+        .eq("id", userId)
+        .select("avatar_url")
+        .single();
 
       if (error) { showToast(`خطأ: ${error.message}`, false); return; }
 
-      setUserData(prev => ({ ...prev, avatar_url: base64 }));
-      showToast("تم تحديث الصورة ✓");
+      // Verify it actually saved by checking returned data
+      if (!data?.avatar_url) {
+        showToast("لم يتم الحفظ — حاول تاني", false); return;
+      }
+
+      setUserData(prev => ({ ...prev, avatar_url: data.avatar_url }));
+      showToast("تم حفظ الصورة ✓");
     } catch (err) {
       showToast(`خطأ: ${err.message}`, false);
     } finally {
