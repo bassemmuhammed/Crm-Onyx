@@ -100,6 +100,11 @@ export default function App() {
     () => sessionStorage.getItem("showAddProject") === "true"
   );
 
+  // ── Sales leads state ──
+  const [leads,        setLeads]        = useState([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [leadsFilter,  setLeadsFilter]  = useState(null); // null = "all"
+
   // ── Admin UI state ──
   const [activeAdminTab, setActiveAdminTab] = useState(() => {
     const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
@@ -178,7 +183,70 @@ export default function App() {
     localStorage.setItem("userRole", role);
   };
 
-  // ── Fetch projects from Supabase ──
+  // ── Fetch leads from Supabase (sales) ──
+  const fetchLeads = useCallback(async () => {
+    setLeadsLoading(true);
+    const { data: sessionData } = await supabase.auth.getSession();
+    const uid = sessionData?.session?.user?.id;
+    if (!uid) { setLeadsLoading(false); return; }
+
+    const { data, error } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("assigned_to", uid)
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setLeads(data.map(r => ({
+        id:           r.id,
+        name:         r.name,
+        phone:        r.phone,
+        source:       r.source,
+        status:       r.status,
+        project:      r.project,
+        priority:     r.priority,
+        comments:     r.comments     || [],
+        callbackDate: r.callback_date || "",
+        callbackTime: r.callback_time || "",
+        clientInfo:   r.client_info   || { type: "", budget: "" },
+      })));
+    }
+    setLeadsLoading(false);
+  }, []);
+
+  // Fetch leads on login
+  useEffect(() => {
+    if (loggedIn && (userRole === "sales" || userRole === "broker")) fetchLeads();
+  }, [loggedIn, userRole, fetchLeads]);
+
+  // Realtime leads subscription
+  useEffect(() => {
+    if (!loggedIn || (userRole !== "sales" && userRole !== "broker")) return;
+    const channel = supabase
+      .channel("leads-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => {
+        fetchLeads();
+      })
+      .subscribe();
+    return () => supabase.removeChannel(channel);
+  }, [loggedIn, userRole, fetchLeads]);
+
+  // ── Update a single lead in Supabase ──
+  const handleUpdateLead = useCallback(async (updated) => {
+    setLeads(prev => prev.map(l => l.id === updated.id ? updated : l));
+    await supabase.from("leads").update({
+      name:          updated.name,
+      phone:         updated.phone,
+      source:        updated.source,
+      status:        updated.status,
+      project:       updated.project,
+      priority:      updated.priority,
+      comments:      updated.comments,
+      callback_date: updated.callbackDate,
+      callback_time: updated.callbackTime,
+      client_info:   updated.clientInfo,
+    }).eq("id", updated.id);
+  }, []);
   const fetchProjects = useCallback(async () => {
     setProjectsLoading(true);
     const { data, error } = await supabase
@@ -503,9 +571,29 @@ export default function App() {
   const renderSalesPage = () => {
     switch (activeSalesTab) {
       case TAB_HOME:
-        return <HomePage activeTab={activeSalesTab} onTabChange={setActiveSalesTab} onSignOut={handleSignOut} />;
+        return (
+          <HomePage
+            activeTab={activeSalesTab}
+            onTabChange={setActiveSalesTab}
+            onSignOut={handleSignOut}
+            leads={leads}
+            onLeadsFilter={(filterKey) => {
+              setLeadsFilter(filterKey);
+              setActiveSalesTab(TAB_LEADS);
+            }}
+          />
+        );
       case TAB_LEADS:
-        return <LeadsPage activeTab={activeSalesTab} onTabChange={setActiveSalesTab} onSignOut={handleSignOut} />;
+        return (
+          <LeadsPage
+            activeTab={activeSalesTab}
+            onTabChange={setActiveSalesTab}
+            onSignOut={handleSignOut}
+            leads={leads}
+            onUpdateLead={handleUpdateLead}
+            initialFilter={leadsFilter}
+          />
+        );
       case TAB_SCHEDULE:
         return <TimelinePage activeTab={activeSalesTab} onTabChange={setActiveSalesTab} onSignOut={handleSignOut} />;
       case TAB_PROJECTS:
