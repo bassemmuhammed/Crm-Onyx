@@ -90,14 +90,16 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
   const [saving, setSaving]   = useState(false);
   const prevId                = useRef(null);
   const inputRef              = useRef(null);
+  const [pendingComment, setPendingComment] = useState(""); // كومنت بيتبعت مع الـ Save
 
   useEffect(() => {
     if (open && lead && lead.id !== prevId.current) {
       setLocal({ ...lead, comments: [...lead.comments] });
       setComment("");
+      setPendingComment("");
       prevId.current = lead.id;
     }
-    if (!open) prevId.current = null;
+    if (!open) { prevId.current = null; setPendingComment(""); }
   }, [open, lead]);
 
   useEffect(() => {
@@ -123,10 +125,24 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
 
   const handleSave = useCallback(async () => {
     setSaving(true);
-    await onUpdate(local);
+    const commentText = pendingComment.trim();
+    // لو فيه كومنت، احفظه في lead_comments وابعته مع الـ changelog
+    if (commentText) {
+      const time = new Date().toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" });
+      const saved = await dbAddComment(local.id, { text: commentText, by: salesName, time });
+      const entry = saved
+        ? { id: saved.id, text: saved.text, by: saved.by, time: saved.time }
+        : { id: Date.now(), text: commentText, by: salesName, time };
+      // ضيف الكومنت في الـ local قبل الـ save عشان يتسجل في الـ changelog
+      const updatedLocal = { ...local, comments: [entry, ...local.comments] };
+      await onUpdate(updatedLocal, commentText);
+    } else {
+      await onUpdate(local, null);
+    }
     setSaving(false);
+    setPendingComment("");
     onClose();
-  }, [local, onUpdate, onClose]);
+  }, [local, onUpdate, onClose, pendingComment, salesName]);
 
   if (!open || !local) return null;
 
@@ -346,6 +362,33 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
 
           {/* Footer */}
           <div style={{ padding:"10px 18px 14px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+            {/* Comment مع الـ Save — بيظهر في الـ changelog عند الأدمن */}
+            <div style={{ position:"relative", marginBottom:8 }}>
+              <input
+                value={pendingComment}
+                onChange={e => setPendingComment(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && !e.shiftKey && handleSave()}
+                placeholder="💬 Add a note with this save (optional)…"
+                style={{
+                  ...inputBase,
+                  fontSize:".72rem", padding:"9px 12px",
+                  background: C.surface,
+                  border:`1.5px solid ${pendingComment.trim() ? C.blue+"66" : C.border}`,
+                  borderRadius:10,
+                  transition:"border-color .2s",
+                  WebkitUserSelect:"text", userSelect:"text",
+                }}
+              />
+              {pendingComment.trim() && (
+                <div style={{
+                  position:"absolute", right:10, top:"50%", transform:"translateY(-50%)",
+                  fontSize:".55rem", fontWeight:800, color:C.blue,
+                  background:`${C.blue}18`, border:`1px solid ${C.blue}33`,
+                  padding:"2px 6px", borderRadius:4, fontFamily:"Archivo,sans-serif",
+                  pointerEvents:"none",
+                }}>will be logged</div>
+              )}
+            </div>
             <div style={{ display:"flex", gap:8, alignItems:"center" }}>
               <button onClick={onClose} style={{
                 flex:1, padding:"11px 0", borderRadius:10,
@@ -598,8 +641,9 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
   const closeDetail = useCallback(() => setDetail(false), []);
 
   // ── Update Lead: بيحفظ في Supabase ويسجّل الـ changelog ─────
-  const updateLead = useCallback(async (updated) => {
-    const result = await dbUpdateLead(updated, salesName);
+  // comment بيتبعت من handleSave عشان يتسجل في الـ changelog عند الأدمن
+  const updateLead = useCallback(async (updated, comment = null) => {
+    const result = await dbUpdateLead(updated, salesName, comment);
     if (result) {
       setLeads(prev => prev.map(l => l.id === updated.id ? { ...result, comments: updated.comments } : l));
       setSelected({ ...result, comments: updated.comments });
