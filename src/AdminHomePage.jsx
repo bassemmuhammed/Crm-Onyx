@@ -67,9 +67,6 @@ const STATUS_META = {
   closed:          { label: "Closed",          color: "#374151", bg: "#37415130" },
 };
 
-// الـ metrics للشارت — نفس أسماء الـ status
-const METRICS = Object.entries(STATUS_META).map(([key, m]) => ({ key, label: m.label, color: m.color }));
-
 // ─── Lead Overview Cards Meta ──────────────────────────────────
 const LEAD_OVERVIEW_CARDS = [
   { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#10b981", accentLine: "#10b981" },
@@ -195,161 +192,138 @@ function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
   );
 }
 
-// ─── Rank badge styles ────────────────────────────────────────
-const RANK_STYLES = [
-  { bg:"linear-gradient(135deg,#FFD700 0%,#B8860B 100%)", text:"#000", border:"#FFD70055", glow:"#FFD70022", topLine:"#FFD700" },
-  { bg:"linear-gradient(135deg,#C0C0C0 0%,#707070 100%)", text:"#000", border:"#C0C0C044", glow:"#C0C0C015", topLine:"#C0C0C0" },
-  { bg:"linear-gradient(135deg,#CD7F32 0%,#7B4A1A 100%)", text:"#fff", border:"#CD7F3244", glow:"#CD7F3215", topLine:"#CD7F32" },
-];
+// ─── Heatmap Table ────────────────────────────────────────────
+function HeatmapTable({ teamData, onTabChange }) {
+  const [hoveredCell, setHoveredCell] = useState(null);
+  const statuses = Object.entries(STATUS_META);
 
-// ─── Leaderboard Card ─────────────────────────────────────────
-function LeaderboardCard({ agent, rank, totalLeads, index, onTabChange }) {
-  const [expanded, setExpanded]   = useState(false);
-  const [imgError,  setImgError]  = useState(false);
-  const hasPhoto   = agent.avatar_url && !imgError;
-  const pct        = totalLeads > 0 ? Math.round((agent.total / totalLeads) * 100) : 0;
-  const rankStyle  = RANK_STYLES[index] || null;
-  const isTop      = index === 0;
-
-  // all statuses with count > 0, sorted
-  const allStatuses = Object.entries(STATUS_META)
-    .map(([key, m]) => ({ key, ...m, count: agent[key] || 0 }))
-    .filter(s => s.count > 0)
-    .sort((a, b) => b.count - a.count);
-
-  // top 4 for segmented bar
-  const top4 = allStatuses.slice(0, 4);
+  const maxPerStatus = Object.fromEntries(
+    statuses.map(([key]) => [key, Math.max(...teamData.map(a => a[key] || 0), 1)])
+  );
 
   return (
-    <div
-      style={{
-        background: isTop
-          ? "linear-gradient(145deg,#1C1A0A 0%,#161610 100%)"
-          : C.cardGrad2,
-        borderRadius: 16,
-        border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
-        boxShadow: rankStyle
-          ? `0 0 24px ${rankStyle.glow}, 0 2px 8px rgba(0,0,0,.5)`
-          : "0 2px 8px rgba(0,0,0,.4)",
-        overflow: "hidden",
-        animation: `slideUp .4s ease both`,
-        animationDelay: `${index * 70}ms`,
-        position: "relative",
-      }}
-    >
-      {/* top accent line */}
-      {rankStyle && (
-        <div style={{
-          position:"absolute", top:0, left:0, right:0, height:2,
-          background:`linear-gradient(90deg, ${rankStyle.topLine}, transparent)`,
-        }} />
-      )}
-
-      {/* ── Main row ── */}
-      <div
-        onClick={() => setExpanded(e => !e)}
-        style={{
-          display:"flex", alignItems:"center", gap:11,
-          padding:"13px 14px",
-          cursor:"pointer",
-        }}
-      >
-        {/* Rank badge */}
-        <div style={{
-          width:28, height:28, borderRadius:8, flexShrink:0,
-          background: rankStyle ? rankStyle.bg : C.cardAlt,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:".65rem", fontWeight:900,
-          color: rankStyle ? rankStyle.text : C.gray,
-          border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
-        }}>
-          {rank <= 3 ? `#${rank}` : rank}
-        </div>
-
-        {/* Avatar */}
-        <div style={{
-          width:40, height:40, borderRadius:"50%", flexShrink:0,
-          overflow:"hidden",
-          border:`2px solid ${agent.color || C.border}`,
-          background: agent.color || C.cardAlt,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:".8rem", fontWeight:900, color:"#fff",
-          boxShadow: isTop ? `0 0 14px ${agent.color || C.red}55` : "none",
-        }}>
-          {hasPhoto ? (
-            <img
-              src={agent.avatar_url}
-              alt={agent.name}
-              onError={() => setImgError(true)}
-              style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}
-            />
-          ) : (
-            <span>{agent.name.charAt(0).toUpperCase()}</span>
-          )}
-        </div>
-
-        {/* Name + segmented bar */}
-        <div style={{ flex:1, minWidth:0 }}>
-          <div style={{
-            fontSize:".75rem", fontWeight:800, color:C.white,
-            marginBottom:6,
-            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis",
-          }}>
-            {agent.name}
-          </div>
-          {/* Segmented progress bar */}
-          <div style={{ height:5, background:C.border, borderRadius:99, overflow:"hidden", display:"flex", gap:1 }}>
-            {top4.map(s => (
-              <div key={s.key} style={{
-                height:"100%",
-                width:`${agent.total > 0 ? (s.count / agent.total) * pct : 0}%`,
-                background: s.color,
-                borderRadius:99,
-                transition:"width .6s ease",
-              }} />
+    <div style={{ overflowX:"auto" }}>
+      <table style={{ width:"100%", borderCollapse:"separate", borderSpacing:"3px" }}>
+        <thead>
+          <tr>
+            <th style={{ textAlign:"left", padding:"0 6px 8px 0", minWidth:90 }}>
+              <span style={{ fontSize:".52rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:"1px" }}>Agent</span>
+            </th>
+            {statuses.map(([key, m]) => (
+              <th key={key} style={{ padding:"0 0 8px", minWidth:36 }}>
+                <div style={{
+                  writingMode:"vertical-rl", textOrientation:"mixed",
+                  transform:"rotate(180deg)",
+                  fontSize:".44rem", fontWeight:700, color:m.color,
+                  textTransform:"uppercase", letterSpacing:".5px",
+                  height:48, display:"flex", alignItems:"center", justifyContent:"flex-start",
+                }}>
+                  {m.label}
+                </div>
+              </th>
             ))}
-          </div>
-        </div>
-
-        {/* Total + pct */}
-        <div style={{ textAlign:"right", flexShrink:0 }}>
-          <div style={{
-            fontSize:"1.15rem", fontWeight:900, lineHeight:1,
-            color: isTop ? "#FFD700" : C.white,
-          }}>
-            {agent.total}
-          </div>
-          <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700, marginTop:2 }}>
-            {pct}%
-          </div>
-        </div>
-      </div>
-
-      {/* ── Expanded status pills ── */}
-      {expanded && allStatuses.length > 0 && (
-        <div style={{
-          padding:"0 14px 13px",
-          display:"flex", flexWrap:"wrap", gap:5,
-          borderTop:`1px solid ${C.border}`,
-          paddingTop:10,
-        }}>
-          {allStatuses.map(s => (
-            <div
-              key={s.key}
-              onClick={() => onTabChange && onTabChange("leads", { status: s.key, agent_id: agent.id })}
-              style={{
-                display:"flex", alignItems:"center", gap:4,
-                background:`${s.color}15`, border:`1px solid ${s.color}44`,
-                borderRadius:6, padding:"4px 8px", cursor:"pointer",
-              }}
-            >
-              <div style={{ width:5, height:5, borderRadius:"50%", background:s.color, flexShrink:0 }} />
-              <span style={{ fontSize:".52rem", fontWeight:700, color:s.color }}>{s.label}</span>
-              <span style={{ fontSize:".6rem", fontWeight:900, color:C.white }}>{s.count}</span>
-            </div>
+            <th style={{ padding:"0 0 8px 6px", minWidth:36 }}>
+              <div style={{
+                writingMode:"vertical-rl", textOrientation:"mixed",
+                transform:"rotate(180deg)",
+                fontSize:".44rem", fontWeight:700, color:C.gray,
+                textTransform:"uppercase", letterSpacing:".5px",
+                height:48, display:"flex", alignItems:"center",
+              }}>Total</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {teamData.map((agent, ri) => (
+            <tr key={agent.id}>
+              <td style={{ padding:"0 8px 3px 0", verticalAlign:"middle" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                  <div style={{
+                    width:22, height:22, borderRadius:"50%",
+                    background: agent.color || C.cardAlt,
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize:".52rem", fontWeight:900, color:"#fff", flexShrink:0,
+                  }}>
+                    {agent.name.charAt(0)}
+                  </div>
+                  <span style={{
+                    fontSize:".6rem", fontWeight:700, color:C.white,
+                    whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", maxWidth:60,
+                  }}>
+                    {agent.name.split(" ")[0]}
+                  </span>
+                </div>
+              </td>
+              {statuses.map(([key, m]) => {
+                const val       = agent[key] || 0;
+                const intensity = val / maxPerStatus[key];
+                const cellId    = `${ri}-${key}`;
+                const isHov     = hoveredCell === cellId;
+                return (
+                  <td key={key} style={{ padding:"0 0 3px", verticalAlign:"middle", textAlign:"center" }}>
+                    <div
+                      onMouseEnter={() => setHoveredCell(cellId)}
+                      onMouseLeave={() => setHoveredCell(null)}
+                      onTouchStart={() => setHoveredCell(cellId)}
+                      onTouchEnd={() => setTimeout(() => setHoveredCell(null), 1000)}
+                      onClick={() => val > 0 && onTabChange && onTabChange("leads", { status: key, agent_id: agent.id })}
+                      style={{
+                        width:32, height:32, borderRadius:7, margin:"0 auto",
+                        background: val === 0
+                          ? C.cardAlt
+                          : `${m.color}${Math.round(intensity * 200 + 30).toString(16).padStart(2,"0")}`,
+                        border: isHov
+                          ? `1px solid ${m.color}`
+                          : val > 0 ? `1px solid ${m.color}30` : `1px solid ${C.border}`,
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        cursor: val > 0 ? "pointer" : "default",
+                        transition:"all .15s ease",
+                        transform: isHov && val > 0 ? "scale(1.15)" : "scale(1)",
+                        boxShadow: isHov && val > 0 ? `0 0 10px ${m.color}44` : "none",
+                        position:"relative",
+                      }}
+                    >
+                      {val > 0 && (
+                        <span style={{ fontSize:".58rem", fontWeight:900, color: intensity > 0.5 ? "#fff" : m.color }}>
+                          {val}
+                        </span>
+                      )}
+                      {isHov && val > 0 && (
+                        <div style={{
+                          position:"absolute", bottom:"calc(100% + 6px)", left:"50%",
+                          transform:"translateX(-50%)",
+                          background:C.cardAlt, border:`1px solid ${m.color}66`,
+                          borderRadius:7, padding:"4px 8px",
+                          pointerEvents:"none", whiteSpace:"nowrap", zIndex:20,
+                          boxShadow:`0 4px 12px rgba(0,0,0,.5)`,
+                        }}>
+                          <div style={{ fontSize:".5rem", color:m.color, fontWeight:800 }}>{m.label}</div>
+                          <div style={{ fontSize:".6rem", color:C.white, fontWeight:900, textAlign:"center" }}>{val}</div>
+                          <div style={{
+                            position:"absolute", bottom:-4, left:"50%", transform:"translateX(-50%)",
+                            width:0, height:0,
+                            borderLeft:"4px solid transparent", borderRight:"4px solid transparent",
+                            borderTop:`4px solid ${C.cardAlt}`,
+                          }} />
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                );
+              })}
+              <td style={{ padding:"0 0 3px 6px", textAlign:"center", verticalAlign:"middle" }}>
+                <div style={{
+                  width:32, height:32, borderRadius:7, margin:"0 auto",
+                  background:"#CC151518", border:`1px solid #CC151544`,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                }}>
+                  <span style={{ fontSize:".65rem", fontWeight:900, color:C.red }}>{agent.total}</span>
+                </div>
+              </td>
+            </tr>
           ))}
-        </div>
-      )}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -405,7 +379,7 @@ export default function AdminHomePage({ onTabChange }) {
   const teamData = team.map((agent) => {
     const agentLeads = leads.filter(l => l.assigned_to === agent.id);
     const byStatus = {};
-    METRICS.forEach(m => { byStatus[m.key] = agentLeads.filter(l => l.status === m.key).length; });
+    Object.keys(STATUS_META).forEach(key => { byStatus[key] = agentLeads.filter(l => l.status === key).length; });
     return { ...agent, total: agentLeads.length, ...byStatus };
   }).sort((a, b) => b.total - a.total);
 
@@ -457,7 +431,7 @@ export default function AdminHomePage({ onTabChange }) {
             </div>
           </div>
 
-          {/* ── Team Leaderboard ── */}
+          {/* ── Team Heatmap ── */}
           <div style={{
             background: C.cardGrad2, borderRadius:20,
             padding:"18px 16px 16px",
@@ -474,9 +448,9 @@ export default function AdminHomePage({ onTabChange }) {
               <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                 <div style={{ width:3, height:18, background:C.red, borderRadius:99 }} />
                 <div>
-                  <div style={{ fontSize:".82rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Team Leaderboard</div>
+                  <div style={{ fontSize:".82rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Team Performance</div>
                   <div style={{ fontSize:".5rem", color:C.gray, fontWeight:600, marginTop:1, textTransform:"uppercase", letterSpacing:"1px" }}>
-                    Tap a card to see details
+                    Tap a cell to filter leads
                   </div>
                 </div>
               </div>
@@ -489,62 +463,13 @@ export default function AdminHomePage({ onTabChange }) {
               </div>
             </div>
 
-            {/* Cards */}
+            {/* Heatmap */}
             {teamData.length === 0 ? (
               <div style={{ textAlign:"center", padding:"20px 0", color:C.gray, fontSize:".78rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"1px" }}>
                 No team yet
               </div>
             ) : (
-              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                {teamData.map((agent, i) => (
-                  <LeaderboardCard
-                    key={agent.id}
-                    agent={agent}
-                    rank={i + 1}
-                    index={i}
-                    totalLeads={leads.length}
-                    onTabChange={onTabChange}
-                  />
-                ))}
-
-                {/* Unassigned */}
-                {(() => {
-                  const unassigned = leads.filter(l => !l.assigned_to).length;
-                  if (!unassigned) return null;
-                  const pct = leads.length > 0 ? Math.round((unassigned / leads.length) * 100) : 0;
-                  return (
-                    <div style={{
-                      display:"flex", alignItems:"center", gap:11,
-                      padding:"11px 14px",
-                      background: C.card,
-                      borderRadius:14, border:`1px solid ${C.border}`,
-                    }}>
-                      <div style={{
-                        width:28, height:28, borderRadius:8, flexShrink:0,
-                        background:C.cardAlt, border:`1px dashed ${C.border}`,
-                        display:"flex", alignItems:"center", justifyContent:"center",
-                        fontSize:".6rem", fontWeight:900, color:C.gray,
-                      }}>?</div>
-                      <div style={{
-                        width:40, height:40, borderRadius:"50%", flexShrink:0,
-                        background:C.cardAlt, border:`2px dashed ${C.border}`,
-                        display:"flex", alignItems:"center", justifyContent:"center",
-                        fontSize:".65rem", fontWeight:900, color:C.gray,
-                      }}>–</div>
-                      <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontSize:".7rem", fontWeight:700, color:C.gray, marginBottom:5, textTransform:"uppercase", letterSpacing:".5px" }}>Unassigned</div>
-                        <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
-                          <div style={{ height:"100%", width:`${pct}%`, background:C.cardAlt, borderRadius:99, transition:"width .5s ease" }} />
-                        </div>
-                      </div>
-                      <div style={{ textAlign:"right", flexShrink:0 }}>
-                        <div style={{ fontSize:"1.1rem", fontWeight:900, color:C.gray }}>{unassigned}</div>
-                        <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700 }}>{pct}%</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
+              <HeatmapTable teamData={teamData} onTabChange={onTabChange} />
             )}
           </div>
         </>
