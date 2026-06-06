@@ -66,6 +66,13 @@ const STYLES = `
   select option { background:${C.cardAlt}; color:${C.white} }
 
   @keyframes spin { to { transform:rotate(360deg) } }
+
+  /* Body lock without layout shift */
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
 `;
 
 const inputBase = {
@@ -122,12 +129,20 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
 
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      document.body.classList.add("modal-open");
+      document.body.style.top = `-${scrollY}px`;
     } else {
-      document.body.style.overflow = "";
+      const scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      if (scrollY) window.scrollTo(0, scrollY);
     }
     return () => {
-      document.body.style.overflow = "";
+      const scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      if (scrollY) window.scrollTo(0, scrollY);
     };
   }, [open]);
 
@@ -227,7 +242,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div
+            style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}
+            onTouchMove={e => e.stopPropagation()}
+          >
 
             {/* ── ACTIONS SECTION ── */}
             <SectionHeader label="Actions" />
@@ -721,11 +739,25 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
 // ─── Modals ───────────────────────────────────────────────────────
 function ModalWrap({ onClose, title, children }) {
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
+    return () => {
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   return (
     <div style={{ position:"fixed", top:0, left:0, right:0, bottom:62, zIndex:300, background:"rgba(0,0,0,.75)", backdropFilter:"blur(10px)", display:"flex", alignItems:"flex-end", justifyContent:"center" }}
       onClick={e => { if (e.target===e.currentTarget) onClose(); }}
     >
-      <div style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 24px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
+      <div
+        onClick={e=>e.stopPropagation()}
+        onTouchMove={e=>e.stopPropagation()}
+        style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 24px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
           <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{title}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
@@ -882,11 +914,13 @@ function DeletePopup({ lead, onConfirm, onCancel }) {
 // ─── FAB Chooser Modal ────────────────────────────────────────────
 function FabChooserModal({ onClose, onChoose }) {
   useEffect(() => {
-    const y = window.scrollY;
-    document.body.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
     return () => {
-      document.body.style.overflow = "";
-      window.scrollTo(0, y);
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      window.scrollTo(0, scrollY);
     };
   }, []);
 
@@ -1262,7 +1296,9 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
           onClick={() => setModal("fab")}
           className="tap-btn"
           style={{
-            position:"fixed", bottom:88, right:20,
+            position:"fixed",
+            bottom:`calc(72px + env(safe-area-inset-bottom, 0px))`,
+            right:20,
             width:54, height:54, borderRadius:"50%",
             background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
             display:"flex", alignItems:"center", justifyContent:"center",
