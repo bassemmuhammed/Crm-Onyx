@@ -26,7 +26,8 @@ const OnyxGlobalStyles = () => (
       --onyx-silver: #cecece; --onyx-gray: #595a5f; --onyx-blue: #253ff6;
       --onyx-surface: #0a0a0a; --onyx-card: #111111; --onyx-border: #1e1e1e;
     }
-    body, html { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; }
+    html, body { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; height: 100%; margin: 0; padding: 0; }
+    body.modal-open { overflow: hidden; position: fixed; width: 100%; }
     ::-webkit-scrollbar { width: 0px; height: 0px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: transparent; }
