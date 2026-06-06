@@ -511,7 +511,6 @@ export default function App() {
         color: "#ffffff",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
         backgroundImage: `
           radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
           radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
@@ -634,7 +633,6 @@ export default function App() {
       color: "#ffffff",
       display: "flex",
       flexDirection: "column",
-      overflow: "hidden",
       backgroundImage: `
         radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
         radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
