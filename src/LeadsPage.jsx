@@ -251,7 +251,7 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch", overscrollBehavior:"contain" }}>
 
             {/* Status */}
             <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
