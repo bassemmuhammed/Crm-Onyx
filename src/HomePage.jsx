@@ -10,10 +10,6 @@
 //   tasks          {array}     — optional: live tasks data
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import AppHeader         from "./AppHeader";
-import BottomNav         from "./BottomNav";
-import NotificationPanel from "./NotificationPanel";
-import ProfileModal      from "./ProfileModal";
 import Icons             from "./Icons";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
@@ -403,18 +399,14 @@ export default function HomePage({
   tasks: tasksFromProps,
 }) {
   const [animate,      setAnimate]      = useState(false);
-  const [profileOpen,  setProfileOpen]  = useState(false);
   const [viewAllOpen,  setViewAllOpen]  = useState(false);
-  const [notifOpen,    setNotifOpen]    = useState(false);
   const [tasks,        setTasks]        = useState(tasksFromProps || TASKS_DEFAULT);
-  const [notifs,       setNotifs]       = useState(NOTIFICATIONS_DEFAULT);
 
   // Freeze scroll when modal is open
   useEffect(() => {
-    const anyOpen = viewAllOpen || profileOpen || notifOpen;
-    document.body.style.overflow = anyOpen ? "hidden" : "";
+    document.body.style.overflow = viewAllOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [viewAllOpen, profileOpen, notifOpen]);
+  }, [viewAllOpen]);
 
   // Schedule notifications
   useEffect(() => {
@@ -448,9 +440,7 @@ export default function HomePage({
     return { all: total, ...byStatus };
   }, [leads]);
 
-  const unreadCount = notifs.filter(n => n.unread).length;
   const toggleTask  = id => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  const markAllRead = ()  => setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
   const doneTasks   = tasks.filter(t => t.done).length;
   const totalTasks  = tasks.length;
 
@@ -462,8 +452,6 @@ export default function HomePage({
   return (
     <div style={{
       fontFamily: "Archivo,sans-serif",
-      background: C.surface,
-      minHeight: "100vh",
       color: C.white,
       width: "100%",
       position: "relative",
@@ -471,30 +459,12 @@ export default function HomePage({
       WebkitUserSelect: "none",
     }}>
 
-      {/* ── Modals & Panels ── */}
-      <ProfileModal
-        open={profileOpen}
-        onClose={() => setProfileOpen(false)}
-        onSignOut={onSignOut}
-      />
+      {/* ── Modals ── */}
       <AllTasksModal
         open={viewAllOpen}
         onClose={() => setViewAllOpen(false)}
         tasks={tasks}
         onToggle={toggleTask}
-      />
-      <NotificationPanel
-        open={notifOpen}
-        onClose={() => setNotifOpen(false)}
-        notifs={notifs}
-        onMarkAll={markAllRead}
-      />
-
-      {/* ── Header ── */}
-      <AppHeader
-        unreadCount={unreadCount}
-        onBellClick={() => setNotifOpen(true)}
-        onProfileClick={() => setProfileOpen(true)}
       />
 
       {/* ── Scroll Content ── */}
@@ -596,8 +566,6 @@ export default function HomePage({
 
       </div>
 
-      {/* ── Bottom Nav ── */}
-      <BottomNav activeTab={activeTab} onTabChange={onTabChange} />
     </div>
   );
 }

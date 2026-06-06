@@ -1,8 +1,4 @@
 import Icons             from "./Icons";
-import AppHeader         from "./AppHeader";
-import BottomNav         from "./BottomNav";
-import NotificationPanel from "./NotificationPanel";
-import ProfileModal      from "./ProfileModal";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, subscribeToLeads, supabase } from "./sharedLeadsData";
 
@@ -543,8 +539,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
   const [showFilters,  setFilters]    = useState(false);
   const [notifOpen,    setNotifOpen]  = useState(false);
   const [profileOpen,  setProfileOpen]= useState(false);
-  const [notifs,       setNotifs]     = useState([]);
-  const [newBadge,     setNewBadge]   = useState(0); // عداد الليدز الجديدة اللي وصلت real-time
+  const [newBadge,     setNewBadge]   = useState(0);
 
   const salesName = currentUser?.name || currentUser?.email || "Sales";
 
@@ -607,12 +602,6 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
     return unsub;
   }, [currentUser?.id]);
 
-  const unreadCount = notifs.filter(n => n.unread).length;
-  const markAllRead = () => {
-    setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
-    setNewBadge(0);
-  };
-
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return leads.filter(l => {
@@ -652,22 +641,13 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
 
   return (
     <div style={{
-      fontFamily:"Archivo,sans-serif", background:C.surface,
-      minHeight:"100vh", color:C.white,
+      fontFamily:"Archivo,sans-serif",
+      color:C.white,
       colorScheme:"dark", userSelect:"none", WebkitUserSelect:"none",
     }}>
       <style>{STYLES}</style>
-      <link href={FONT_URL} rel="stylesheet" />
 
       <LeadDetailModal lead={selectedLead} open={detailOpen} onClose={closeDetail} onUpdate={updateLead} salesName={salesName} />
-      <NotificationPanel open={notifOpen}   onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={markAllRead} />
-      <ProfileModal      open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
-
-      <AppHeader
-        unreadCount={unreadCount}
-        onBellClick={()    => setNotifOpen(true)}
-        onProfileClick={() => setProfileOpen(true)}
-      />
 
       <div style={{ padding:"12px 14px 0", display:"flex", flexDirection:"column", gap:9 }}>
 
@@ -745,7 +725,6 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         </div>
       </div>
 
-      <BottomNav activeTab={activeTab} onTabChange={onTabChange} />
     </div>
   );
 }

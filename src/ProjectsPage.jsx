@@ -1,10 +1,6 @@
 // ── ProjectsPage.jsx — ONYX Design System ────────────────────
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "./lib/supabase";
-import AppHeader from "./AppHeader";
-import BottomNav from "./BottomNav";
-import NotificationPanel from "./NotificationPanel";
-import ProfileModal from "./ProfileModal";
 import Icons from "./Icons";
 
 // ─── ONYX Tokens ─────────────────────────────────────────────
@@ -184,12 +180,8 @@ function SectionTitle({ children }) {
 
 // ─── Main Component ───────────────────────────────────────────
 export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) {
-  const [notifOpen,   setNotifOpen]   = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [notifs,      setNotifs]      = useState(DEFAULT_NOTIFS);
   const [storyOpen,   setStoryOpen]   = useState(false);
   const [videoOpen,   setVideoOpen]   = useState(false);
-  const [activeTab,   setActiveTab]   = useState(3);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [projects,    setProjects]    = useState([]);
   const [loading,     setLoading]     = useState(true);
@@ -237,22 +229,11 @@ export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) 
     return () => supabase.removeChannel(ch);
   }, []);
 
-  const unread = notifs.filter(n => n.unread).length;
   const p = projects.length > 0 ? (projects[selectedIdx] ?? projects[0]) : null;
-  const handleTabChange = (i) => { setActiveTab(i); onTabChange?.(i); };
 
   return (
-    <div style={{ minHeight:"100vh", background:C.surface, fontFamily:"Archivo,sans-serif", paddingBottom:100 }}>
+    <div style={{ fontFamily:"Archivo,sans-serif", color:C.white, paddingBottom:20 }}>
       <style>{STYLES}</style>
-
-      {/* Red top accent */}
-      <div style={{ height:2, background:`linear-gradient(90deg,${C.red} 0%,${C.redLight} 40%,transparent 100%)`, position:"sticky", top:0, zIndex:100 }} />
-
-      <AppHeader
-        unreadCount={unread}
-        onBellClick={() => setNotifOpen(true)}
-        onProfileClick={() => setProfileOpen(true)}
-      />
 
       {/* ── Project Tabs ── */}
       {projects.length > 1 && (
@@ -505,9 +486,6 @@ export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) 
         </>
       )}
 
-      <NotificationPanel open={notifOpen} onClose={()=>setNotifOpen(false)} notifs={notifs} onMarkAll={()=>setNotifs(prev=>prev.map(n=>({...n,unread:false})))} />
-      <ProfileModal open={profileOpen} onClose={()=>setProfileOpen(false)} onSignOut={onSignOut} />
-      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }

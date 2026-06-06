@@ -1,9 +1,5 @@
 // ── TimelinePage.jsx — ONYX Design System ────────────────────
 import { useState, useRef } from "react";
-import AppHeader         from "./AppHeader";
-import BottomNav         from "./BottomNav";
-import NotificationPanel from "./NotificationPanel";
-import ProfileModal      from "./ProfileModal";
 import Icons             from "./Icons";
 
 // ─── ONYX Tokens — matched to AdminHomePage reference ────────
@@ -493,27 +489,11 @@ const TABS = [
 ];
 
 export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) {
-  const [tabIndex,    setTabIndex]    = useState(0);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [notifOpen,   setNotifOpen]   = useState(false);
-  const [notifs,      setNotifs]      = useState([
-    { id: 1, text: "Launch جديد: AMG R7 — 15 يونيو", time: "منذ ساعة", color: C.blue,  unread: true  },
-    { id: 2, text: "بوست جديد من المانجر على Nile Gate", time: "أمس",  color: C.green, unread: false },
-  ]);
-
-  const unread = notifs.filter(n => n.unread).length;
+  const [tabIndex, setTabIndex] = useState(0);
 
   return (
-    <div style={{ fontFamily: "Archivo,sans-serif", background: C.surface, minHeight: "100vh", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ fontFamily: "Archivo,sans-serif", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
       <NoSelect />
-
-      <ProfileModal      open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
-      <NotificationPanel open={notifOpen}   onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))} />
-
-      {/* App-level red top line */}
-      <div style={{ height: 2, background: `linear-gradient(90deg,${C.red} 0%,${C.redLight} 40%,transparent 100%)`, position: "sticky", top: 0, zIndex: 100 }} />
-
-      <AppHeader unreadCount={unread} onBellClick={() => setNotifOpen(true)} onProfileClick={() => setProfileOpen(true)} />
 
       {/* Section header */}
       <div style={{ padding: "14px 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
@@ -586,8 +566,6 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
           ))}
         </div>
       </SwipeableTabs>
-
-      <BottomNav activeTab={activeTab} onTabChange={onTabChange} />
     </div>
   );
 }

@@ -617,16 +617,64 @@ export default function App() {
 
   return (
     <div style={{
-      fontFamily: "'Archivo', sans-serif",
+      height: "100dvh",
       background: "#0a0a0a",
-      minHeight: "100vh",
-      width: "100%",
-      position: "relative",
+      fontFamily: "'Archivo', sans-serif",
       color: "#ffffff",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      backgroundImage: `
+        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
+      `,
     }}>
       <OnyxGlobalStyles />
       <TopLoadingBar />
-      {renderSalesPage()}
+
+      {/* ── FIXED HEADER ── */}
+      <div style={{ flexShrink: 0, position: "relative", zIndex: 50 }}>
+        <div style={{ height: 2, background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)" }} />
+        <AppHeader
+          unreadCount={unread}
+          onBellClick={()    => setNotifOpen(true)}
+          onProfileClick={() => setProfileOpen(true)}
+          logo={<OnyxLogo size={28} />}
+          avatarUrl={headerAvatarUrl}
+        />
+      </div>
+
+      {/* ── SCROLLABLE PAGE CONTENT ── */}
+      <div
+        key={activeSalesTab}
+        className="onyx-animate"
+        style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+      >
+        {renderSalesPage()}
+      </div>
+
+      <NotificationPanel
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        notifs={notifs}
+        onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))}
+      />
+      <ProfileModal
+        open={profileOpen}
+        onClose={() => { setProfileOpen(false); refreshAvatar(); }}
+        onSignOut={handleSignOut}
+      />
+
+      {/* ── FIXED BOTTOM NAV ── */}
+      <BottomNav
+        activeTab={activeSalesTab}
+        onTabChange={(tab) => {
+          if (tab === TAB_PROJECTS && activeSalesTab === TAB_PROJECTS) {
+            setShowAddProject(false);
+          }
+          setActiveSalesTab(tab);
+        }}
+      />
     </div>
   );
 }
