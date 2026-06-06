@@ -19,17 +19,20 @@ import Icons             from "./Icons";
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
   black:     "#000000",
-  surface:   "#0A0A0A",
-  card:      "#111111",
-  border:    "#1E1E1E",
-  cardAlt:   "#252525",
-  cardHover: "#2E2E2E",
-  gray:      "#595A5F",
+  surface:   "#0D0D0D",
+  card:      "#161618",
+  border:    "#2A2A2E",
+  cardAlt:   "#1E1E22",
+  cardHover: "#2E2E34",
+  gray:      "#6B6C73",
   silver:    "#CECECE",
   white:     "#FFFFFF",
   red:       "#CC1515",
   redLight:  "#FF2020",
   blue:      "#253FF6",
+  // Card gradient variants for daylight separation
+  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
+  cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
 
 // ─── Global Styles ────────────────────────────────────────────────────
@@ -38,7 +41,7 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 const STYLES = `
   @import url('${FONT_URL}');
   :root { color-scheme: dark only; }
-  html, body { margin:0; padding:0; background:#0A0A0A; overflow-x:hidden; }
+  html, body { margin:0; padding:0; background:#0D0D0D; overflow-x:hidden; }
   *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:dark; -webkit-user-select:none; user-select:none; }
   @keyframes fadeInUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
@@ -165,7 +168,7 @@ function SectionHeader({ title, right }) {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────
-function StatCard({ s, animate, onLeadsFilter, delay = 0 }) {
+function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
   const val = useCounter(s.target, animate);
   const [barW, setBarW] = useState("0%");
 
@@ -173,26 +176,54 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0 }) {
     if (animate) setTimeout(() => setBarW(s.pct + "%"), 500);
   }, [animate, s.pct]);
 
+  // Alternate card backgrounds for visual separation in daylight
+  const cardBg = index % 2 === 0 ? C.cardGrad1 : C.cardGrad2;
+
   return (
     <div
       className="stat-card fade-up"
       onClick={() => onLeadsFilter && onLeadsFilter(s.filter)}
       style={{
-        background: C.card,
+        background: cardBg,
         border: `1px solid ${C.border}`,
-        borderLeft: `3px solid ${s.color}`,
         borderRadius: 14,
         padding: "13px 13px 11px",
         cursor: "pointer",
         animationDelay: `${delay}ms`,
         fontFamily: "Archivo,sans-serif",
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
       }}
     >
+      {/* Corner accent lines — top-left and top-right only */}
+      <div style={{
+        position: "absolute", top: 0, left: 0,
+        width: 22, height: 3, borderRadius: "0 0 3px 0",
+        background: s.color,
+      }} />
+      <div style={{
+        position: "absolute", top: 0, left: 0,
+        width: 3, height: 22, borderRadius: "0 0 3px 0",
+        background: s.color,
+      }} />
+      <div style={{
+        position: "absolute", top: 0, right: 0,
+        width: 22, height: 3, borderRadius: "0 0 0 3px",
+        background: s.color,
+      }} />
+      <div style={{
+        position: "absolute", top: 0, right: 0,
+        width: 3, height: 22, borderRadius: "0 0 0 3px",
+        background: s.color,
+      }} />
+
       {/* Icon + Label */}
       <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:8 }}>
         <div style={{
           width: 28, height: 28, borderRadius: 8,
-          background: `${s.color}18`,
+          background: `${s.color}22`,
+          border: `1px solid ${s.color}33`,
           display: "flex", alignItems: "center", justifyContent: "center",
           color: s.color, flexShrink: 0,
         }}>
@@ -204,7 +235,7 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0 }) {
       </div>
 
       {/* Count */}
-      <div style={{ fontSize:"1.9rem", fontWeight:900, color:s.color, lineHeight:1, letterSpacing:-1 }}>
+      <div style={{ fontSize:"1.9rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1 }}>
         {val}
       </div>
 
@@ -233,15 +264,17 @@ function TaskCard({ t, onToggle }) {
       className="task-row"
       onClick={onToggle}
       style={{
-        background: C.card,
+        background: C.cardGrad2,
         border: `1px solid ${C.border}`,
-        borderLeft: `3px solid ${t.done ? C.gray : (PRIORITY_COLOR[t.priority] || C.red)}`,
         borderRadius: 12,
         padding: "12px 14px",
         display: "flex", alignItems: "center", gap: 12,
         cursor: "pointer",
         opacity: t.done ? 0.55 : 1,
         fontFamily: "Archivo,sans-serif",
+        boxShadow: "0 1px 6px rgba(0,0,0,0.35)",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
       {/* Checkbox */}
@@ -491,6 +524,7 @@ export default function HomePage({
                 animate={animate}
                 onLeadsFilter={handleLeadsFilter}
                 delay={i * 30}
+                index={i}
               />
             ))}
           </div>
@@ -500,14 +534,20 @@ export default function HomePage({
         <div
           className="fade-up"
           style={{
-            background: C.card,
+            background: C.cardGrad1,
             border: `1px solid ${C.border}`,
-            borderLeft: `3px solid ${C.red}`,
             borderRadius: 14,
             overflow: "hidden",
             animationDelay: "200ms",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
+            position: "relative",
           }}
         >
+          {/* Corner accents top-left and top-right */}
+          <div style={{ position:"absolute", top:0, left:0, width:22, height:3, background:C.red, borderRadius:"0 0 3px 0" }} />
+          <div style={{ position:"absolute", top:0, left:0, width:3, height:22, background:C.red, borderRadius:"0 0 3px 0" }} />
+          <div style={{ position:"absolute", top:0, right:0, width:22, height:3, background:C.red, borderRadius:"0 0 0 3px" }} />
+          <div style={{ position:"absolute", top:0, right:0, width:3, height:22, background:C.red, borderRadius:"0 0 0 3px" }} />
           {/* Section Title Bar */}
           <div style={{
             padding:"10px 14px 9px",
