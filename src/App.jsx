@@ -104,6 +104,9 @@ export default function App() {
   // ── Sales leads state ──
   const [leadsFilter,  setLeadsFilter]  = useState(null); // null = "all"
 
+  // ── Admin leads filter state ──
+  const [adminLeadsFilter, setAdminLeadsFilter] = useState(null); // { status, agent_id }
+
   // ── Admin UI state ──
   const [activeAdminTab, setActiveAdminTab] = useState(() => {
     const saved = parseInt(sessionStorage.getItem("adminTab") || "0");
@@ -276,7 +279,14 @@ export default function App() {
     sessionStorage.setItem("activeTab", activeSalesTab);
   }, [activeSalesTab]);
 
-  const handleAdminTabChange = (tab) => {
+  const handleAdminTabChange = (tab, filter = null) => {
+    if (tab === "leads") {
+      setAdminLeadsFilter(filter);
+      sessionStorage.setItem("adminTab", TAB_LEADS);
+      setActiveAdminTab(TAB_LEADS);
+      return;
+    }
+    setAdminLeadsFilter(null);
     sessionStorage.setItem("adminTab", tab);
     setActiveAdminTab(tab);
   };
@@ -466,7 +476,7 @@ export default function App() {
             />
           );
         case TAB_LEADS:
-          return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} />;
+          return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} initialFilter={adminLeadsFilter} />;
         case TAB_ADDPROJECT:
           return null;
         case TAB_SETTINGS:

@@ -940,14 +940,14 @@ function FabChooserModal({ onClose, onChoose }) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────
-export default function AdminLeadsPage({ onModalChange, externalModalOpen = false }) {
+export default function AdminLeadsPage({ onModalChange, externalModalOpen = false, initialFilter = null }) {
   const [leads, setLeads]       = useState([]);
   const [team, setTeam]         = useState([]);
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState("");
-  const [statusFilter, setStatus] = useState("all");
+  const [statusFilter, setStatus] = useState(initialFilter?.status || "all");
   const [showFilters, setFilters] = useState(false);
-  const [filterAgent, setFilterAgent] = useState("all");
+  const [filterAgent, setFilterAgent] = useState(initialFilter?.agent_id ? String(initialFilter.agent_id) : "all");
   const [agentPickerOpen, setAgentPickerOpen] = useState(false);
   const [modal, setModal]       = useState(null);
   const [selectedLead, setSelected] = useState(null);
@@ -1049,7 +1049,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     return leads.filter(l => {
       const ms = !q || (l.name||"").toLowerCase().includes(q) || (l.phone||"").includes(q) || (l.project||"").toLowerCase().includes(q);
       const mst = statusFilter==="all" || l.status===statusFilter;
-      const ma  = filterAgent==="all" || (filterAgent==="unassigned" ? !l.assignedTo : l.assignedTo===Number(filterAgent));
+      const ma  = filterAgent==="all" || (filterAgent==="unassigned" ? !l.assignedTo : String(l.assignedTo)===String(filterAgent));
       return ms && mst && ma;
     });
   }, [leads, search, statusFilter, filterAgent]);
