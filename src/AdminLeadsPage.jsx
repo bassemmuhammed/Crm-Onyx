@@ -1102,6 +1102,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
       colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column", overflow:"hidden",
+      position:"relative",
     }}>
       <style>{STYLES}</style>
       <link href={FONT_URL} rel="stylesheet" />
@@ -1266,7 +1267,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         )}
 
         {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:88 }}>
           {loading
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
@@ -1285,19 +1286,14 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         </div>
       </div>
 
-    </div>
-  );
-
-  return (
-    <>
-      {page}
+      {/* FAB — absolute inside page so it respects the container bounds */}
       {!anyModalOpen && (
         <div
           onClick={() => setModal("fab")}
           className="tap-btn"
           style={{
-            position:"fixed",
-            bottom:`calc(72px + env(safe-area-inset-bottom, 0px))`,
+            position:"absolute",
+            bottom:16,
             right:20,
             width:54, height:54, borderRadius:"50%",
             background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
@@ -1309,6 +1305,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
           <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
         </div>
       )}
-    </>
+    </div>
   );
+
+  return page;
 }
