@@ -244,9 +244,19 @@ function ProjectListCard({ project, index, onSelect }) {
             {/* Tags row */}
             <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginTop:7, alignItems:"center" }}>
               {project.location && (
-                <span style={{ fontSize:".54rem", fontWeight:600, color:C.gray, background:C.cardAlt, border:`1px solid ${C.border}`, padding:"2px 8px", borderRadius:5, display:"flex", alignItems:"center", gap:3 }}>
-                  <svg width="8" height="8" viewBox="0 0 256 256" fill={C.gray}><path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,192Zm0-104a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V96A8,8,0,0,0,128,88Zm0-32a12,12,0,1,0,12,12A12,12,0,0,0,128,56Z"/></svg>
+                <span
+                  onClick={project.locationUrl ? e => { e.stopPropagation(); window.open(project.locationUrl, "_blank"); } : undefined}
+                  style={{ fontSize:".54rem", fontWeight:600, color: project.locationUrl ? C.white : C.gray, background:C.cardAlt, border:`1px solid ${project.locationUrl ? C.red+"55" : C.border}`, padding:"2px 8px", borderRadius:5, display:"flex", alignItems:"center", gap:4, cursor: project.locationUrl ? "pointer" : "default" }}
+                >
+                  <svg width="9" height="9" viewBox="0 0 256 256" fill={project.locationUrl ? C.red : C.gray}>
+                    <path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,168a8,8,0,0,1-6.93-4c-9-15.77-34.27-63.7-34.27-84a41.2,41.2,0,0,1,82.4,0c0,20.27-25.25,68.2-34.27,84A8,8,0,0,1,128,184Zm0-104a24,24,0,1,0,24,24A24,24,0,0,0,128,80Z"/>
+                  </svg>
                   {toWesternNums(project.location)}
+                  {project.locationUrl && (
+                    <svg width="7" height="7" viewBox="0 0 256 256" fill={C.red} style={{ flexShrink:0 }}>
+                      <path d="M224,104a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32-11.32L196.69,64H168a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/>
+                    </svg>
+                  )}
                 </span>
               )}
               {project.category && (
@@ -429,9 +439,19 @@ function ProjectDetail({ project: p, onBack, onPrev, onNext, hasPrev, hasNext, o
               </div>
             )}
             {p.location && (
-              <div style={{ display:"flex", alignItems:"center", gap:5, marginTop:6, color:C.gray, fontSize:".72rem", fontWeight:600 }}>
-                <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,192Zm0-104a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V96A8,8,0,0,0,128,88Zm0-32a12,12,0,1,0,12,12A12,12,0,0,0,128,56Z"/></svg>
+              <div
+                onClick={p.locationUrl ? () => window.open(p.locationUrl, "_blank") : undefined}
+                style={{ display:"inline-flex", alignItems:"center", gap:5, marginTop:6, color: p.locationUrl ? C.white : C.gray, fontSize:".72rem", fontWeight:600, cursor: p.locationUrl ? "pointer" : "default", background: p.locationUrl ? C.cardAlt : "transparent", border: p.locationUrl ? `1px solid ${C.red}55` : "none", padding: p.locationUrl ? "3px 10px" : "3px 0", borderRadius:6 }}
+              >
+                <svg width="11" height="11" viewBox="0 0 256 256" fill={p.locationUrl ? C.red : C.gray}>
+                  <path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,168a8,8,0,0,1-6.93-4c-9-15.77-34.27-63.7-34.27-84a41.2,41.2,0,0,1,82.4,0c0,20.27-25.25,68.2-34.27,84A8,8,0,0,1,128,184Zm0-104a24,24,0,1,0,24,24A24,24,0,0,0,128,80Z"/>
+                </svg>
                 {toWesternNums(p.location)}
+                {p.locationUrl && (
+                  <svg width="8" height="8" viewBox="0 0 256 256" fill={C.red} style={{ flexShrink:0 }}>
+                    <path d="M224,104a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32-11.32L196.69,64H168a8,8,0,0,1,0-16h48a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"/>
+                  </svg>
+                )}
               </div>
             )}
           </div>
@@ -445,9 +465,8 @@ function ProjectDetail({ project: p, onBack, onPrev, onNext, hasPrev, hasNext, o
 
       {/* ── KEY INFO ── */}
       <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"60ms" }}>
-        {/* Left accent bar — same gradient as outside cards */}
-        <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, position:"relative", overflow:"hidden" }}>
-          {/* Gradient accent overlay on left border */}
+        <div style={{ background:C.card, borderRadius:14, padding:"14px 14px 14px 17px", border:`1px solid ${C.border}`, position:"relative" }}>
+          {/* Gradient left accent bar — thick red top, fades down */}
           <div style={{ position:"absolute", top:0, left:0, bottom:0, width:3, background:`linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.04) 100%)`, borderRadius:"14px 0 0 14px" }} />
           <SectionTitle>Key Info</SectionTitle>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
@@ -586,6 +605,7 @@ export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) 
         name:         r.name,
         developer:    r.developer,
         location:     r.location,
+        locationUrl:  r.location_url || null,
         category:     r.category,
         status:       r.status,
         statusColor:  r.status_color,
