@@ -11,6 +11,7 @@ const NoSelect = () => <style>{`
   @keyframes countUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
   @keyframes slideInLeft { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
   @keyframes arrowBounce { 0%{transform:translateX(0)} 50%{transform:translateX(4px)} 100%{transform:translateX(0)} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 `}</style>;
 
 // ─── Animated Number Hook ──────────────────────────────────────
@@ -194,220 +195,161 @@ function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
   );
 }
 
-// ─── Modern Bar Chart ─────────────────────────────────────────
-function BarChart({ data, metric }) {
-  const [hovered, setHovered] = useState(null);
-  const maxVal = Math.max(...data.map(d => d[metric.key] || 0), 1);
+// ─── Rank badge styles ────────────────────────────────────────
+const RANK_STYLES = [
+  { bg:"linear-gradient(135deg,#FFD700 0%,#B8860B 100%)", text:"#000", border:"#FFD70055", glow:"#FFD70022", topLine:"#FFD700" },
+  { bg:"linear-gradient(135deg,#C0C0C0 0%,#707070 100%)", text:"#000", border:"#C0C0C044", glow:"#C0C0C015", topLine:"#C0C0C0" },
+  { bg:"linear-gradient(135deg,#CD7F32 0%,#7B4A1A 100%)", text:"#fff", border:"#CD7F3244", glow:"#CD7F3215", topLine:"#CD7F32" },
+];
 
-  return (
-    <div style={{ width:"100%", position:"relative" }}>
-      {/* Y-axis grid lines */}
-      <div style={{ position:"absolute", inset:0, pointerEvents:"none", paddingBottom:40 }}>
-        {[100, 75, 50, 25, 0].map(pct => (
-          <div key={pct} style={{
-            position:"absolute", left:28, right:0,
-            bottom:`calc(${pct}% + 40px)`,
-            borderTop:`1px dashed ${C.border}`,
-            display:"flex", alignItems:"center",
-          }}>
-            <span style={{
-              fontSize:".45rem", color:C.gray, fontWeight:700,
-              position:"absolute", left:-28, lineHeight:1,
-            }}>
-              {Math.round(maxVal * pct / 100)}
-            </span>
-          </div>
-        ))}
-      </div>
+// ─── Leaderboard Card ─────────────────────────────────────────
+function LeaderboardCard({ agent, rank, totalLeads, index, onTabChange }) {
+  const [expanded, setExpanded]   = useState(false);
+  const [imgError,  setImgError]  = useState(false);
+  const hasPhoto   = agent.avatar_url && !imgError;
+  const pct        = totalLeads > 0 ? Math.round((agent.total / totalLeads) * 100) : 0;
+  const rankStyle  = RANK_STYLES[index] || null;
+  const isTop      = index === 0;
 
-      {/* Bars */}
-      <div style={{ display:"flex", alignItems:"flex-end", gap:5, height:180, paddingBottom:40, paddingLeft:32, position:"relative" }}>
-        {data.map((person, i) => {
-          const val  = person[metric.key] || 0;
-          const pct  = (val / maxVal) * 100;
-          const isHov = hovered === i;
-          return (
-            <div
-              key={i}
-              style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", height:"100%", justifyContent:"flex-end", cursor:"pointer", position:"relative" }}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-              onTouchStart={() => setHovered(i)}
-              onTouchEnd={() => setTimeout(() => setHovered(null), 1200)}
-            >
-              {/* Value label on top of bar */}
-              {val > 0 && (
-                <div style={{
-                  fontSize:".52rem", fontWeight:800,
-                  color: isHov ? C.white : metric.color,
-                  marginBottom:3, transition:"color .2s",
-                  opacity: isHov ? 1 : 0.7,
-                }}>{val}</div>
-              )}
-
-              {/* Tooltip */}
-              {isHov && (
-                <div style={{
-                  position:"absolute", bottom:`calc(${pct}% + 52px)`,
-                  background:C.cardAlt, color:C.white,
-                  border:`1px solid ${metric.color}66`,
-                  fontSize:".58rem", fontWeight:800,
-                  padding:"5px 10px", borderRadius:8,
-                  pointerEvents:"none", whiteSpace:"nowrap",
-                  zIndex:10,
-                  boxShadow:`0 4px 16px rgba(0,0,0,.5)`,
-                  letterSpacing:".3px",
-                }}>
-                  <span style={{ color:metric.color }}>{person.full}</span>
-                  <span style={{ color:C.gray, margin:"0 4px" }}>·</span>
-                  <span>{val} {metric.label}</span>
-                  <div style={{
-                    position:"absolute", bottom:-4, left:"50%", transform:"translateX(-50%)",
-                    width:0, height:0,
-                    borderLeft:"4px solid transparent", borderRight:"4px solid transparent",
-                    borderTop:`4px solid ${C.cardAlt}`,
-                  }} />
-                </div>
-              )}
-
-              {/* Bar with gradient */}
-              <div style={{
-                width:"100%",
-                height:`${Math.max(pct, val > 0 ? 3 : 0)}%`,
-                background: isHov
-                  ? `linear-gradient(180deg, ${metric.color} 0%, ${metric.color}88 100%)`
-                  : `linear-gradient(180deg, ${metric.color}cc 0%, ${metric.color}44 100%)`,
-                borderRadius:"6px 6px 3px 3px",
-                transition:"all .25s ease",
-                boxShadow: isHov ? `0 -4px 20px ${metric.color}55` : "none",
-                position:"relative", overflow:"hidden",
-              }}>
-                {/* Shine effect */}
-                {isHov && (
-                  <div style={{
-                    position:"absolute", top:0, left:0, right:0, height:"40%",
-                    background:"rgba(255,255,255,.08)", borderRadius:"6px 6px 0 0",
-                  }} />
-                )}
-              </div>
-
-              {/* X label */}
-              <div style={{
-                fontSize:".46rem", color: isHov ? metric.color : C.gray,
-                fontWeight: isHov ? 800 : 600,
-                marginTop:5, textAlign:"center", lineHeight:1.2,
-                transition:"color .2s", maxWidth:"100%",
-                overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
-              }}>
-                {person.name}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// ─── Metric Selector Chips ────────────────────────────────────
-function MetricChips({ metrics, activeKey, onSelect, totals }) {
-  return (
-    <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
-      {metrics.filter(m => totals[m.key] > 0 || m.key === activeKey).map(m => {
-        const active = m.key === activeKey;
-        return (
-          <div
-            key={m.key}
-            onClick={() => onSelect(m)}
-            style={{
-              display:"flex", alignItems:"center", gap:5,
-              padding:"5px 10px", borderRadius:6,
-              background: active ? `${m.color}18` : C.cardAlt,
-              border: active ? `1px solid ${m.color}66` : `1px solid ${C.border}`,
-              cursor:"pointer", transition:"all .2s",
-            }}
-          >
-            {active && <div style={{ width:5, height:5, borderRadius:"50%", background:m.color, flexShrink:0 }} />}
-            <span style={{ fontSize:".6rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>
-              {m.label}
-            </span>
-            <span style={{ fontSize:".55rem", fontWeight:800, color: active ? m.color : C.gray }}>
-              {totals[m.key] || 0}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── Team Distribution Row ────────────────────────────────────
-function TeamDistRow({ agent, totalLeads }) {
-  const pct = totalLeads > 0 ? (agent.total / totalLeads) * 100 : 0;
-  const [imgError, setImgError] = useState(false);
-  const hasPhoto = agent.avatar_url && !imgError;
-
-  // Top 3 statuses for this agent
-  const topStatuses = Object.entries(STATUS_META)
+  // all statuses with count > 0, sorted
+  const allStatuses = Object.entries(STATUS_META)
     .map(([key, m]) => ({ key, ...m, count: agent[key] || 0 }))
     .filter(s => s.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 3);
+    .sort((a, b) => b.count - a.count);
+
+  // top 4 for segmented bar
+  const top4 = allStatuses.slice(0, 4);
 
   return (
-    <div style={{
-      display:"flex", alignItems:"center", gap:10,
-      padding:"11px 0",
-      borderBottom:`1px solid ${C.border}`,
-    }}>
-      {/* ── Circular Avatar ── */}
-      <div style={{
-        width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+    <div
+      style={{
+        background: isTop
+          ? "linear-gradient(145deg,#1C1A0A 0%,#161610 100%)"
+          : C.cardGrad2,
+        borderRadius: 16,
+        border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
+        boxShadow: rankStyle
+          ? `0 0 24px ${rankStyle.glow}, 0 2px 8px rgba(0,0,0,.5)`
+          : "0 2px 8px rgba(0,0,0,.4)",
         overflow: "hidden",
-        border: `2px solid ${agent.color || C.border}`,
-        background: agent.color || "#2A2A2E",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: ".72rem", fontWeight: 900, color: "#fff",
+        animation: `slideUp .4s ease both`,
+        animationDelay: `${index * 70}ms`,
         position: "relative",
-      }}>
-        {hasPhoto ? (
-          <img
-            src={agent.avatar_url}
-            alt={agent.name}
-            onError={() => setImgError(true)}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
-        ) : (
-          <span>{agent.name.charAt(0).toUpperCase()}</span>
-        )}
-      </div>
+      }}
+    >
+      {/* top accent line */}
+      {rankStyle && (
+        <div style={{
+          position:"absolute", top:0, left:0, right:0, height:2,
+          background:`linear-gradient(90deg, ${rankStyle.topLine}, transparent)`,
+        }} />
+      )}
 
-      <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
-          <div style={{ fontSize:".72rem", fontWeight:800, color:C.white }}>{agent.name}</div>
-          <div style={{ display:"flex", gap:4 }}>
-            {topStatuses.map(s => (
-              <span key={s.key} style={{
-                fontSize:".5rem", fontWeight:800, color:s.color,
-                background:`${s.color}18`, padding:"2px 6px", borderRadius:4,
-                border:`1px solid ${s.color}44`,
-              }}>{s.label.split(" ")[0]} {s.count}</span>
+      {/* ── Main row ── */}
+      <div
+        onClick={() => setExpanded(e => !e)}
+        style={{
+          display:"flex", alignItems:"center", gap:11,
+          padding:"13px 14px",
+          cursor:"pointer",
+        }}
+      >
+        {/* Rank badge */}
+        <div style={{
+          width:28, height:28, borderRadius:8, flexShrink:0,
+          background: rankStyle ? rankStyle.bg : C.cardAlt,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          fontSize:".65rem", fontWeight:900,
+          color: rankStyle ? rankStyle.text : C.gray,
+          border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
+        }}>
+          {rank <= 3 ? `#${rank}` : rank}
+        </div>
+
+        {/* Avatar */}
+        <div style={{
+          width:40, height:40, borderRadius:"50%", flexShrink:0,
+          overflow:"hidden",
+          border:`2px solid ${agent.color || C.border}`,
+          background: agent.color || C.cardAlt,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          fontSize:".8rem", fontWeight:900, color:"#fff",
+          boxShadow: isTop ? `0 0 14px ${agent.color || C.red}55` : "none",
+        }}>
+          {hasPhoto ? (
+            <img
+              src={agent.avatar_url}
+              alt={agent.name}
+              onError={() => setImgError(true)}
+              style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}
+            />
+          ) : (
+            <span>{agent.name.charAt(0).toUpperCase()}</span>
+          )}
+        </div>
+
+        {/* Name + segmented bar */}
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{
+            fontSize:".75rem", fontWeight:800, color:C.white,
+            marginBottom:6,
+            whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis",
+          }}>
+            {agent.name}
+          </div>
+          {/* Segmented progress bar */}
+          <div style={{ height:5, background:C.border, borderRadius:99, overflow:"hidden", display:"flex", gap:1 }}>
+            {top4.map(s => (
+              <div key={s.key} style={{
+                height:"100%",
+                width:`${agent.total > 0 ? (s.count / agent.total) * pct : 0}%`,
+                background: s.color,
+                borderRadius:99,
+                transition:"width .6s ease",
+              }} />
             ))}
           </div>
         </div>
-        {/* Progress bar */}
-        <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
+
+        {/* Total + pct */}
+        <div style={{ textAlign:"right", flexShrink:0 }}>
           <div style={{
-            height:"100%", width:`${pct}%`,
-            background:`linear-gradient(90deg, ${C.red}, ${C.red}60)`,
-            borderRadius:99, transition:"width .6s ease",
-          }} />
+            fontSize:"1.15rem", fontWeight:900, lineHeight:1,
+            color: isTop ? "#FFD700" : C.white,
+          }}>
+            {agent.total}
+          </div>
+          <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700, marginTop:2 }}>
+            {pct}%
+          </div>
         </div>
       </div>
 
-      <div style={{ fontSize:".8rem", fontWeight:900, color:C.red, flexShrink:0, minWidth:24, textAlign:"right" }}>
-        {agent.total}
-      </div>
+      {/* ── Expanded status pills ── */}
+      {expanded && allStatuses.length > 0 && (
+        <div style={{
+          padding:"0 14px 13px",
+          display:"flex", flexWrap:"wrap", gap:5,
+          borderTop:`1px solid ${C.border}`,
+          paddingTop:10,
+        }}>
+          {allStatuses.map(s => (
+            <div
+              key={s.key}
+              onClick={() => onTabChange && onTabChange("leads", { status: s.key, agent_id: agent.id })}
+              style={{
+                display:"flex", alignItems:"center", gap:4,
+                background:`${s.color}15`, border:`1px solid ${s.color}44`,
+                borderRadius:6, padding:"4px 8px", cursor:"pointer",
+              }}
+            >
+              <div style={{ width:5, height:5, borderRadius:"50%", background:s.color, flexShrink:0 }} />
+              <span style={{ fontSize:".52rem", fontWeight:700, color:s.color }}>{s.label}</span>
+              <span style={{ fontSize:".6rem", fontWeight:900, color:C.white }}>{s.count}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -423,10 +365,9 @@ export default function AdminHomePage({ onTabChange }) {
   const cachedLeads = JSON.parse(localStorage.getItem("cache_leads") || "[]");
   const cachedTeam  = cachedTeamValid ? rawCachedTeam : [];
 
-  const [leads,        setLeads]        = useState(cachedLeads);
-  const [team,         setTeam]         = useState(cachedTeam);
-  const [loading,      setLoading]      = useState(true); // always load fresh on mount
-  const [activeMetric, setActiveMetric] = useState(METRICS[0]);
+  const [leads,   setLeads]   = useState(cachedLeads);
+  const [team,    setTeam]    = useState(cachedTeam);
+  const [loading, setLoading] = useState(true); // always load fresh on mount
 
   useEffect(() => {
     const load = async () => {
@@ -468,18 +409,8 @@ export default function AdminHomePage({ onTabChange }) {
     return { ...agent, total: agentLeads.length, ...byStatus };
   }).sort((a, b) => b.total - a.total);
 
-  // ── Chart data ──
-  const chartData = teamData
-    .map(a => ({ name: a.name.split(" ")[0], full: a.name, ...Object.fromEntries(METRICS.map(m => [m.key, a[m.key]])) }))
-    .sort((a, b) => (b[activeMetric.key] || 0) - (a[activeMetric.key] || 0));
-
-  // ── Totals per status ──
-  const totals = Object.fromEntries(
-    METRICS.map(m => [m.key, leads.filter(l => l.status === m.key).length])
-  );
-
   return (
-    <div style={{ padding:"16px 16px 0", background:C.surface, minHeight:"100vh" }}>
+    <div style={{ padding:"16px 16px 0", background:C.surface, minHeight:"100vh", paddingBottom:90 }}>
       <NoSelect />
 
       {loading && (
@@ -526,84 +457,95 @@ export default function AdminHomePage({ onTabChange }) {
             </div>
           </div>
 
-          {/* ── Team Performance Chart ── */}
+          {/* ── Team Leaderboard ── */}
           <div style={{
             background: C.cardGrad2, borderRadius:20,
             padding:"18px 16px 16px",
             boxShadow:"0 4px 32px rgba(0,0,0,.5)",
-            marginBottom:14,
+            marginBottom:16,
             border:`1px solid ${C.border}`,
             position:"relative", overflow:"hidden",
           }}>
+            {/* Red top accent */}
             <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${C.red} 0%, transparent 100%)` }} />
 
             {/* Header */}
-            <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:16 }}>
-              <div>
-                <div style={{ fontSize:".88rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Team Performance</div>
-                <div style={{ fontSize:".55rem", color:C.gray, fontWeight:600, marginTop:2, textTransform:"uppercase", letterSpacing:"1px" }}>
-                  {activeMetric.label} · {totals[activeMetric.key] || 0} total
-                </div>
-              </div>
-              {/* Active metric color dot */}
-              <div style={{
-                display:"flex", alignItems:"center", gap:5,
-                background:`${activeMetric.color}18`, border:`1px solid ${activeMetric.color}44`,
-                borderRadius:8, padding:"5px 10px",
-              }}>
-                <div style={{ width:6, height:6, borderRadius:"50%", background:activeMetric.color }} />
-                <span style={{ fontSize:".6rem", fontWeight:800, color:activeMetric.color }}>{activeMetric.label}</span>
-              </div>
-            </div>
-
-            <BarChart data={chartData} metric={activeMetric} />
-
-            {/* Metric chips */}
-            <div style={{ marginTop:14 }}>
-              <MetricChips metrics={METRICS} activeKey={activeMetric.key} onSelect={setActiveMetric} totals={totals} />
-            </div>
-          </div>
-
-          {/* ── Team Distribution Card ── */}
-          <div style={{
-            background: C.cardGrad2, borderRadius:20,
-            padding:"16px",
-            boxShadow:"0 4px 32px rgba(0,0,0,.5)",
-            marginBottom:100,
-            border:`1px solid ${C.border}`,
-            position:"relative", overflow:"hidden",
-          }}>
-            <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${C.red} 0%, transparent 100%)` }} />
-
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-              <div style={{ fontSize:".82rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Lead Distribution</div>
-              <div style={{ fontSize:".58rem", color:C.gray, fontWeight:700, textTransform:"uppercase", letterSpacing:"1px" }}>{leads.length} leads total</div>
-            </div>
-
-            {teamData.length === 0 ? (
-              <div style={{ textAlign:"center", padding:"20px 0", color:C.gray, fontSize:".78rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"1px" }}>No team yet</div>
-            ) : teamData.map((agent) => (
-              <TeamDistRow key={agent.id} agent={agent} totalLeads={leads.length} />
-            ))}
-
-            {/* Unassigned row */}
-            {(() => {
-              const unassigned = leads.filter(l => !l.assigned_to).length;
-              if (!unassigned) return null;
-              const pct = leads.length > 0 ? (unassigned / leads.length) * 100 : 0;
-              return (
-                <div style={{ display:"flex", alignItems:"center", gap:10, padding:"11px 0", borderTop:`1px solid ${C.border}`, marginTop:4 }}>
-                  <div style={{ width:34, height:34, borderRadius:9, background:C.cardAlt, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".65rem", fontWeight:900, color:C.gray, flexShrink:0, border:`1px dashed ${C.border}` }}>?</div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:".68rem", fontWeight:700, color:C.gray, marginBottom:5, textTransform:"uppercase", letterSpacing:".5px" }}>Unassigned</div>
-                    <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
-                      <div style={{ height:"100%", width:`${pct}%`, background:C.cardAlt, borderRadius:99, transition:"width .5s ease" }} />
-                    </div>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div style={{ width:3, height:18, background:C.red, borderRadius:99 }} />
+                <div>
+                  <div style={{ fontSize:".82rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Team Leaderboard</div>
+                  <div style={{ fontSize:".5rem", color:C.gray, fontWeight:600, marginTop:1, textTransform:"uppercase", letterSpacing:"1px" }}>
+                    Tap a card to see details
                   </div>
-                  <div style={{ fontSize:".72rem", fontWeight:900, color:C.gray, flexShrink:0 }}>{unassigned}</div>
                 </div>
-              );
-            })()}
+              </div>
+              <div style={{
+                background:`${C.red}18`, border:`1px solid ${C.red}44`,
+                borderRadius:8, padding:"5px 10px",
+                fontSize:".58rem", fontWeight:800, color:C.red,
+              }}>
+                {leads.length} leads
+              </div>
+            </div>
+
+            {/* Cards */}
+            {teamData.length === 0 ? (
+              <div style={{ textAlign:"center", padding:"20px 0", color:C.gray, fontSize:".78rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"1px" }}>
+                No team yet
+              </div>
+            ) : (
+              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                {teamData.map((agent, i) => (
+                  <LeaderboardCard
+                    key={agent.id}
+                    agent={agent}
+                    rank={i + 1}
+                    index={i}
+                    totalLeads={leads.length}
+                    onTabChange={onTabChange}
+                  />
+                ))}
+
+                {/* Unassigned */}
+                {(() => {
+                  const unassigned = leads.filter(l => !l.assigned_to).length;
+                  if (!unassigned) return null;
+                  const pct = leads.length > 0 ? Math.round((unassigned / leads.length) * 100) : 0;
+                  return (
+                    <div style={{
+                      display:"flex", alignItems:"center", gap:11,
+                      padding:"11px 14px",
+                      background: C.card,
+                      borderRadius:14, border:`1px solid ${C.border}`,
+                    }}>
+                      <div style={{
+                        width:28, height:28, borderRadius:8, flexShrink:0,
+                        background:C.cardAlt, border:`1px dashed ${C.border}`,
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        fontSize:".6rem", fontWeight:900, color:C.gray,
+                      }}>?</div>
+                      <div style={{
+                        width:40, height:40, borderRadius:"50%", flexShrink:0,
+                        background:C.cardAlt, border:`2px dashed ${C.border}`,
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        fontSize:".65rem", fontWeight:900, color:C.gray,
+                      }}>–</div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:".7rem", fontWeight:700, color:C.gray, marginBottom:5, textTransform:"uppercase", letterSpacing:".5px" }}>Unassigned</div>
+                        <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${pct}%`, background:C.cardAlt, borderRadius:99, transition:"width .5s ease" }} />
+                        </div>
+                      </div>
+                      <div style={{ textAlign:"right", flexShrink:0 }}>
+                        <div style={{ fontSize:"1.1rem", fontWeight:900, color:C.gray }}>{unassigned}</div>
+                        <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700 }}>{pct}%</div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         </>
       )}
