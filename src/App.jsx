@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase }         from "./lib/supabase";
 import Login                from "./Login";
 import HomePage             from "./HomePage";
-import LeadsPage, { LeadDetailModal } from "./LeadsPage";
+import LeadsPage            from "./LeadsPage";
 import TimelinePage         from "./TimelinePage";
 import ProjectsPage         from "./ProjectsPage";
 import AdminHomePage        from "./AdminHomePage";
@@ -26,8 +26,7 @@ const OnyxGlobalStyles = () => (
       --onyx-silver: #cecece; --onyx-gray: #595a5f; --onyx-blue: #253ff6;
       --onyx-surface: #0a0a0a; --onyx-card: #111111; --onyx-border: #1e1e1e;
     }
-    html, body { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; height: 100%; margin: 0; padding: 0; }
-    body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+    body, html { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; }
     ::-webkit-scrollbar { width: 0px; height: 0px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: transparent; }
@@ -606,7 +605,6 @@ export default function App() {
             onSignOut={handleSignOut}
             currentUser={currentUser}
             initialFilter={leadsFilter}
-            onModalState={setLeadsModalState}
           />
         );
       case TAB_SCHEDULE:
@@ -675,17 +673,6 @@ export default function App() {
         onClose={() => { setProfileOpen(false); refreshAvatar(); }}
         onSignOut={handleSignOut}
       />
-
-      {/* LeadDetailModal rendered at top level - outside any scroll container */}
-      {activeSalesTab === TAB_LEADS && leadsModalState.open && leadsModalState.lead && (
-        <LeadDetailModal
-          lead={leadsModalState.lead}
-          open={leadsModalState.open}
-          onClose={() => setLeadsModalState(s => ({ ...s, open: false }))}
-          onUpdate={leadsModalState.onUpdate}
-          salesName={currentUser?.name || "Sales"}
-        />
-      )}
 
       {/* BottomNav is fixed-positioned so it renders outside the flex container */}
       <BottomNav
