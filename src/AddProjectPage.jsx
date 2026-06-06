@@ -97,7 +97,9 @@ function Section({ title, children, delay = 0 }) {
   return (
     <div className="section-card" style={{
       background: C.card, borderRadius: 14,
-      border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.red}`,
+      border: `1px solid ${C.border}`,
+      borderLeft: `3px solid ${C.red}`,
+      boxShadow: `inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,
       animationDelay: `${delay}ms`, overflow: "hidden",
     }}>
       <div style={{ padding:"10px 14px 8px", borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", gap:8 }}>
@@ -171,7 +173,11 @@ function PaymentRow({ plan, index, onChange, onRemove }) {
 export default function AddProjectPage({
   onProjectSaved, onTabChange, onSignOut,
   editProject = null, navItems, activeTab: activeTabProp,
+  projects = [], onDeleteProject,
 }) {
+  const [view, setView] = useState(editProject ? "form" : "list"); // "list" | "form" | "detail"
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [saved,   setSaved]   = useState(false);
   const [errors,  setErrors]  = useState({});
 
@@ -187,6 +193,9 @@ export default function AddProjectPage({
   const [prevWork,       setPrevWork]       = useState(init.prevWork       || "");
   const [maintenance,    setMaintenance]    = useState(init.maintenance    || "");
   const [parking,        setParking]        = useState(init.parking        || "");
+
+  // ── Location Link ──
+  const [locationLink, setLocationLink] = useState(init.locationLink || "");
 
   // ── Status ──
   const [status,      setStatus]      = useState(init.status      || "Under Construction");
@@ -248,6 +257,7 @@ export default function AddProjectPage({
       price:        price.trim(),
       area:         area.trim(),
       delivery:     delivery.trim(),
+      locationLink: locationLink.trim(),
       projectArea:  projectArea.trim(),
       prevWork:     prevWork.trim(),
       maintenance:  maintenance.trim(),
@@ -265,7 +275,10 @@ export default function AddProjectPage({
     };
     onProjectSaved?.(project);
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setTimeout(() => {
+      setSaved(false);
+      setView("list");
+    }, 1500);
   };
 
   const handleTabChange = (tab) => { onTabChange?.(tab); };
@@ -285,12 +298,216 @@ export default function AddProjectPage({
 
   const statusMeta = STATUS_OPTIONS.find(s=>s.value===status) || STATUS_OPTIONS[0];
 
+  // ── Project List View ──
+  if (view === "list") {
+    return (
+      <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:80 }}>
+        <style>{STYLES}</style>
+        <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:4 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:3, height:20, background:C.red, borderRadius:2 }}/>
+              <span style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>PROJECTS</span>
+              <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderRadius:6, padding:"2px 8px", fontSize:".65rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif" }}>{projects.length}</div>
+            </div>
+            <button onClick={()=>setView("form")} className="tap-btn" style={{
+              background:C.red, border:"none", borderRadius:10, padding:"8px 14px",
+              color:C.white, fontSize:".72rem", fontWeight:800, cursor:"pointer",
+              display:"flex", alignItems:"center", gap:5, fontFamily:"Archivo,sans-serif",
+            }}>
+              <span style={{fontSize:"1rem"}}>+</span> Add Project
+            </button>
+          </div>
+
+          {projects.length === 0 ? (
+            <div className="section-card" style={{
+              background:C.card, border:`1px solid ${C.border}`, borderRadius:14,
+              padding:"40px 20px", textAlign:"center", animationDelay:"0ms",
+            }}>
+              <div style={{fontSize:"2.5rem",marginBottom:12}}>🏗️</div>
+              <div style={{fontSize:".82rem",fontWeight:700,color:C.silver,fontFamily:"Archivo,sans-serif",marginBottom:6}}>No Projects Yet</div>
+              <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,fontFamily:"Archivo,sans-serif"}}>Tap + Add Project to get started</div>
+            </div>
+          ) : (
+            projects.map((proj, i) => {
+              const sMeta = STATUS_OPTIONS.find(s=>s.value===proj.status) || STATUS_OPTIONS[0];
+              return (
+                <div key={proj.id} className="section-card" style={{
+                  background:C.card, border:`1px solid ${C.border}`,
+                  borderLeft:`3px solid ${C.red}`,
+                  boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,
+                  borderRadius:14, overflow:"hidden", cursor:"pointer",
+                  animationDelay:`${i*40}ms`,
+                }} onClick={()=>{setSelectedProject(proj);setView("detail");}}>
+                  <div style={{ padding:"12px 14px", display:"flex", alignItems:"center", gap:12 }}>
+                    {proj.profilePic
+                      ? <img src={proj.profilePic} alt={proj.name} style={{width:48,height:48,borderRadius:10,objectFit:"cover",border:`1px solid ${C.border}`,flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                      : <div style={{width:48,height:48,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0}}>🏢</div>
+                    }
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:".88rem",fontWeight:800,color:C.white,fontFamily:"Archivo,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proj.name}</div>
+                      <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Archivo,sans-serif"}}>{proj.developer}</div>
+                      {proj.location && <div style={{fontSize:".62rem",color:C.gray,fontWeight:600,marginTop:1,fontFamily:"Archivo,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>📍 {proj.location}</div>}
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 256 256" fill={C.gray}><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
+                  </div>
+                  <div style={{ padding:"8px 14px 12px", borderTop:`1px solid ${C.border}`, display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
+                    <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".58rem",fontWeight:700,padding:"3px 8px",borderRadius:6,fontFamily:"Archivo,sans-serif"}}>{proj.category}</div>
+                    <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".58rem",fontWeight:800,padding:"3px 8px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Archivo,sans-serif"}}>
+                      <div style={{width:5,height:5,borderRadius:"50%",background:sMeta.color}}/>
+                      {proj.status}
+                    </div>
+                    {proj.price && <div style={{marginLeft:"auto",fontSize:".6rem",fontWeight:700,color:C.red,fontFamily:"Archivo,sans-serif"}}>From {proj.price}</div>}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Project Detail View ──
+  if (view === "detail" && selectedProject) {
+    const proj = selectedProject;
+    const sMeta = STATUS_OPTIONS.find(s=>s.value===proj.status) || STATUS_OPTIONS[0];
+    return (
+      <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:100 }}>
+        <style>{STYLES}</style>
+        <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
+          {/* Back */}
+          <button onClick={()=>setView("list")} className="tap-btn" style={{
+            background:"none", border:"none", color:C.gray, cursor:"pointer",
+            display:"flex", alignItems:"center", gap:6, padding:"4px 0",
+            fontSize:".72rem", fontWeight:700, fontFamily:"Archivo,sans-serif",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
+            Back to Projects
+          </button>
+
+          {/* Hero Card */}
+          <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"0ms"}}>
+            <div style={{ padding:"16px 14px", display:"flex", alignItems:"center", gap:14 }}>
+              {proj.profilePic
+                ? <img src={proj.profilePic} alt={proj.name} style={{width:60,height:60,borderRadius:12,objectFit:"cover",border:`1px solid ${C.border}`,flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
+                : <div style={{width:60,height:60,borderRadius:12,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.6rem",flexShrink:0}}>🏢</div>
+              }
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:"1rem",fontWeight:900,color:C.white,fontFamily:"Archivo,sans-serif"}}>{proj.name}</div>
+                {proj.developer && <div style={{fontSize:".68rem",color:C.gray,fontWeight:600,marginTop:3,fontFamily:"Archivo,sans-serif"}}>{proj.developer}</div>}
+                {proj.location && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Archivo,sans-serif"}}>📍 {proj.location}</div>}
+                {proj.locationLink && <a href={proj.locationLink} target="_blank" rel="noopener noreferrer" style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif",textDecoration:"none",display:"block",marginTop:2}}>🗺️ View on Google Maps</a>}
+              </div>
+            </div>
+            <div style={{ padding:"8px 14px 14px", borderTop:`1px solid ${C.border}`, display:"flex", gap:6, flexWrap:"wrap" }}>
+              <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Archivo,sans-serif"}}>{proj.category}</div>
+              <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".6rem",fontWeight:800,padding:"4px 10px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Archivo,sans-serif"}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:sMeta.color}}/>
+                {proj.status}
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing */}
+          {(proj.price || proj.area || proj.delivery) && (
+            <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"40ms"}}>
+              <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Pricing & Details</span>
+              </div>
+              <div style={{padding:"12px 14px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+                {proj.price && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Starting Price</div><div style={{fontSize:".75rem",fontWeight:800,color:C.red,fontFamily:"Archivo,sans-serif"}}>{proj.price}</div></div>}
+                {proj.area && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Unit Size</div><div style={{fontSize:".75rem",fontWeight:800,color:C.white,fontFamily:"Archivo,sans-serif"}}>{proj.area}</div></div>}
+                {proj.delivery && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Delivery</div><div style={{fontSize:".75rem",fontWeight:800,color:C.launch,fontFamily:"Archivo,sans-serif"}}>{proj.delivery}</div></div>}
+              </div>
+            </div>
+          )}
+
+          {/* Amenities */}
+          {proj.amenities?.length > 0 && (
+            <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"80ms"}}>
+              <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Amenities</span>
+              </div>
+              <div style={{padding:"12px 14px",display:"flex",flexWrap:"wrap",gap:5}}>
+                {proj.amenities.map(a=>(
+                  <div key={a} style={{background:`${C.red}18`,border:`1px solid ${C.red}44`,color:C.white,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Archivo,sans-serif",display:"flex",alignItems:"center",gap:4}}>
+                    <div style={{width:4,height:4,borderRadius:"50%",background:C.red}}/>
+                    {a}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Description */}
+          {proj.description && (
+            <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"100ms"}}>
+              <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Description</span>
+              </div>
+              <div style={{padding:"12px 14px",fontSize:".75rem",color:C.silver,fontWeight:500,fontFamily:"Archivo,sans-serif",lineHeight:1.7}}>{proj.description}</div>
+            </div>
+          )}
+
+          {/* Delete Confirm */}
+          {confirmDelete === proj.id && (
+            <div style={{background:`${C.red}12`,border:`1px solid ${C.red}44`,borderRadius:12,padding:"14px",display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{fontSize:".75rem",fontWeight:700,color:C.white,fontFamily:"Archivo,sans-serif",textAlign:"center"}}>🗑️ حذف المشروع نهائياً؟</div>
+              <div style={{fontSize:".65rem",color:C.gray,fontFamily:"Archivo,sans-serif",textAlign:"center"}}>لا يمكن التراجع عن هذه العملية</div>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={()=>setConfirmDelete(null)} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:`1px solid ${C.border}`,background:C.cardAlt,color:C.white,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:"Archivo,sans-serif"}}>إلغاء</button>
+                <button onClick={()=>{onDeleteProject?.(proj.id);setView("list");setConfirmDelete(null);}} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:"none",background:C.red,color:C.white,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:"Archivo,sans-serif"}}>تأكيد الحذف</button>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div style={{position:"sticky",bottom:16,zIndex:50,display:"flex",gap:8}}>
+            <button onClick={()=>{setSelectedProject(proj);setView("form");}} className="tap-btn" style={{
+              flex:1,padding:"13px",borderRadius:12,border:`1px solid ${C.border}`,
+              background:C.cardAlt,color:C.white,fontSize:".8rem",fontWeight:800,
+              cursor:"pointer",fontFamily:"Archivo,sans-serif",
+              display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
+              تعديل
+            </button>
+            <button onClick={()=>setConfirmDelete(proj.id)} className="tap-btn" style={{
+              flex:1,padding:"13px",borderRadius:12,border:`1px solid ${C.red}44`,
+              background:`${C.red}18`,color:C.red,fontSize:".8rem",fontWeight:800,
+              cursor:"pointer",fontFamily:"Archivo,sans-serif",
+              display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>
+              حذف
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Add/Edit Form View ──
   return (
-    <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:20 }}>
+    <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:80 }}>
       <style>{STYLES}</style>
 
       {/* ── Form Body ── */}
       <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
+
+        {/* Back to list */}
+        <button onClick={()=>setView(selectedProject?"detail":"list")} className="tap-btn" style={{
+          background:"none", border:"none", color:C.gray, cursor:"pointer",
+          display:"flex", alignItems:"center", gap:6, padding:"4px 0",
+          fontSize:".72rem", fontWeight:700, fontFamily:"Archivo,sans-serif",
+        }}>
+          <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
+          {selectedProject ? "Back to Project" : "Back to Projects"}
+        </button>
 
         {/* ── 1. Basic Information ── */}
         <Section title="Basic Information" delay={0}>
@@ -321,6 +538,25 @@ export default function AddProjectPage({
                 placeholder="e.g. New Cairo — 5th Settlement"
                 style={{...inputBase, borderColor:errors.location?C.red:C.border}}/>
               {errors.location && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.location}</div>}
+            </div>
+
+            {/* Location Link — Google Maps */}
+            <div>
+              <span style={labelStyle}>📍 Google Maps Link</span>
+              <input value={locationLink} onChange={e=>setLocationLink(e.target.value)}
+                placeholder="https://maps.google.com/..."
+                style={inputBase}/>
+              {locationLink && locationLink.includes("google") && (
+                <div style={{marginTop:6,display:"flex",alignItems:"center",gap:6}}>
+                  <a href={locationLink} target="_blank" rel="noopener noreferrer" style={{
+                    fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif",
+                    textDecoration:"none",display:"flex",alignItems:"center",gap:4,
+                  }}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    ✓ Link verified — tap to preview
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* Project Area + Previous Work */}
@@ -578,31 +814,35 @@ export default function AddProjectPage({
           </div>
         )}
 
-        {/* ── Save Button ── */}
-        <button className="save-btn" onClick={handleSave} style={{
-          width:"100%", padding:"13px", borderRadius:12, border:"none",
-          background: saved ? "#10b981" : C.red,
-          color:"#fff", fontSize:".88rem", fontWeight:900, cursor:"pointer", letterSpacing:.3,
-          boxShadow: saved ? "0 6px 20px rgba(16,185,129,.35)" : `0 6px 20px ${C.red}44`,
-          display:"flex", alignItems:"center", justifyContent:"center", gap:8,
-          transition:"background .3s ease, box-shadow .3s ease",
-          fontFamily:"Archivo,sans-serif",
+        {/* ── Save Button — sticky above nav bar ── */}
+        <div style={{
+          position:"sticky", bottom:16, zIndex:50,
+          paddingTop:4,
         }}>
-          {saved ? (
-            <>
-              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>
-              Project Saved Successfully!
-            </>
-          ) : (
-            <>
-              <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M219.31,108.68l-80-80A16,16,0,0,0,128,24H48A16,16,0,0,0,32,40v80a16,16,0,0,0,4.69,11.31l80,80a16,16,0,0,0,22.62,0l80-80a16,16,0,0,0,0-22.63ZM128,204.69,51.31,128,48,124.69V40h80l3.31,3.31h0L208,120Z"/></svg>
-              {editProject ? "Update Project" : "Save & Publish Project"}
-            </>
-          )}
-        </button>
-
-        <div style={{textAlign:"center",fontSize:".62rem",color:C.gray,fontWeight:600,paddingBottom:4,fontFamily:"Archivo,sans-serif"}}>
-          {editProject ? "Changes will be reflected instantly for all sales agents" : "Project will appear in sales agents' Projects page immediately"}
+          <button className="save-btn" onClick={handleSave} style={{
+            width:"100%", padding:"13px", borderRadius:12, border:"none",
+            background: saved ? "#10b981" : C.red,
+            color:"#fff", fontSize:".88rem", fontWeight:900, cursor:"pointer", letterSpacing:.3,
+            boxShadow: saved ? "0 6px 20px rgba(16,185,129,.35)" : `0 6px 20px ${C.red}44`,
+            display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+            transition:"background .3s ease, box-shadow .3s ease",
+            fontFamily:"Archivo,sans-serif",
+          }}>
+            {saved ? (
+              <>
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>
+                Project Saved Successfully!
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M219.31,108.68l-80-80A16,16,0,0,0,128,24H48A16,16,0,0,0,32,40v80a16,16,0,0,0,4.69,11.31l80,80a16,16,0,0,0,22.62,0l80-80a16,16,0,0,0,0-22.63ZM128,204.69,51.31,128,48,124.69V40h80l3.31,3.31h0L208,120Z"/></svg>
+                {editProject ? "Update Project" : "Save & Publish Project"}
+              </>
+            )}
+          </button>
+          <div style={{textAlign:"center",fontSize:".62rem",color:C.gray,fontWeight:600,paddingTop:4,fontFamily:"Archivo,sans-serif"}}>
+            {editProject ? "Changes will be reflected instantly for all sales agents" : "Project will appear in sales agents' Projects page immediately"}
+          </div>
         </div>
 
       </div>
