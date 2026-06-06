@@ -26,37 +26,35 @@ async function insertNotif(text, color = "#CC1515", userId = null) {
 }
 
 // ── Schedule push for upcoming meeting/callback ──
-function scheduleLeadReminder(lead, scheduledIds) {
-  // callback: use callbackDate + callbackTime
-  // pendingMeeting: use meetingDate + meetingTime (or same fields)
-  const dateStr = lead.callbackDate || lead.meetingDate;
-  const timeStr = lead.callbackTime || lead.meetingTime;
+function scheduleLeadReminder(lead, scheduledIds, userId) {
+  const dateStr = lead.callbackDate || lead.meetingDate || lead.callback_date || lead.meeting_date;
+  const timeStr = lead.callbackTime || lead.meetingTime || lead.callback_time || lead.meeting_time;
   if (!dateStr || !timeStr) return;
 
   const meetingTime = new Date(`${dateStr}T${timeStr}`);
   if (isNaN(meetingTime.getTime())) return;
 
-  const notifyAt60 = meetingTime.getTime() - 60 * 60 * 1000; // 1 hour before
-  const notifyAt15 = meetingTime.getTime() - 15 * 60 * 1000; // 15 min before
+  const notifyAt60 = meetingTime.getTime() - 60 * 60 * 1000;
+  const notifyAt15 = meetingTime.getTime() - 15 * 60 * 1000;
   const now = Date.now();
 
   const key = `${lead.id}-${dateStr}-${timeStr}`;
   if (scheduledIds.current.has(key)) return;
   scheduledIds.current.add(key);
 
-  const label = lead.status === "callback" ? "Call Back" : "Pending Meeting";
+  const label = (lead.status === "callback") ? "Call Back" : "Pending Meeting";
 
   if (notifyAt60 > now) {
     setTimeout(() => {
       sendPush(`${label} in 1 hour ⏰`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      insertNotif(`⏰ ${label} in 1 hour: ${lead.name} (${dateStr} ${timeStr})`, "#f59e0b");
+      insertNotif(`⏰ ${label} in 1 hour: ${lead.name} (${dateStr} ${timeStr})`, "#f59e0b", userId);
     }, notifyAt60 - now);
   }
 
   if (notifyAt15 > now) {
     setTimeout(() => {
       sendPush(`${label} in 15 min 🔔`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      insertNotif(`🔔 ${label} in 15 min: ${lead.name} (${dateStr} ${timeStr})`, "#CC1515");
+      insertNotif(`🔔 ${label} in 15 min: ${lead.name} (${dateStr} ${timeStr})`, "#CC1515", userId);
     }, notifyAt15 - now);
   }
 }
@@ -108,8 +106,7 @@ export function NotificationProvider({ children, currentUser }) {
       .channel("leads-notif-watch")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "leads" }, (payload) => {
         const lead = payload.new;
-        // New lead assigned to me
-        if (lead.assignedTo === currentUser.id || lead.assigned_to === currentUser.id) {
+        if (lead.assigned_to === currentUser.id) {
           const text = `🆕 New lead assigned: ${lead.name || "Unknown"}`;
           sendPush("New Lead! 🆕", `${lead.name || "Unknown"} has been assigned to you`);
           insertNotif(text, "#10b981", currentUser.id);
@@ -117,11 +114,9 @@ export function NotificationProvider({ children, currentUser }) {
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "leads" }, (payload) => {
         const lead = payload.new;
-        const myId = currentUser.id;
-        // If callback or pendingMeeting with a date, schedule push reminder
-        if ((lead.assignedTo === myId || lead.assigned_to === myId) &&
+        if (lead.assigned_to === currentUser.id &&
             (lead.status === "callback" || lead.status === "pendingMeeting")) {
-          scheduleLeadReminder(lead, scheduledIds);
+          scheduleLeadReminder(lead, scheduledIds, currentUser.id);
         }
       })
       .subscribe();
@@ -136,9 +131,9 @@ export function NotificationProvider({ children, currentUser }) {
       const { data } = await supabase
         .from("leads")
         .select("*")
-        .or(`assignedTo.eq.${currentUser.id},assigned_to.eq.${currentUser.id}`)
+        .eq("assigned_to", currentUser.id)
         .in("status", ["callback", "pendingMeeting"]);
-      if (data) data.forEach(l => scheduleLeadReminder(l, scheduledIds));
+      if (data) data.forEach(l => scheduleLeadReminder(l, scheduledIds, currentUser.id));
     })();
   }, [currentUser?.id]);
 
