@@ -414,28 +414,42 @@ function TeamDistRow({ agent, totalLeads }) {
 
 // ─── Main ─────────────────────────────────────────────────────
 export default function AdminHomePage({ onTabChange }) {
+  // ── Cache: invalidate old team cache that doesn't have avatar_url field ──
+  const rawCachedTeam = JSON.parse(localStorage.getItem("cache_team") || "[]");
+  const cachedTeamValid = rawCachedTeam.length > 0 && "avatar_url" in rawCachedTeam[0];
+  if (!cachedTeamValid && rawCachedTeam.length > 0) {
+    localStorage.removeItem("cache_team");
+  }
   const cachedLeads = JSON.parse(localStorage.getItem("cache_leads") || "[]");
-  const cachedTeam  = JSON.parse(localStorage.getItem("cache_team")  || "[]");
+  const cachedTeam  = cachedTeamValid ? rawCachedTeam : [];
 
   const [leads,        setLeads]        = useState(cachedLeads);
   const [team,         setTeam]         = useState(cachedTeam);
-  const [loading,      setLoading]      = useState(cachedLeads.length === 0);
+  const [loading,      setLoading]      = useState(true); // always load fresh on mount
   const [activeMetric, setActiveMetric] = useState(METRICS[0]);
 
   useEffect(() => {
     const load = async () => {
-      if (cachedLeads.length === 0) setLoading(true);
-      const [{ data: leadsData }, { data: teamData }] = await Promise.all([
-        supabase.from("leads").select("status, assigned_to"),
-        supabase.from("users").select("id, name, color, avatar_url").neq("role", "admin").neq("role", "owner"),
-      ]);
-      const newLeads = leadsData || [];
-      const newTeam  = teamData  || [];
-      localStorage.setItem("cache_leads", JSON.stringify(newLeads));
-      localStorage.setItem("cache_team",  JSON.stringify(newTeam));
-      setLeads(newLeads);
-      setTeam(newTeam);
-      setLoading(false);
+      setLoading(true);
+      try {
+        const [leadsRes, teamRes] = await Promise.all([
+          supabase.from("leads").select("status, assigned_to"),
+          supabase.from("users")
+            .select("id, name, color, avatar_url")
+            .neq("role", "admin")
+            .neq("role", "owner"),
+        ]);
+        const newLeads = leadsRes.data || [];
+        const newTeam  = teamRes.data  || [];
+        localStorage.setItem("cache_leads", JSON.stringify(newLeads));
+        localStorage.setItem("cache_team",  JSON.stringify(newTeam));
+        setLeads(newLeads);
+        setTeam(newTeam);
+      } catch (err) {
+        console.error("AdminHomePage load error:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
 
