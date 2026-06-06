@@ -63,6 +63,13 @@ const STYLES = `
   input, select { color-scheme: dark }
   ::placeholder { color:#595A5F !important; opacity:1 }
   select option { background:#252525; color:#fff }
+
+  /* Body lock without layout shift */
+  body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
 `;
 
 const inputBase = {
@@ -100,23 +107,21 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
   }, [open, lead]);
 
   useEffect(() => {
-    const scrollEl = document.querySelector("[data-scroll-container]");
-    if (!scrollEl) return;
     if (open) {
-      const scrollY = scrollEl.scrollTop;
-      scrollEl.dataset.savedScroll = String(scrollY);
-      scrollEl.style.overflowY = "hidden";
+      const scrollY = window.scrollY;
+      document.body.classList.add("modal-open");
+      document.body.style.top = `-${scrollY}px`;
     } else {
-      const saved = parseInt(scrollEl.dataset.savedScroll || "0");
-      scrollEl.style.overflowY = "";
-      scrollEl.scrollTop = saved;
-      delete scrollEl.dataset.savedScroll;
+      const scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      if (scrollY) window.scrollTo(0, scrollY);
     }
     return () => {
-      const saved = parseInt(scrollEl.dataset.savedScroll || "0");
-      scrollEl.style.overflowY = "";
-      scrollEl.scrollTop = saved;
-      delete scrollEl.dataset.savedScroll;
+      const scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      if (scrollY) window.scrollTo(0, scrollY);
     };
   }, [open]);
 

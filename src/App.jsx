@@ -659,7 +659,6 @@ export default function App() {
       <div
         key={activeSalesTab}
         className="onyx-animate"
-        data-scroll-container="true"
         style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", paddingBottom: 62 }}
       >
         {renderSalesPage()}
