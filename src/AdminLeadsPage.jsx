@@ -109,7 +109,6 @@ const SectionHeader = ({ label }) => (
 function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, changedBy = "Admin" }) {
   const [local, setLocal]   = useState(null);
   const [comment, setComment] = useState("");
-  const [saveComment, setSaveComment] = useState("");
   const [saving, setSaving]   = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
   const [deleting, setDeleting]     = useState(false);
@@ -158,7 +157,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
   }, [comment, local]);
 
   const handleSave = useCallback(async () => {
-    setSaving(true); await onUpdate(local, changedBy, saveComment.trim() || null); setSaving(false); setSaveComment(""); onClose();
+    setSaving(true); await onUpdate(local, changedBy, null); setSaving(false); onClose();
   }, [local, onUpdate, onClose, changedBy, saveComment]);
 
   const handleDelete = useCallback(async () => {
@@ -465,20 +464,6 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
 
           {/* Footer */}
           <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:"#141418" }}>
-            {/* Optional note with save */}
-            <div style={{ marginBottom:8 }}>
-              <input
-                value={saveComment}
-                onChange={e => setSaveComment(e.target.value)}
-                placeholder="ملاحظة مع الحفظ (اختياري)…"
-                style={{
-                  ...inputBase,
-                  fontSize:".72rem", padding:"8px 12px",
-                  background: C.surface,
-                  border:`1px solid ${C.border}`,
-                }}
-              />
-            </div>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Confirm permanent delete?</span>
