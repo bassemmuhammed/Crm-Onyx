@@ -752,6 +752,15 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         </div>
       </div>
 
+      {/* Lead Detail Modal */}
+      <LeadDetailModal
+        lead={selectedLead}
+        open={detailOpen}
+        onClose={closeDetail}
+        onUpdate={updateLead}
+        salesName={salesName}
+      />
+
     </div>
   );
 }
