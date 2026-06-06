@@ -8,15 +8,17 @@ import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
   black:    "#000000",
-  surface:  "#0A0A0A",
-  card:     "#111111",
-  border:   "#1E1E1E",
-  cardAlt:  "#252525",
-  gray:     "#595A5F",
+  surface:  "#0D0D0D",
+  card:     "#161618",
+  border:   "#2A2A2E",
+  cardAlt:  "#1E1E22",
+  gray:     "#6B6C73",
   silver:   "#CECECE",
   white:    "#FFFFFF",
   red:      "#CC1515",
   blue:     "#253FF6",
+  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
+  cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
 
 // ─── نفس الـ statuses بالظبط زي AdminLeadsPage ───────────────────
@@ -326,12 +328,13 @@ const LeadCard = ({ lead, onClick }) => {
 
   return (
     <div className="lead-card" onClick={onClick} style={{
-      background: C.card,
+      background: C.cardGrad1,
       border: `1px solid ${C.border}`,
-      borderLeft: `3px solid ${C.red}`,
+      borderLeft: `3px solid ${meta.color}`,
       borderRadius: 14,
       cursor: "pointer",
       overflow: "hidden",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.45)",
     }}>
       <div style={{ padding:"13px 14px", display:"flex", flexDirection:"column", gap:10 }}>
 
@@ -413,7 +416,7 @@ const LeadCard = ({ lead, onClick }) => {
 };
 
 // ─── MAIN PAGE ───────────────────────────────────────────────────
-export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads: externalLeads, onUpdateLead: externalUpdateLead }) {
+export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads: externalLeads, onUpdateLead: externalUpdateLead, initialFilter }) {
   const [localLeads, setLocalLeads] = useState(() => {
     try { const saved = localStorage.getItem("onyx_leads"); return saved ? JSON.parse(saved) : LEADS_INIT; }
     catch { return LEADS_INIT; }
@@ -421,7 +424,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
   const leads = externalLeads ?? localLeads;
 
   const [search,       setSearch]   = useState("");
-  const [statusFilter, setStatus]   = useState("all");
+  const [statusFilter, setStatus]   = useState(initialFilter || "all");
   const [selectedLead, setSelected] = useState(null);
   const [detailOpen,   setDetail]   = useState(false);
   const [showFilters,  setFilters]  = useState(false);
@@ -453,6 +456,12 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
   [leads]);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  // Apply filter from HomePage card tap
+  useEffect(() => {
+    if (initialFilter) setStatus(initialFilter);
+    else setStatus("all");
+  }, [initialFilter]);
 
   const openDetail  = useCallback((lead) => { setSelected(lead); setDetail(true); }, []);
   const closeDetail = useCallback(() => setDetail(false), []);
@@ -527,7 +536,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
 
         {/* Filter panel */}
         {showFilters && (
-          <div style={{ background:C.card, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:14, padding:"12px", display:"flex", flexDirection:"column", gap:9 }}>
+          <div style={{ background:C.cardGrad2, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:14, padding:"12px", display:"flex", flexDirection:"column", gap:9 }}>
             <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
               {ALL_STATUSES.map(s => {
                 const m = s !== "all" ? STATUS_META[s] : null;

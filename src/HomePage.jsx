@@ -9,7 +9,7 @@
 //   leads          {array}     — optional: live leads data
 //   tasks          {array}     — optional: live tasks data
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import AppHeader         from "./AppHeader";
 import BottomNav         from "./BottomNav";
 import NotificationPanel from "./NotificationPanel";
@@ -118,20 +118,21 @@ function scheduleTaskNotifications(tasks) {
 }
 
 // ─── Stats Definition ─────────────────────────────────────────────────
+// filterKey must match LeadsPage STATUS_META keys exactly
 const STATS_TEMPLATE = [
-  { label: "All Leads",       filter: null,              icon: "sparkle",       color: "#4f46e5", target: 0, pct: 0, trend: "", up: null },
-  { label: "New Leads",       filter: "New",             icon: "sparkle",       color: "#10b981", target: 0, pct: 0, trend: "", up: null },
-  { label: "Call Back",       filter: "Call Back",       icon: "phoneCall",     color: "#f59e0b", target: 0, pct: 0, trend: "", up: null },
-  { label: "Pending Meeting", filter: "Pending Meeting", icon: "calendarCheck", color: "#8b5cf6", target: 0, pct: 0, trend: "", up: null },
-  { label: "Meeting Done",    filter: "Meeting Done",    icon: "calendarCheck", color: "#10b981", target: 0, pct: 0, trend: "", up: null },
-  { label: "Deal",            filter: "Deal",            icon: "handshake",     color: C.redLight, target: 0, pct: 0, trend: "", up: null },
-  { label: "On Going",        filter: "On Going",        icon: "hourglass",     color: "#ec4899", target: 0, pct: 0, trend: "", up: null },
-  { label: "Low Budget",      filter: "Low Budget",      icon: "bar",           color: "#f97316", target: 0, pct: 0, trend: "", up: null },
-  { label: "No Answer",       filter: "No Answer",       icon: "phoneCall",     color: "#94a3b8", target: 0, pct: 0, trend: "", up: null },
-  { label: "Not Interested",  filter: "Not Interested",  icon: "snowflake",     color: "#0ea5e9", target: 0, pct: 0, trend: "", up: null },
-  { label: "Competitor",      filter: "Competitor",      icon: "flag",          color: C.red,     target: 0, pct: 0, trend: "", up: null },
-  { label: "Long Term",       filter: "Long Term",       icon: "hourglass",     color: "#7c3aed", target: 0, pct: 0, trend: "", up: null },
-  { label: "Closed",          filter: "Closed",          icon: "checkSquare",   color: "#64748b", target: 0, pct: 0, trend: "", up: null },
+  { label: "All Leads",       filterKey: "all",              icon: "sparkle",       color: "#4f46e5" },
+  { label: "New Leads",       filterKey: "new",              icon: "sparkle",       color: "#10b981" },
+  { label: "Call Back",       filterKey: "callback",         icon: "phoneCall",     color: "#f59e0b" },
+  { label: "Pending Meeting", filterKey: "pendingMeeting",   icon: "calendarCheck", color: "#8b5cf6" },
+  { label: "Meeting Done",    filterKey: "meetingDone",      icon: "calendarCheck", color: "#10b981" },
+  { label: "Deal",            filterKey: "deal",             icon: "handshake",     color: C.redLight },
+  { label: "On Going",        filterKey: "onGoing",          icon: "hourglass",     color: "#ec4899" },
+  { label: "Low Budget",      filterKey: "lowBudget",        icon: "bar",           color: "#f97316" },
+  { label: "No Answer",       filterKey: "noAnswer",         icon: "phoneCall",     color: "#94a3b8" },
+  { label: "Not Interested",  filterKey: "notInterested",    icon: "snowflake",     color: "#0ea5e9" },
+  { label: "Competitor",      filterKey: "chooseCompetitor", icon: "flag",          color: C.red     },
+  { label: "Long Term",       filterKey: "longTerm",         icon: "hourglass",     color: "#7c3aed" },
+  { label: "Closed",          filterKey: "closed",           icon: "checkSquare",   color: "#64748b" },
 ];
 
 const PRIORITY_COLOR = { high: C.red, medium: "#f59e0b", low: "#0ea5e9" };
@@ -168,13 +169,14 @@ function SectionHeader({ title, right }) {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────
-function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
-  const val = useCounter(s.target, animate);
+function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay = 0, index = 0 }) {
+  const val = useCounter(count, animate);
+  const pct  = totalLeads > 0 && s.filterKey !== "all" ? Math.round((count / totalLeads) * 100) : 0;
   const [barW, setBarW] = useState("0%");
 
   useEffect(() => {
-    if (animate) setTimeout(() => setBarW(s.pct + "%"), 500);
-  }, [animate, s.pct]);
+    if (animate) setTimeout(() => setBarW(pct + "%"), 500);
+  }, [animate, pct]);
 
   // Alternate card backgrounds for visual separation in daylight
   const cardBg = index % 2 === 0 ? C.cardGrad1 : C.cardGrad2;
@@ -182,7 +184,7 @@ function StatCard({ s, animate, onLeadsFilter, delay = 0, index = 0 }) {
   return (
     <div
       className="stat-card fade-up"
-      onClick={() => onLeadsFilter && onLeadsFilter(s.filter)}
+      onClick={() => onLeadsFilter && onLeadsFilter(s.filterKey)}
       style={{
         background: cardBg,
         border: `1px solid ${C.border}`,
@@ -436,6 +438,16 @@ export default function HomePage({
     }
   }, []);
 
+  const leads = leadsFromProps || [];
+
+  // Compute live counts per status
+  const statCounts = useMemo(() => {
+    const total = leads.length;
+    const byStatus = {};
+    leads.forEach(l => { byStatus[l.status] = (byStatus[l.status] || 0) + 1; });
+    return { all: total, ...byStatus };
+  }, [leads]);
+
   const unreadCount = notifs.filter(n => n.unread).length;
   const toggleTask  = id => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
   const markAllRead = ()  => setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
@@ -443,7 +455,7 @@ export default function HomePage({
   const totalTasks  = tasks.length;
 
   const handleLeadsFilter = filterKey => {
-    if (onLeadsFilter) onLeadsFilter(filterKey);
+    if (onLeadsFilter) onLeadsFilter(filterKey === "all" ? null : filterKey);
     if (onTabChange)   onTabChange(1);
   };
 
@@ -496,6 +508,8 @@ export default function HomePage({
               <StatCard
                 key={i}
                 s={s}
+                count={statCounts[s.filterKey] || 0}
+                totalLeads={statCounts.all}
                 animate={animate}
                 onLeadsFilter={handleLeadsFilter}
                 delay={i * 30}
