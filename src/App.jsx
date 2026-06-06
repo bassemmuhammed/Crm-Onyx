@@ -89,6 +89,7 @@ export default function App() {
   const [topLoading,  setTopLoading]  = useState(true);
   const [loggedIn,    setLoggedIn]    = useState(false);
   const [userRole,    setUserRole]    = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // { id, name, email, role }
 
 
 
@@ -101,8 +102,6 @@ export default function App() {
   );
 
   // ── Sales leads state ──
-  const [leads,        setLeads]        = useState([]);
-  const [leadsLoading, setLeadsLoading] = useState(false);
   const [leadsFilter,  setLeadsFilter]  = useState(null); // null = "all"
 
   // ── Admin UI state ──
@@ -170,12 +169,18 @@ export default function App() {
   const resolveRole = async (userId) => {
     const { data } = await supabase
       .from("users")
-      .select("role")
+      .select("id, name, email, role")
       .eq("id", userId)
       .single();
 
     const role = data?.role || localStorage.getItem("userRole") || "sales";
     setUserRole(role);
+    setCurrentUser({
+      id:    userId,
+      name:  data?.name  || data?.email || "Sales",
+      email: data?.email || "",
+      role,
+    });
     setLoggedIn(true);
     setTopLoading(false);
     setAuthLoading(false);
@@ -183,70 +188,31 @@ export default function App() {
     localStorage.setItem("userRole", role);
   };
 
-  // ── Fetch leads from Supabase (sales) ──
-  const fetchLeads = useCallback(async () => {
-    setLeadsLoading(true);
-    const { data: sessionData } = await supabase.auth.getSession();
-    const uid = sessionData?.session?.user?.id;
-    if (!uid) { setLeadsLoading(false); return; }
+  // ── Leads state خفيف للـ HomePage stats بس ──────────────────
+  // الـ fetch والـ realtime الحقيقي جوا LeadsPage
+  const [leads, setLeads] = useState([]);
 
-    const { data, error } = await supabase
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    // جيب الليدز المخصصة للسيلز عشان يظهر الـ stats في HomePage
+    supabase
       .from("leads")
-      .select("*")
-      .eq("assigned_to", uid)
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setLeads(data.map(r => ({
-        id:           r.id,
-        name:         r.name,
-        phone:        r.phone,
-        source:       r.source,
-        status:       r.status,
-        project:      r.project,
-        priority:     r.priority,
-        comments:     r.comments     || [],
-        callbackDate: r.callback_date || "",
-        callbackTime: r.callback_time || "",
-        clientInfo:   r.client_info   || { type: "", budget: "" },
-      })));
-    }
-    setLeadsLoading(false);
-  }, []);
-
-  // Fetch leads on login
-  useEffect(() => {
-    if (loggedIn && (userRole === "sales" || userRole === "broker")) fetchLeads();
-  }, [loggedIn, userRole, fetchLeads]);
-
-  // Realtime leads subscription
-  useEffect(() => {
-    if (!loggedIn || (userRole !== "sales" && userRole !== "broker")) return;
-    const channel = supabase
-      .channel("leads-changes")
+      .select("id, status, assigned_to")
+      .eq("assigned_to", currentUser.id)
+      .then(({ data }) => { if (data) setLeads(data.map(r => ({ id: r.id, status: r.status }))); });
+    // Realtime خفيف — بس يحدّث الـ counts
+    const ch = supabase
+      .channel("app-leads-stats")
       .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => {
-        fetchLeads();
+        supabase
+          .from("leads")
+          .select("id, status, assigned_to")
+          .eq("assigned_to", currentUser.id)
+          .then(({ data }) => { if (data) setLeads(data.map(r => ({ id: r.id, status: r.status }))); });
       })
       .subscribe();
-    return () => supabase.removeChannel(channel);
-  }, [loggedIn, userRole, fetchLeads]);
-
-  // ── Update a single lead in Supabase ──
-  const handleUpdateLead = useCallback(async (updated) => {
-    setLeads(prev => prev.map(l => l.id === updated.id ? updated : l));
-    await supabase.from("leads").update({
-      name:          updated.name,
-      phone:         updated.phone,
-      source:        updated.source,
-      status:        updated.status,
-      project:       updated.project,
-      priority:      updated.priority,
-      comments:      updated.comments,
-      callback_date: updated.callbackDate,
-      callback_time: updated.callbackTime,
-      client_info:   updated.clientInfo,
-    }).eq("id", updated.id);
-  }, []);
+    return () => supabase.removeChannel(ch);
+  }, [currentUser?.id]);
   const fetchProjects = useCallback(async () => {
     setProjectsLoading(true);
     const { data, error } = await supabase
@@ -329,6 +295,7 @@ export default function App() {
     localStorage.setItem("loggedIn", "false");
     localStorage.removeItem("userRole");
     setLoggedIn(false);
+    setCurrentUser(null);
     setActiveSalesTab(TAB_HOME);
     setProjects([]);
     setEditProject(null);
@@ -589,8 +556,7 @@ export default function App() {
             activeTab={activeSalesTab}
             onTabChange={setActiveSalesTab}
             onSignOut={handleSignOut}
-            leads={leads}
-            onUpdateLead={handleUpdateLead}
+            currentUser={currentUser}
             initialFilter={leadsFilter}
           />
         );
