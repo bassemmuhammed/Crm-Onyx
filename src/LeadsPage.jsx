@@ -208,9 +208,9 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 display:"flex", alignItems:"center", justifyContent:"center",
                 fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
               }}>{(local.name || "?").charAt(0)}</div>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
-                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
+              <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", alignItems:"center" }}>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{local.name}</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif", textAlign:"center" }}>{local.phone}</div>
               </div>
               <div style={{ background:C.card, borderRadius:6, padding:"5px 11px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
                 <div style={{ width:6, height:6, borderRadius:"50%", background:meta.color }} />
@@ -380,33 +380,6 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
 
           {/* Footer */}
           <div style={{ padding:"10px 18px 14px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
-            {/* Comment مع الـ Save — بيظهر في الـ changelog عند الأدمن */}
-            <div style={{ position:"relative", marginBottom:8 }}>
-              <input
-                value={pendingComment}
-                onChange={e => setPendingComment(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && !e.shiftKey && handleSave()}
-                placeholder="💬 Add a note with this save (optional)…"
-                style={{
-                  ...inputBase,
-                  fontSize:".72rem", padding:"9px 12px",
-                  background: C.surface,
-                  border:`1.5px solid ${pendingComment.trim() ? C.blue+"66" : C.border}`,
-                  borderRadius:10,
-                  transition:"border-color .2s",
-                  WebkitUserSelect:"text", userSelect:"text",
-                }}
-              />
-              {pendingComment.trim() && (
-                <div style={{
-                  position:"absolute", right:10, top:"50%", transform:"translateY(-50%)",
-                  fontSize:".55rem", fontWeight:800, color:C.blue,
-                  background:`${C.blue}18`, border:`1px solid ${C.blue}33`,
-                  padding:"2px 6px", borderRadius:4, fontFamily:"Archivo,sans-serif",
-                  pointerEvents:"none",
-                }}>will be logged</div>
-              )}
-            </div>
             <div style={{ display:"flex", gap:8, alignItems:"center" }}>
               <button onClick={onClose} style={{
                 flex:1, padding:"11px 0", borderRadius:10,
