@@ -373,8 +373,7 @@ export default function App() {
     // fetchProjects manually (+ realtime as backup)
     await fetchProjects();
     setEditProject(null);
-    setShowAddProject(false);
-    handleAdminTabChange(TAB_HOME);
+    // لا تغير الـ tab — AddProjectPage هتعمل setView("list") لوحدها
   };
 
   const openAddProject = (project = null) => {

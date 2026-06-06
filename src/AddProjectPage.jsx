@@ -7,7 +7,7 @@
 //   onSignOut       {function}
 //   editProject     {object|null}
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -54,6 +54,7 @@ const STYLES = `
   *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
   .section-card { animation: fadeInUp .3s ease both; }
   .save-btn     { transition: opacity .15s ease, transform .1s ease, box-shadow .15s ease; }
   .save-btn:active  { transform: scale(.97); }
@@ -181,6 +182,11 @@ export default function AddProjectPage({
   const [saved,   setSaved]   = useState(false);
   const [errors,  setErrors]  = useState({});
 
+  // لو الأدمن فتح edit من بره، روح على الفورم
+  useEffect(() => {
+    if (editProject) setView("form");
+  }, [editProject]);
+
   const init = editProject || {};
 
   // ── Basic Info ──
@@ -278,6 +284,7 @@ export default function AddProjectPage({
     setTimeout(() => {
       setSaved(false);
       setView("list");
+      setSelectedProject(null);
     }, 1500);
   };
 
@@ -320,13 +327,21 @@ export default function AddProjectPage({
           </div>
 
           {projects.length === 0 ? (
-            <div className="section-card" style={{
-              background:C.card, border:`1px solid ${C.border}`, borderRadius:14,
-              padding:"40px 20px", textAlign:"center", animationDelay:"0ms",
+            <div style={{
+              display:"flex", flexDirection:"column", alignItems:"center",
+              justifyContent:"center", minHeight:"55vh", textAlign:"center",
             }}>
-              <div style={{fontSize:"2.5rem",marginBottom:12}}>🏗️</div>
-              <div style={{fontSize:".82rem",fontWeight:700,color:C.silver,fontFamily:"Archivo,sans-serif",marginBottom:6}}>No Projects Yet</div>
-              <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,fontFamily:"Archivo,sans-serif"}}>Tap + Add Project to get started</div>
+              <div style={{ marginBottom:24, position:"relative" }}>
+                <div style={{ position:"absolute", inset:-14, borderRadius:"50%", border:`1px solid ${C.red}33`, animation:"pulse-ring 2.8s ease-in-out infinite" }} />
+                <div style={{ position:"absolute", inset:-6, borderRadius:"50%", border:`1px solid ${C.border}` }} />
+                <div style={{ width:80, height:80, borderRadius:"50%", background:C.card, border:`1.5px solid ${C.border}`, borderLeft:`2px solid ${C.red}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <svg width="32" height="32" viewBox="0 0 256 256" fill={C.red}>
+                    <path d="M240,208H224V96a16,16,0,0,0-16-16H144V48a16,16,0,0,0-16-16H32A16,16,0,0,0,16,48V208H8a8,8,0,0,0,0,16H240a8,8,0,0,0,0-16ZM144,208H112V168a8,8,0,0,1,8-8h16a8,8,0,0,1,8,8Zm64,0H160V168a24,24,0,0,0-24-24H120a24,24,0,0,0-24,24v40H32V48H128V96h0a16,16,0,0,0,16,16h64Z"/>
+                  </svg>
+                </div>
+              </div>
+              <div style={{fontSize:"1.05rem",fontWeight:900,color:C.white,fontFamily:"Archivo,sans-serif",marginBottom:8}}>No Projects Yet</div>
+              <div style={{fontSize:".75rem",color:C.gray,fontWeight:600,fontFamily:"Archivo,sans-serif",lineHeight:1.6,maxWidth:220}}>اضغط + Add Project عشان تضيف مشروع جديد</div>
             </div>
           ) : (
             projects.map((proj, i) => {
