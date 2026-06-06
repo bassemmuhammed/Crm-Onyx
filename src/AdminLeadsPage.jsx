@@ -1097,15 +1097,15 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   const page = (
     <div style={{
       fontFamily:"Archivo, sans-serif",
-      background:C.surface, height:"100dvh",
+      background:"transparent",
       color:C.white,
       colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
-      display:"flex", flexDirection:"column", overflow:"hidden",
+      display:"flex", flexDirection:"column",
+      minHeight:"100%",
       position:"relative",
     }}>
       <style>{STYLES}</style>
-      <link href={FONT_URL} rel="stylesheet" />
 
       <LoadingBar show={loading} />
 
@@ -1132,34 +1132,11 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
       {/* ── BODY ── */}
       <div
         ref={bodyRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
         style={{
-          flex:1, overflowY:"auto", padding:"12px 14px 0",
+          flex:1, padding:"12px 14px 0",
           display:"flex", flexDirection:"column", gap:9,
-          WebkitOverflowScrolling:"touch",
-          overscrollBehavior:"contain",
-          scrollBehavior:"smooth",
-          willChange:"scroll-position",
         }}
       >
-        {/* Pull-to-refresh indicator */}
-        <div style={{
-          height: pulling || refreshing ? Math.min(pullY, 60) : 0,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          overflow:"hidden", transition: pulling ? "none" : "height .25s ease",
-          marginBottom: pulling || refreshing ? 4 : 0,
-        }}>
-          <div style={{
-            width:28, height:28, borderRadius:"50%",
-            border:`2.5px solid ${C.red}`, borderTopColor:"transparent",
-            animation: refreshing ? "spin .7s linear infinite" : "none",
-            transform: !refreshing ? `rotate(${pullY * 3}deg)` : undefined,
-            opacity: Math.min(pullY / 60, 1),
-          }} />
-        </div>
-
         {/* Search */}
         <div style={{ position:"relative" }}>
           <div style={{ position:"absolute", left:13, top:"50%", transform:"translateY(-50%)", color:C.gray, pointerEvents:"none" }}>
@@ -1267,7 +1244,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         )}
 
         {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:88 }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:100 }}>
           {loading
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
@@ -1286,14 +1263,20 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         </div>
       </div>
 
-      {/* FAB — absolute inside page so it respects the container bounds */}
+    </div>
+  );
+
+  return (
+    <>
+      {page}
+      {/* FAB — fixed so it always floats above BottomNav regardless of scroll container */}
       {!anyModalOpen && (
         <div
           onClick={() => setModal("fab")}
           className="tap-btn"
           style={{
-            position:"absolute",
-            bottom:16,
+            position:"fixed",
+            bottom:76,
             right:20,
             width:54, height:54, borderRadius:"50%",
             background:C.red, boxShadow:`0 6px 24px ${C.red}66`,
@@ -1305,8 +1288,6 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
           <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
         </div>
       )}
-    </div>
+    </>
   );
-
-  return page;
 }

@@ -8,10 +8,6 @@
 //   editProject     {object|null}
 
 import { useState } from "react";
-import AppHeader from "./AppHeader";
-import BottomNav from "./BottomNav";
-import NotificationPanel from "./NotificationPanel";
-import ProfileModal from "./ProfileModal";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -46,11 +42,6 @@ const AMENITY_OPTIONS = [
   "Swimming Pool", "Gym", "Kids Area", "Security 24/7",
   "Underground Parking", "Rooftop Garden", "Club House",
   "Smart Home", "Mall", "Mosque", "Hospital", "School",
-];
-
-const NOTIFICATIONS = [
-  { id: 1, text: "New lead on Nile Heights Tower", time: "2 min ago", color: "#253FF6", unread: true  },
-  { id: 2, text: "Project updated by admin",        time: "1 hr ago",  color: "#10b981", unread: false },
 ];
 
 // ─── Styles ───────────────────────────────────────────────────────────
@@ -181,14 +172,8 @@ export default function AddProjectPage({
   onProjectSaved, onTabChange, onSignOut,
   editProject = null, navItems, activeTab: activeTabProp,
 }) {
-  const [notifOpen,   setNotifOpen]   = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
-  const [notifs,      setNotifs]      = useState(NOTIFICATIONS);
-  const [activeTab,   setActiveTab]   = useState(activeTabProp ?? 3);
-  const [saved,       setSaved]       = useState(false);
-  const [errors,      setErrors]      = useState({});
-
-  const unread = notifs.filter(n => n.unread).length;
+  const [saved,   setSaved]   = useState(false);
+  const [errors,  setErrors]  = useState({});
 
   const init = editProject || {};
 
@@ -283,7 +268,7 @@ export default function AddProjectPage({
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const handleTabChange = (tab) => { setActiveTab(tab); onTabChange?.(tab); };
+  const handleTabChange = (tab) => { onTabChange?.(tab); };
   const toggleAmenity   = (a)   => setAmenities(prev => prev.includes(a) ? prev.filter(x=>x!==a) : [...prev,a]);
 
   const addUnit     = () => setUnits(u=>[...u,{type:"",size:"",price:"",available:0}]);
@@ -301,12 +286,10 @@ export default function AddProjectPage({
   const statusMeta = STATUS_OPTIONS.find(s=>s.value===status) || STATUS_OPTIONS[0];
 
   return (
-    <div style={{ minHeight:"100vh", background:C.surface, fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:120 }}>
+    <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:20 }}>
       <style>{STYLES}</style>
 
-      <AppHeader unreadCount={unread} onBellClick={()=>setNotifOpen(true)} onProfileClick={()=>setProfileOpen(true)} />
-
-      {/* ── Form Body (no page-title section per request) ── */}
+      {/* ── Form Body ── */}
       <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
 
         {/* ── 1. Basic Information ── */}
@@ -623,11 +606,6 @@ export default function AddProjectPage({
         </div>
 
       </div>
-
-      {/* ── Modals & Panels ── */}
-      <NotificationPanel open={notifOpen} onClose={()=>setNotifOpen(false)} notifs={notifs} onMarkAll={()=>setNotifs(prev=>prev.map(n=>({...n,unread:false})))}/>
-      <ProfileModal open={profileOpen} onClose={()=>setProfileOpen(false)} onSignOut={onSignOut}/>
-      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} items={navItems}/>
     </div>
   );
 }
