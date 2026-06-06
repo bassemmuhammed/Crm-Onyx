@@ -1,5 +1,6 @@
 import Icons             from "./Icons";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, subscribeToLeads, supabase } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
@@ -99,20 +100,21 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
   }, [open, lead]);
 
   useEffect(() => {
-    const scrollEl = document.querySelector("[data-scroll-container]") || document.documentElement;
+    const scrollEl = document.querySelector("[data-scroll-container]");
+    if (!scrollEl) return;
     if (open) {
       const scrollY = scrollEl.scrollTop;
-      scrollEl.dataset.savedScroll = scrollY;
-      scrollEl.style.overflow = "hidden";
+      scrollEl.dataset.savedScroll = String(scrollY);
+      scrollEl.style.overflowY = "hidden";
     } else {
       const saved = parseInt(scrollEl.dataset.savedScroll || "0");
-      scrollEl.style.overflow = "";
+      scrollEl.style.overflowY = "";
       scrollEl.scrollTop = saved;
       delete scrollEl.dataset.savedScroll;
     }
     return () => {
       const saved = parseInt(scrollEl.dataset.savedScroll || "0");
-      scrollEl.style.overflow = "";
+      scrollEl.style.overflowY = "";
       scrollEl.scrollTop = saved;
       delete scrollEl.dataset.savedScroll;
     };
@@ -160,7 +162,7 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
   const meta       = STATUS_META[local.status] || STATUS_META.new;
   const isCallback = local.status === "callback";
 
-  return (
+  return createPortal(
     <>
       <style>{STYLES}</style>
       <div onClick={onClose} style={{
@@ -416,7 +418,8 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
