@@ -597,15 +597,6 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
             if (prev.some(l => l.id === lead.id)) return prev;
             return [lead, ...prev];
           });
-          // أضف notification وزوّد الـ badge
-          const notif = {
-            id: Date.now(),
-            text: `New lead: ${lead.name}`,
-            time: "Just now",
-            color: "#10b981",
-            unread: true,
-          };
-          setNotifs(prev => [notif, ...prev]);
           setNewBadge(b => b + 1);
         }
       }
@@ -656,16 +647,6 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
     else setStatus("all");
   }, [initialFilter]);
 
-  const openDetail  = useCallback((lead) => {
-    setSelected(lead);
-    setDetail(true);
-    onModalState?.({ lead, open: true, onUpdate: updateLead });
-  }, [onModalState, updateLead]);
-  const closeDetail = useCallback(() => {
-    setDetail(false);
-    onModalState?.({ lead: null, open: false });
-  }, [onModalState]);
-
   // ── Update Lead: بيحفظ في Supabase ويسجّل الـ changelog ─────
   // comment بيتبعت من handleSave عشان يتسجل في الـ changelog عند الأدمن
   const updateLead = useCallback(async (updated, comment = null) => {
@@ -675,6 +656,16 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
       setSelected({ ...result, comments: updated.comments });
     }
   }, [salesName]);
+
+  const openDetail  = useCallback((lead) => {
+    setSelected(lead);
+    setDetail(true);
+    onModalState?.({ lead, open: true, onUpdate: updateLead });
+  }, [onModalState, updateLead]);
+  const closeDetail = useCallback(() => {
+    setDetail(false);
+    onModalState?.({ lead: null, open: false });
+  }, [onModalState]);
 
   return (
     <div style={{
