@@ -232,6 +232,9 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
 
 // ─── Task Card ────────────────────────────────────────────────────────
 function TaskCard({ t, onToggle }) {
+  const leadBorderColor = t.isLead
+    ? (t.priority === "high" ? "#8b5cf6" : "#f59e0b")
+    : null;
   return (
     <div
       className="task-row"
@@ -239,6 +242,7 @@ function TaskCard({ t, onToggle }) {
       style={{
         background: C.cardGrad2,
         border: `1px solid ${C.border}`,
+        borderLeft: leadBorderColor ? `3px solid ${leadBorderColor}` : `1px solid ${C.border}`,
         borderRadius: 12,
         padding: "12px 14px",
         display: "flex", alignItems: "center", gap: 12,
@@ -389,6 +393,18 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
   );
 }
 
+// ─── Format date for task display ────────────────────────────────────
+function formatLeadDue(lead) {
+  const dateStr = lead.callbackDate || lead.meetingDate;
+  const timeStr = lead.callbackTime || lead.meetingTime;
+  if (!dateStr) return "No date set";
+  if (!timeStr) return dateStr;
+  // Format: "15 Jun, 3:00 PM"
+  const dt = new Date(`${dateStr}T${timeStr}`);
+  if (isNaN(dt.getTime())) return `${dateStr} ${timeStr}`;
+  return dt.toLocaleString("en-GB", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit", hour12:true });
+}
+
 // ─── Home Page ────────────────────────────────────────────────────────
 export default function HomePage({
   activeTab = 0,
@@ -400,19 +416,14 @@ export default function HomePage({
 }) {
   const [animate,      setAnimate]      = useState(false);
   const [viewAllOpen,  setViewAllOpen]  = useState(false);
-  const [tasks,        setTasks]        = useState(tasksFromProps || TASKS_DEFAULT);
+  const [manualTasks,  setManualTasks]  = useState(tasksFromProps || TASKS_DEFAULT);
+  const [doneLeadIds,  setDoneLeadIds]  = useState(new Set());
 
   // Freeze scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = viewAllOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [viewAllOpen]);
-
-  // Schedule notifications
-  useEffect(() => {
-    if (tasks.length === 0) return;
-    scheduleTaskNotifications(tasks);
-  }, [tasks]);
 
   // Trigger animate on mount
   useEffect(() => {
@@ -432,6 +443,26 @@ export default function HomePage({
 
   const leads = leadsFromProps || [];
 
+  // ── Auto-generate tasks from callback + pendingMeeting leads ──
+  const leadTasks = useMemo(() => {
+    return leads
+      .filter(l => l.status === "callback" || l.status === "pendingMeeting")
+      .map(l => ({
+        id:       `lead-${l.id}`,
+        title:    l.status === "callback"
+                    ? `📞 Call Back: ${l.name}`
+                    : `📅 Meeting: ${l.name}`,
+        due:      formatLeadDue(l),
+        priority: l.status === "pendingMeeting" ? "high" : "medium",
+        done:     doneLeadIds.has(l.id),
+        isLead:   true,
+        leadId:   l.id,
+      }));
+  }, [leads, doneLeadIds]);
+
+  // Merge lead tasks + manual tasks (lead tasks first)
+  const tasks = useMemo(() => [...leadTasks, ...manualTasks], [leadTasks, manualTasks]);
+
   // Compute live counts per status
   const statCounts = useMemo(() => {
     const total = leads.length;
@@ -440,8 +471,19 @@ export default function HomePage({
     return { all: total, ...byStatus };
   }, [leads]);
 
-  const toggleTask  = id => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  const doneTasks   = tasks.filter(t => t.done).length;
+  const toggleTask = id => {
+    if (id.startsWith("lead-")) {
+      const leadId = id.replace("lead-", "");
+      setDoneLeadIds(prev => {
+        const next = new Set(prev);
+        next.has(leadId) ? next.delete(leadId) : next.add(leadId);
+        return next;
+      });
+    } else {
+      setManualTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    }
+  };
+  const doneTasks = tasks.filter(t => t.done).length;
   const totalTasks  = tasks.length;
 
   const handleLeadsFilter = filterKey => {

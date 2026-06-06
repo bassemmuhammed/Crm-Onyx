@@ -17,7 +17,7 @@ const STYLES = `
   .notif-item:active { background: #1e1e1e !important; }
 `;
 
-export default function NotificationPanel({ open, onClose, notifs = [], onMarkAll }) {
+export default function NotificationPanel({ open, onClose, notifs = [], onMarkAll, onMarkRead }) {
   if (!open) return null;
 
   const unreadCount = notifs.filter(n => n.unread).length;
@@ -88,6 +88,7 @@ export default function NotificationPanel({ open, onClose, notifs = [], onMarkAl
             <div
               key={n.id}
               className="notif-item"
+              onClick={() => n.unread && onMarkRead?.(n.id)}
               style={{
                 padding: "12px 16px",
                 borderBottom: i < notifs.length - 1 ? `1px solid ${C.border}` : "none",

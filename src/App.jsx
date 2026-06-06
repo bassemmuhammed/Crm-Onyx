@@ -15,6 +15,7 @@ import AppHeader            from "./AppHeader";
 import BottomNav            from "./BottomNav";
 import NotificationPanel    from "./NotificationPanel";
 import ProfileModal         from "./ProfileModal";
+import { NotificationProvider, useNotifications } from "./NotificationContext";
 
 // ─── ONYX Design ─────────────────────────────────────────────────
 const OnyxGlobalStyles = () => (
@@ -45,6 +46,40 @@ const OnyxLogo = ({ size = 32 }) => (
     </g>
   </svg>
 );
+
+function NotifConnectedHeader({ onBellClick, onProfileClick, logo, avatarUrl }) {
+  const { unreadCount } = useNotifications();
+  return (
+    <AppHeader
+      unreadCount={unreadCount}
+      onBellClick={onBellClick}
+      onProfileClick={onProfileClick}
+      logo={logo}
+      avatarUrl={avatarUrl}
+    />
+  );
+}
+
+// ─── Inner shell — uses NotificationContext ───────────────────────
+function NotifConnectedPanels({ open, onClose, onProfileClick, profileOpen, onProfileClose, onSignOut, refreshAvatar }) {
+  const { notifs, markAllRead, markRead } = useNotifications();
+  return (
+    <>
+      <NotificationPanel
+        open={open}
+        onClose={onClose}
+        notifs={notifs}
+        onMarkAll={markAllRead}
+        onMarkRead={markRead}
+      />
+      <ProfileModal
+        open={profileOpen}
+        onClose={() => { onProfileClose(); refreshAvatar(); }}
+        onSignOut={onSignOut}
+      />
+    </>
+  );
+}
 
 // ─── Tab constants ────────────────────────────────────────────────
 const TAB_HOME     = 0;
@@ -118,7 +153,6 @@ export default function App() {
   });
   const [notifOpen,      setNotifOpen]      = useState(false);
   const [profileOpen,    setProfileOpen]    = useState(false);
-  const [notifs,         setNotifs]         = useState(INIT_NOTIFS);
 
   // ── Sales tab ──
   const [activeSalesTab, setActiveSalesTab] = useState(() => {
@@ -393,8 +427,6 @@ export default function App() {
     setShowAddProject(false);
     handleAdminTabChange(TAB_HOME);
   };
-  const unread = notifs.filter(n => n.unread).length;
-
   // ────────────────────────────────────────────────────────────────
   // RENDER GATES
   // ────────────────────────────────────────────────────────────────
@@ -473,6 +505,7 @@ export default function App() {
     };
 
     return (
+      <NotificationProvider currentUser={currentUser}>
       <div style={{
         height: "100dvh",
         background: "#0a0a0a",
@@ -496,8 +529,7 @@ export default function App() {
             background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)",
           }} />
 
-          <AppHeader
-            unreadCount={unread}
+          <NotifConnectedHeader
             onBellClick={()    => setNotifOpen(true)}
             onProfileClick={() => setProfileOpen(true)}
             logo={<OnyxLogo size={28} />}
@@ -514,16 +546,13 @@ export default function App() {
           {renderAdminPage()}
         </div>
 
-        <NotificationPanel
+        <NotifConnectedPanels
           open={notifOpen}
           onClose={() => setNotifOpen(false)}
-          notifs={notifs}
-          onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))}
-        />
-        <ProfileModal
-          open={profileOpen}
-          onClose={() => { setProfileOpen(false); refreshAvatar(); }}
+          profileOpen={profileOpen}
+          onProfileClose={() => setProfileOpen(false)}
           onSignOut={handleSignOut}
+          refreshAvatar={refreshAvatar}
         />
 
         {/* ── FIXED BOTTOM NAV ── */}
@@ -533,6 +562,7 @@ export default function App() {
           items={ADMIN_NAV}
         />
       </div>
+      </NotificationProvider>
     );
   }
 
@@ -595,6 +625,7 @@ export default function App() {
   };
 
   return (
+    <NotificationProvider currentUser={currentUser}>
     <div style={{
       height: "100dvh",
       background: "#0a0a0a",
@@ -613,8 +644,7 @@ export default function App() {
       {/* ── FIXED HEADER ── */}
       <div style={{ flexShrink: 0, position: "relative", zIndex: 50 }}>
         <div style={{ height: 2, background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)" }} />
-        <AppHeader
-          unreadCount={unread}
+        <NotifConnectedHeader
           onBellClick={()    => setNotifOpen(true)}
           onProfileClick={() => setProfileOpen(true)}
           logo={<OnyxLogo size={28} />}
@@ -631,16 +661,13 @@ export default function App() {
         {renderSalesPage()}
       </div>
 
-      <NotificationPanel
+      <NotifConnectedPanels
         open={notifOpen}
         onClose={() => setNotifOpen(false)}
-        notifs={notifs}
-        onMarkAll={() => setNotifs(prev => prev.map(n => ({ ...n, unread: false })))}
-      />
-      <ProfileModal
-        open={profileOpen}
-        onClose={() => { setProfileOpen(false); refreshAvatar(); }}
+        profileOpen={profileOpen}
+        onProfileClose={() => setProfileOpen(false)}
         onSignOut={handleSignOut}
+        refreshAvatar={refreshAvatar}
       />
 
       {/* BottomNav is fixed-positioned so it renders outside the flex container */}
@@ -652,5 +679,6 @@ export default function App() {
         }}
       />
     </div>
+    </NotificationProvider>
   );
 }
