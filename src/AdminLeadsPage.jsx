@@ -158,7 +158,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
 
   const handleSave = useCallback(async () => {
     setSaving(true); await onUpdate(local, changedBy, null); setSaving(false); onClose();
-  }, [local, onUpdate, onClose, changedBy, saveComment]);
+  }, [local, onUpdate, onClose, changedBy]);
 
   const handleDelete = useCallback(async () => {
     if (!confirmDel) { setConfirmDel(true); return; }
