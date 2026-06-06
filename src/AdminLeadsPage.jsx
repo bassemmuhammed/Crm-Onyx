@@ -237,13 +237,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               display:"flex", alignItems:"center", gap:10,
               background:C.cardAlt, borderRadius:12, padding:"10px 14px",
               cursor:"pointer", border:`1px solid ${C.border}`,
-              position:"relative", overflow:"hidden",
+              position:"relative", paddingLeft:17,
             }}>
               {/* Gradient left border */}
               <div style={{
                 position:"absolute", left:0, top:0, bottom:0, width:3,
                 background:`linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
                 borderRadius:"12px 0 0 12px",
+                pointerEvents:"none",
               }} />
               <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
