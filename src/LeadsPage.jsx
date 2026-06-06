@@ -99,27 +99,22 @@ function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" })
   }, [open, lead]);
 
   useEffect(() => {
+    const scrollEl = document.querySelector("[data-scroll-container]") || document.documentElement;
     if (open) {
-      const scrollY = window.scrollY;
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
+      const scrollY = scrollEl.scrollTop;
+      scrollEl.dataset.savedScroll = scrollY;
+      scrollEl.style.overflow = "hidden";
     } else {
-      const top = document.body.style.top;
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      window.scrollTo(0, -parseInt(top || "0"));
+      const saved = parseInt(scrollEl.dataset.savedScroll || "0");
+      scrollEl.style.overflow = "";
+      scrollEl.scrollTop = saved;
+      delete scrollEl.dataset.savedScroll;
     }
     return () => {
-      const top = document.body.style.top;
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      window.scrollTo(0, -parseInt(top || "0"));
+      const saved = parseInt(scrollEl.dataset.savedScroll || "0");
+      scrollEl.style.overflow = "";
+      scrollEl.scrollTop = saved;
+      delete scrollEl.dataset.savedScroll;
     };
   }, [open]);
 
