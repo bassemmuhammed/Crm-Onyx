@@ -162,11 +162,11 @@ function LaunchCard({ item, index }) {
       borderRadius: 16,
       overflow: "hidden",
       border: `1px solid ${C.border}`,
-      borderLeft: `3px solid ${item.tagColor}`,
+      borderLeft: `3px solid ${C.red}`,
       animationDelay: `${index * 80}ms`,
     }}>
-      {/* Top bar */}
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${item.tagColor}, ${item.tagColor}44, transparent)` }} />
+      {/* Top bar — always red */}
+      <div style={{ height: 3, background: `linear-gradient(90deg, ${C.red}, ${C.redLight} 40%, transparent)` }} />
 
       <div style={{ padding: "14px 14px 12px" }}>
 
@@ -179,12 +179,13 @@ function LaunchCard({ item, index }) {
             </div>
             <div style={{ fontSize:".68rem", color:C.gray, fontWeight:600, fontFamily:"Archivo,sans-serif" }}>{item.developer}</div>
           </div>
+          {/* Days badge — red if urgent */}
           <div style={{
-            background: urgent ? `${C.red}22` : `${item.tagColor}22`,
-            color: urgent ? C.red : item.tagColor,
+            background: urgent ? `${C.red}22` : C.cardAlt,
+            color: urgent ? C.red : C.silver,
             fontSize:".6rem", fontWeight:800,
             padding:"4px 10px", borderRadius:99,
-            border: `1px solid ${urgent ? C.red+"44" : item.tagColor+"44"}`,
+            border: `1px solid ${urgent ? C.red+"55" : C.border}`,
             whiteSpace:"nowrap", fontFamily:"Archivo,sans-serif",
           }}>
             {daysLeft <= 0 ? "Today!" : `${daysLeft} days`}
@@ -193,7 +194,9 @@ function LaunchCard({ item, index }) {
 
         {/* Tags row */}
         <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:12 }}>
-          <div style={{ background:`${item.tagColor}22`, color:item.tagColor, fontSize:".58rem", fontWeight:700, padding:"3px 10px", borderRadius:6, border:`1px solid ${item.tagColor}44`, fontFamily:"Archivo,sans-serif" }}>
+          {/* Launch type tag — red accent */}
+          <div style={{ background:`${C.red}18`, color:C.white, fontSize:".58rem", fontWeight:700, padding:"3px 10px", borderRadius:6, border:`1px solid ${C.red}44`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{ width:4, height:4, borderRadius:"50%", background:C.red }} />
             {item.tag}
           </div>
           <div style={{ background:C.cardAlt, color:C.silver, fontSize:".58rem", fontWeight:600, padding:"3px 10px", borderRadius:6, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", gap:4, fontFamily:"Archivo,sans-serif" }}>
@@ -217,16 +220,16 @@ function LaunchCard({ item, index }) {
           ))}
         </div>
 
-        {/* Booking / Installment / Cash */}
+        {/* Booking / Installment / Cash — white text, colored label */}
         <div style={{ display:"flex", gap:6, marginBottom:12 }}>
           {[
-            { label:"Booking",       value:item.booking,      color:C.blue   },
-            { label:"Installment",   value:item.installment,  color:C.green  },
-            { label:"Cash Discount", value:item.cashDiscount, color:C.amber  },
+            { label:"Booking",       value:item.booking,      color:C.blue  },
+            { label:"Installment",   value:item.installment,  color:C.green },
+            { label:"Cash Discount", value:item.cashDiscount, color:C.amber },
           ].map((d,i) => (
-            <div key={i} style={{ flex:1, background:`${d.color}18`, borderRadius:10, padding:"8px 8px", border:`1px solid ${d.color}33` }}>
-              <div style={{ fontSize:".48rem", color:d.color, fontWeight:700, marginBottom:3, textTransform:"uppercase", letterSpacing:.3, fontFamily:"Archivo,sans-serif", opacity:.8 }}>{d.label}</div>
-              <div style={{ fontSize:".68rem", color:d.color, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>{d.value}</div>
+            <div key={i} style={{ flex:1, background:C.cardAlt, borderRadius:10, padding:"8px 8px", border:`1px solid ${C.border}` }}>
+              <div style={{ fontSize:".48rem", color:d.color, fontWeight:800, marginBottom:3, textTransform:"uppercase", letterSpacing:.3, fontFamily:"Archivo,sans-serif" }}>{d.label}</div>
+              <div style={{ fontSize:".68rem", color:C.white, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>{d.value}</div>
             </div>
           ))}
         </div>
@@ -235,17 +238,17 @@ function LaunchCard({ item, index }) {
         <div style={{ marginBottom:12 }}>
           <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
             <span style={{ fontSize:".58rem", color:C.gray, fontWeight:600, fontFamily:"Archivo,sans-serif" }}>Construction Progress</span>
-            <span style={{ fontSize:".58rem", color:item.tagColor, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>{item.progressLabel}</span>
+            <span style={{ fontSize:".58rem", color:C.red, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>{item.progressLabel}</span>
           </div>
           <div style={{ height:5, borderRadius:99, background:C.cardAlt, overflow:"hidden" }}>
-            <div style={{ height:"100%", borderRadius:99, background:`linear-gradient(90deg, ${item.tagColor}, ${item.tagColor}88)`, width:`${item.progress}%`, transition:"width 1s ease" }} />
+            <div style={{ height:"100%", borderRadius:99, background:`linear-gradient(90deg, ${C.red}, ${C.redLight})`, width:`${item.progress}%`, transition:"width 1s ease" }} />
           </div>
         </div>
 
-        {/* Units toggle */}
+        {/* Units toggle — red */}
         <div onClick={() => setExpanded(e=>!e)} className="tap-scale" style={{ display:"flex", alignItems:"center", justifyContent:"space-between", cursor:"pointer", padding:"8px 0", borderTop:`1px solid ${C.border}` }}>
-          <span style={{ fontSize:".65rem", fontWeight:700, color:item.tagColor, fontFamily:"Archivo,sans-serif" }}>Unit Sizes & Prices</span>
-          <span style={{ fontSize:".6rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>{expanded ? "▲ Hide" : "▼ Show"}</span>
+          <span style={{ fontSize:".65rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Unit Sizes & Prices</span>
+          <span style={{ fontSize:".6rem", color:C.red, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>{expanded ? "▲ Hide" : "▼ Show"}</span>
         </div>
 
         {/* Units table */}
@@ -260,7 +263,7 @@ function LaunchCard({ item, index }) {
               <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:4, background: i%2===0 ? C.cardAlt : C.card, padding:"8px 10px", borderRadius:10, border:`1px solid ${C.border}` }}>
                 <div style={{ fontSize:".7rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif" }}>{u.type}</div>
                 <div style={{ fontSize:".7rem", fontWeight:600, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{u.area}</div>
-                <div style={{ fontSize:".68rem", fontWeight:800, color:item.tagColor, fontFamily:"Archivo,sans-serif" }}>{u.price}</div>
+                <div style={{ fontSize:".68rem", fontWeight:800, color:C.red, fontFamily:"Archivo,sans-serif" }}>{u.price}</div>
               </div>
             ))}
           </div>
@@ -280,16 +283,16 @@ function PostCard({ post, index }) {
       borderRadius: 16,
       overflow: "hidden",
       border: `1px solid ${C.border}`,
-      borderLeft: `3px solid ${post.typeColor}`,
+      borderLeft: `3px solid ${C.red}`,
       animationDelay: `${index * 80}ms`,
     }}>
-      <div style={{ height:3, background:`linear-gradient(90deg, ${post.typeColor}, ${post.typeColor}44, transparent)` }} />
+      <div style={{ height:3, background:`linear-gradient(90deg, ${C.red}, ${C.redLight} 40%, transparent)` }} />
 
       <div style={{ padding:"14px" }}>
         {/* Header */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ width:38, height:38, borderRadius:10, background:`${post.typeColor}22`, border:`1px solid ${post.typeColor}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".78rem", fontWeight:900, color:post.typeColor, fontFamily:"Archivo,sans-serif" }}>
+            <div style={{ width:38, height:38, borderRadius:10, background:`${C.red}18`, border:`1px solid ${C.red}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:".78rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif" }}>
               {post.project.charAt(0)}
             </div>
             <div>
@@ -297,21 +300,23 @@ function PostCard({ post, index }) {
               <div style={{ fontSize:".6rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>{post.postedAt}</div>
             </div>
           </div>
-          <div style={{ background:`${post.typeColor}22`, color:post.typeColor, fontSize:".58rem", fontWeight:700, padding:"3px 9px", borderRadius:6, border:`1px solid ${post.typeColor}44`, fontFamily:"Archivo,sans-serif" }}>
+          {/* Type badge — red */}
+          <div style={{ background:`${C.red}18`, color:C.white, fontSize:".58rem", fontWeight:700, padding:"3px 9px", borderRadius:6, border:`1px solid ${C.red}44`, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{ width:4, height:4, borderRadius:"50%", background:C.red }} />
             {post.typeLabel}
           </div>
         </div>
 
-        {/* Post content */}
-        <div style={{ background:C.cardAlt, borderRadius:12, padding:"12px 14px", marginBottom:10, fontSize:".78rem", color:C.silver, lineHeight:1.7, whiteSpace:"pre-line", maxHeight: expanded?"none":80, overflow:"hidden", position:"relative", border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif" }}>
+        {/* Post content — white text */}
+        <div style={{ background:C.cardAlt, borderRadius:12, padding:"12px 14px", marginBottom:10, fontSize:".78rem", color:C.white, lineHeight:1.7, whiteSpace:"pre-line", maxHeight: expanded?"none":80, overflow:"hidden", position:"relative", border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif" }}>
           {post.content}
           {!expanded && (
             <div style={{ position:"absolute", bottom:0, left:0, right:0, height:32, background:`linear-gradient(transparent, ${C.cardAlt})` }} />
           )}
         </div>
 
-        {/* Expand toggle */}
-        <div onClick={() => setExpanded(e=>!e)} className="tap-scale" style={{ fontSize:".63rem", color:post.typeColor, fontWeight:700, cursor:"pointer", marginBottom:10, display:"flex", alignItems:"center", gap:4, fontFamily:"Archivo,sans-serif" }}>
+        {/* Expand toggle — red */}
+        <div onClick={() => setExpanded(e=>!e)} className="tap-scale" style={{ fontSize:".63rem", color:C.red, fontWeight:700, cursor:"pointer", marginBottom:10, display:"flex", alignItems:"center", gap:4, fontFamily:"Archivo,sans-serif" }}>
           {expanded ? "عرض أقل ▲" : "عرض المزيد ▼"}
         </div>
 
@@ -320,7 +325,7 @@ function PostCard({ post, index }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
             {post.details.map((d,i) => (
               <div key={i} style={{ background:C.cardAlt, borderRadius:10, padding:"8px 10px", border:`1px solid ${C.border}` }}>
-                <div style={{ fontSize:".55rem", color:C.gray, fontWeight:600, marginBottom:2, fontFamily:"Archivo,sans-serif" }}>{d.label}</div>
+                <div style={{ fontSize:".55rem", color:C.gray, fontWeight:700, marginBottom:2, textTransform:"uppercase", letterSpacing:.4, fontFamily:"Archivo,sans-serif" }}>{d.label}</div>
                 <div style={{ fontSize:".75rem", color:C.white, fontWeight:800, fontFamily:"Archivo,sans-serif" }}>{d.value}</div>
               </div>
             ))}
