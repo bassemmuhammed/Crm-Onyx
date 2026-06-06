@@ -101,9 +101,7 @@ export default function App() {
   const [projects,      setProjects]      = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [editProject,    setEditProject]    = useState(null);
-  const [showAddProject, setShowAddProject] = useState(
-    () => sessionStorage.getItem("showAddProject") === "true"
-  );
+  const [showAddProject, setShowAddProject] = useState(false);
 
   // ── Sales leads state ──
   const [leadsFilter,  setLeadsFilter]  = useState(null); // null = "all"
@@ -286,7 +284,6 @@ export default function App() {
   // Persist current tab to sessionStorage (survives refresh, clears on app close)
   useEffect(() => { sessionStorage.setItem("salesTab",  String(activeSalesTab));  }, [activeSalesTab]);
   useEffect(() => { sessionStorage.setItem("adminTab",  String(activeAdminTab));  }, [activeAdminTab]);
-  useEffect(() => { sessionStorage.setItem("showAddProject", String(showAddProject)); }, [showAddProject]);
 
   // Scroll to top whenever tab changes
   useEffect(() => {
@@ -314,7 +311,6 @@ export default function App() {
     setShowAddProject(false);
     sessionStorage.removeItem("adminTab");
     sessionStorage.removeItem("salesTab");
-    sessionStorage.removeItem("showAddProject");
     localStorage.setItem("loggedIn", "true");
     localStorage.setItem("userRole", role);
   };
@@ -325,7 +321,6 @@ export default function App() {
     localStorage.removeItem("userRole");
     sessionStorage.removeItem("adminTab");
     sessionStorage.removeItem("salesTab");
-    sessionStorage.removeItem("showAddProject");
     setLoggedIn(false);
     setCurrentUser(null);
     setActiveSalesTab(TAB_HOME);
@@ -476,6 +471,7 @@ export default function App() {
             editProject={editProject}
             navItems={ADMIN_NAV}
             activeTab={TAB_ADDPROJECT}
+            isAdmin={true}
           />
         );
       }
