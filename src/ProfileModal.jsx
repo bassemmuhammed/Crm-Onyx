@@ -95,32 +95,42 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
 
     setUploading(true);
     try {
-      const ext  = file.name.split(".").pop();
-      const path = `avatars/${userId}.${ext}`;
+      // Always use .jpg extension to avoid bucket policy issues
+      const path = `avatars/${userId}.jpg`;
 
       // Upload to Supabase Storage bucket "avatars"
       const { error: upErr } = await supabase.storage
         .from("avatars")
         .upload(path, file, { upsert: true, contentType: file.type });
-      if (upErr) throw upErr;
 
-      // Get public URL
+      if (upErr) {
+        // Show real error for debugging
+        showToast(`خطأ: ${upErr.message}`, false);
+        return;
+      }
+
+      // Get public URL with cache-buster so new image shows immediately
       const { data: { publicUrl } } = supabase.storage
         .from("avatars")
         .getPublicUrl(path);
+      const urlWithCacheBust = `${publicUrl}?t=${Date.now()}`;
 
       // Save to users table
       const { error: dbErr } = await supabase
         .from("users")
-        .update({ avatar_url: publicUrl })
+        .update({ avatar_url: urlWithCacheBust })
         .eq("id", userId);
-      if (dbErr) throw dbErr;
 
-      setUserData(prev => ({ ...prev, avatar_url: publicUrl }));
+      if (dbErr) {
+        showToast(`خطأ DB: ${dbErr.message}`, false);
+        return;
+      }
+
+      setUserData(prev => ({ ...prev, avatar_url: urlWithCacheBust }));
       setImgError(false);
       showToast("تم تحديث الصورة ✓");
     } catch (err) {
-      showToast("فشل رفع الصورة — حاول تاني", false);
+      showToast(`خطأ غير متوقع: ${err.message}`, false);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -134,9 +144,16 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
   return (
     <>
       <style>{STYLES}</style>
+      {/* File input — position absolute off-screen (not display:none) for Android gallery compat */}
       <input
-        ref={fileRef} type="file" accept="image/*"
-        style={{ display: "none" }}
+        ref={fileRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+        capture={false}
+        style={{
+          position: "fixed", top: -9999, left: -9999,
+          width: 1, height: 1, opacity: 0, pointerEvents: "none",
+        }}
         onChange={handlePhotoChange}
       />
 
