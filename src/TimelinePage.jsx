@@ -404,8 +404,9 @@ function PostCard({ post, index }) {
             </div>
           </div>
 
-          {/* Type label — plain gray, no background */}
-          <span style={{ fontSize: ".58rem", fontWeight: 700, color: C.gray, letterSpacing: ".3px" }}>
+          {/* Type label — red dot + plain gray */}
+          <span style={{ fontSize: ".58rem", fontWeight: 700, color: C.gray, letterSpacing: ".3px", display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, display: "inline-block", flexShrink: 0 }} />
             {post.typeLabel}
           </span>
         </div>
@@ -538,7 +539,7 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
                 cursor:       "pointer",
                 fontSize:     ".72rem",
                 fontWeight:   700,
-                background:   active ? `${C.red}18` : C.cardAlt,
+                background:   active ? C.card : C.cardAlt,
                 color:        active ? C.white : C.gray,
                 display:      "flex",
                 alignItems:   "center",
