@@ -221,13 +221,11 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
         return (
           <div
             key={agent.id}
-            onClick={() => setExpanded(isExp ? null : agent.id)}
             style={{
               background: i === 0 ? "linear-gradient(135deg,#1C1A0E 0%,#161614 100%)" : "#161618",
               borderRadius: 16,
               border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
               boxShadow: rankStyle ? `0 0 20px ${rankStyle.glow}` : "0 2px 8px rgba(0,0,0,.4)",
-              padding: "14px 14px",
               cursor: "pointer",
               transition: "all .2s ease",
               position: "relative",
@@ -244,9 +242,11 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
               }} />
             )}
 
-            {/* Main row */}
-            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-
+            {/* Main row — click navigates to leads filtered by agent */}
+            <div
+              onClick={() => onTabChange && onTabChange("leads", { agent_id: agent.id })}
+              style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 14px" }}
+            >
               {/* Rank badge */}
               <div style={{
                 width:28, height:28, borderRadius:8, flexShrink:0,
@@ -305,12 +305,27 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
                   {pct}% share
                 </div>
               </div>
+
+              {/* Expand toggle chevron */}
+              <div
+                onClick={(e) => { e.stopPropagation(); setExpanded(isExp ? null : agent.id); }}
+                style={{
+                  marginLeft:4, flexShrink:0,
+                  color: isExp ? C.white : C.gray,
+                  fontSize:".75rem", fontWeight:900,
+                  transform: isExp ? "rotate(90deg)" : "rotate(0deg)",
+                  transition:"transform .2s ease",
+                  padding:"4px 2px",
+                }}
+              >
+                ›
+              </div>
             </div>
 
             {/* Expanded status pills */}
             {isExp && (
               <div style={{
-                marginTop:12, paddingTop:10,
+                marginTop:0, paddingTop:10, padding:"0 14px 13px",
                 borderTop:`1px solid ${C.border}`,
                 display:"flex", flexWrap:"wrap", gap:5,
               }}>
@@ -321,7 +336,7 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
                   .map(s => (
                     <div
                       key={s.key}
-                      onClick={(e) => { e.stopPropagation(); onTabChange && onTabChange("leads", { status: s.key, agent_id: agent.id }); }}
+                      onClick={() => onTabChange && onTabChange("leads", { status: s.key, agent_id: agent.id })}
                       style={{
                         display:"flex", alignItems:"center", gap:4,
                         background:`${s.color}15`, border:`1px solid ${s.color}44`,
@@ -469,9 +484,7 @@ export default function AdminHomePage({ onTabChange }) {
                 </div>
               </div>
               <div style={{
-                background:`${C.red}18`, border:`1px solid ${C.red}44`,
-                borderRadius:8, padding:"5px 10px",
-                fontSize:".58rem", fontWeight:800, color:C.red,
+                fontSize:".58rem", fontWeight:800, color:C.gray,
               }}>
                 {leads.length} leads
               </div>
