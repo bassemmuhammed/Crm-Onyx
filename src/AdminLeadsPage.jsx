@@ -331,7 +331,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 <div style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", display:"flex", alignItems:"center" }}>
                   <svg width="13" height="13" viewBox="0 0 256 256" fill={C.gray}><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
                 </div>
-                <input value={local.clientInfo?.budget||""} onChange={e => set("clientInfo",{...local.clientInfo, budget:e.target.value})} placeholder="Budget e.g. 2,500,000 EGP" style={{ ...inputBase, paddingLeft:32 }} />
+                <input value={local.clientInfo?.budget||""} onChange={e => {
+                  const val = e.target.value.replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+                  set("clientInfo",{...local.clientInfo, budget:val});
+                }} placeholder="Budget e.g. 2,500,000 EGP" style={{ ...inputBase, paddingLeft:32 }} />
               </div>
             </div>
 
