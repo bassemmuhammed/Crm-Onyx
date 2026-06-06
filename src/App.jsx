@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase }         from "./lib/supabase";
 import Login                from "./Login";
 import HomePage             from "./HomePage";
-import LeadsPage            from "./LeadsPage";
+import LeadsPage, { LeadDetailModal } from "./LeadsPage";
 import TimelinePage         from "./TimelinePage";
 import ProjectsPage         from "./ProjectsPage";
 import AdminHomePage        from "./AdminHomePage";
@@ -606,6 +606,7 @@ export default function App() {
             onSignOut={handleSignOut}
             currentUser={currentUser}
             initialFilter={leadsFilter}
+            onModalState={setLeadsModalState}
           />
         );
       case TAB_SCHEDULE:
@@ -674,6 +675,17 @@ export default function App() {
         onClose={() => { setProfileOpen(false); refreshAvatar(); }}
         onSignOut={handleSignOut}
       />
+
+      {/* LeadDetailModal rendered at top level - outside any scroll container */}
+      {activeSalesTab === TAB_LEADS && leadsModalState.open && leadsModalState.lead && (
+        <LeadDetailModal
+          lead={leadsModalState.lead}
+          open={leadsModalState.open}
+          onClose={() => setLeadsModalState(s => ({ ...s, open: false }))}
+          onUpdate={leadsModalState.onUpdate}
+          salesName={currentUser?.name || "Sales"}
+        />
+      )}
 
       {/* BottomNav is fixed-positioned so it renders outside the flex container */}
       <BottomNav

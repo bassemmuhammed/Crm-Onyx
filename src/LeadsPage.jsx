@@ -88,7 +88,7 @@ const Div = ({ label }) => (
 );
 
 // ─── LeadDetailModal ─────────────────────────────────────────────
-function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" }) {
+export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" }) {
   const [local, setLocal]     = useState(null);
   const [comment, setComment] = useState("");
   const [saving, setSaving]   = useState(false);
@@ -558,7 +558,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
 };
 
 // ─── MAIN PAGE ───────────────────────────────────────────────────
-export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, currentUser, initialFilter }) {
+export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, currentUser, initialFilter, onModalState }) {
   // ── State ──────────────────────────────────────────────────────
   const [leads,        setLeads]      = useState([]);
   const [loading,      setLoading]    = useState(true);
@@ -656,8 +656,15 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
     else setStatus("all");
   }, [initialFilter]);
 
-  const openDetail  = useCallback((lead) => { setSelected(lead); setDetail(true); }, []);
-  const closeDetail = useCallback(() => setDetail(false), []);
+  const openDetail  = useCallback((lead) => {
+    setSelected(lead);
+    setDetail(true);
+    onModalState?.({ lead, open: true, onUpdate: updateLead });
+  }, [onModalState, updateLead]);
+  const closeDetail = useCallback(() => {
+    setDetail(false);
+    onModalState?.({ lead: null, open: false });
+  }, [onModalState]);
 
   // ── Update Lead: بيحفظ في Supabase ويسجّل الـ changelog ─────
   // comment بيتبعت من handleSave عشان يتسجل في الـ changelog عند الأدمن
@@ -677,7 +684,6 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
     }}>
       <style>{STYLES}</style>
 
-      <LeadDetailModal lead={selectedLead} open={detailOpen} onClose={closeDetail} onUpdate={updateLead} salesName={salesName} />
 
       <div style={{ padding:"12px 14px 0", display:"flex", flexDirection:"column", gap:9 }}>
 
