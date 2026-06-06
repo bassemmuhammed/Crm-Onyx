@@ -55,6 +55,7 @@ const STYLES = `
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
   @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
+  @keyframes spin { to { transform: rotate(360deg) } }
   .section-card { animation: fadeInUp .3s ease both; }
   .save-btn     { transition: opacity .15s ease, transform .1s ease, box-shadow .15s ease; }
   .save-btn:active  { transform: scale(.97); }
@@ -180,6 +181,7 @@ export default function AddProjectPage({
   const [selectedProject, setSelectedProject] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [saved,   setSaved]   = useState(false);
+  const [saving,  setSaving]  = useState(false);
   const [errors,  setErrors]  = useState({});
 
   // لو الأدمن فتح edit من بره، روح على الفورم
@@ -247,8 +249,9 @@ export default function AddProjectPage({
   };
 
   // ── Save ──
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validate()) return;
+    setSaving(true);
     const currentStatus = STATUS_OPTIONS.find(s => s.value === status);
     const project = {
       id:           editProject?.id || Date.now(),
@@ -256,7 +259,6 @@ export default function AddProjectPage({
       developer:    developer.trim(),
       location:     location.trim(),
       category,
-      // no projectType
       status,
       isLaunch:     status === "Launch",
       statusColor:  currentStatus?.color || "#f97316",
@@ -279,7 +281,9 @@ export default function AddProjectPage({
       agent:        editProject?.agent  || { name:"Admin", title:"Manager", phone:"" },
       stats:        editProject?.stats  || { leads:0, deals:0 },
     };
-    onProjectSaved?.(project);
+    // انتظر الـ save في Supabase أولاً قبل ما تظهر رسالة النجاح
+    await onProjectSaved?.(project);
+    setSaving(false);
     setSaved(true);
     setTimeout(() => {
       setSaved(false);
@@ -834,19 +838,25 @@ export default function AddProjectPage({
           position:"sticky", bottom:16, zIndex:50,
           paddingTop:4,
         }}>
-          <button className="save-btn" onClick={handleSave} style={{
+          <button className="save-btn" onClick={handleSave} disabled={saving} style={{
             width:"100%", padding:"13px", borderRadius:12, border:"none",
-            background: saved ? "#10b981" : C.red,
-            color:"#fff", fontSize:".88rem", fontWeight:900, cursor:"pointer", letterSpacing:.3,
+            background: saved ? "#10b981" : saving ? C.gray : C.red,
+            color:"#fff", fontSize:".88rem", fontWeight:900, cursor: saving ? "not-allowed" : "pointer", letterSpacing:.3,
             boxShadow: saved ? "0 6px 20px rgba(16,185,129,.35)" : `0 6px 20px ${C.red}44`,
             display:"flex", alignItems:"center", justifyContent:"center", gap:8,
             transition:"background .3s ease, box-shadow .3s ease",
             fontFamily:"Archivo,sans-serif",
+            opacity: saving ? 0.8 : 1,
           }}>
             {saved ? (
               <>
                 <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>
                 Project Saved Successfully!
+              </>
+            ) : saving ? (
+              <>
+                <div style={{width:16,height:16,borderRadius:"50%",border:"2px solid rgba(255,255,255,0.3)",borderTop:"2px solid #fff",animation:"spin .7s linear infinite"}}/>
+                Saving...
               </>
             ) : (
               <>

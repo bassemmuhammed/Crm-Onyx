@@ -113,7 +113,7 @@ export default function App() {
   // sessionStorage = same browser session (tab open) → survives refresh but clears on app close
   const [activeAdminTab, setActiveAdminTab] = useState(() => {
     const saved = parseInt(sessionStorage.getItem("adminTab") ?? "-1");
-    if (saved === TAB_ADDPROJECT) return TAB_HOME;
+    if (saved === TAB_ADDPROJECT) return TAB_HOME; // عند الـ refresh، ارجع للـ HOME مش ADD PROJECT
     return [TAB_HOME, TAB_LEADS, TAB_SETTINGS].includes(saved) ? saved : TAB_HOME;
   });
   const [notifOpen,      setNotifOpen]      = useState(false);
@@ -436,26 +436,38 @@ export default function App() {
   if (userRole === "admin" || userRole === "owner") {
 
     const renderAdminPage = () => {
-      // Add Project rendered inside layout (keeps fixed header)
-      if (showAddProject) {
-        return (
-          <AddProjectPage
-            onProjectSaved={handleProjectSaved}
-            onTabChange={(tab) => {
-              cancelAddProject();
-              handleAdminTabChange(tab === TAB_ADDPROJECT ? TAB_HOME : tab);
-            }}
-            onSignOut={handleSignOut}
-            editProject={editProject}
-            navItems={ADMIN_NAV}
-            activeTab={TAB_ADDPROJECT}
-            isAdmin={true}
-            projects={projects}
-            onDeleteProject={handleDeleteProject}
-          />
-        );
-      }
       switch (activeAdminTab) {
+        case TAB_HOME:
+          return (
+            <AdminHomePage
+              onTabChange={handleAdminTabChange}
+              projects={projects}
+              onAddProject={() => handleAdminTabChange(TAB_ADDPROJECT)}
+              onEditProject={(p) => { setEditProject(p); handleAdminTabChange(TAB_ADDPROJECT); }}
+            />
+          );
+        case TAB_LEADS:
+          return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} initialFilter={adminLeadsFilter} />;
+        case TAB_ADDPROJECT:
+          return (
+            <AddProjectPage
+              onProjectSaved={handleProjectSaved}
+              onTabChange={(tab) => handleAdminTabChange(tab === TAB_ADDPROJECT ? TAB_HOME : tab)}
+              onSignOut={handleSignOut}
+              editProject={editProject}
+              navItems={ADMIN_NAV}
+              activeTab={TAB_ADDPROJECT}
+              isAdmin={true}
+              projects={projects}
+              onDeleteProject={handleDeleteProject}
+            />
+          );
+        case TAB_SETTINGS:
+          return <AdminSettings onTabChange={handleAdminTabChange} onSignOut={handleSignOut} />;
+        default:
+          return null;
+      }
+    };
         case TAB_HOME:
           return (
             <AdminHomePage
@@ -468,7 +480,22 @@ export default function App() {
         case TAB_LEADS:
           return <AdminLeadsPage onTabChange={handleAdminTabChange} externalModalOpen={notifOpen || profileOpen} initialFilter={adminLeadsFilter} />;
         case TAB_ADDPROJECT:
-          return null;
+          return (
+            <AddProjectPage
+              onProjectSaved={handleProjectSaved}
+              onTabChange={(tab) => {
+                cancelAddProject();
+                handleAdminTabChange(tab === TAB_ADDPROJECT ? TAB_HOME : tab);
+              }}
+              onSignOut={handleSignOut}
+              editProject={editProject}
+              navItems={ADMIN_NAV}
+              activeTab={TAB_ADDPROJECT}
+              isAdmin={true}
+              projects={projects}
+              onDeleteProject={handleDeleteProject}
+            />
+          );
         case TAB_SETTINGS:
           return <AdminSettings onTabChange={handleAdminTabChange} onSignOut={handleSignOut} />;
         default:
@@ -512,7 +539,7 @@ export default function App() {
 
         {/* ── SCROLLABLE PAGE CONTENT ── */}
         <div
-          key={showAddProject ? "add-project" : activeAdminTab}
+          key={activeAdminTab}
           className="onyx-animate"
           style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
         >
@@ -533,12 +560,8 @@ export default function App() {
 
         {/* ── FIXED BOTTOM NAV ── */}
         <BottomNav
-          activeTab={showAddProject ? TAB_ADDPROJECT : activeAdminTab}
-          onTabChange={(tab) => {
-            if (tab === TAB_ADDPROJECT) { openAddProject(); return; }
-            cancelAddProject();
-            handleAdminTabChange(tab);
-          }}
+          activeTab={activeAdminTab}
+          onTabChange={handleAdminTabChange}
           items={ADMIN_NAV}
         />
       </div>
