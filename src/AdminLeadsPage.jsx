@@ -1,7 +1,7 @@
 // ── AdminLeadsPage.jsx — ONYX Design System ──────────────────────
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { PROJECTS, fetchTeam, fetchLeads, addLead as dbAddLead, updateLead as dbUpdateLead, deleteLead as dbDeleteLead, addComment as dbAddComment } from "./sharedLeadsData";
+import { PROJECTS, fetchTeam, fetchLeads, addLead as dbAddLead, updateLead as dbUpdateLead, deleteLead as dbDeleteLead, addComment as dbAddComment, subscribeToLeads } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
@@ -97,9 +97,10 @@ const Div = ({ label }) => (
 );
 
 // ─── AdminLeadDetailModal ─────────────────────────────────────────
-function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team }) {
+function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, changedBy = "Admin" }) {
   const [local, setLocal]   = useState(null);
   const [comment, setComment] = useState("");
+  const [saveComment, setSaveComment] = useState("");
   const [saving, setSaving]   = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
   const [deleting, setDeleting]     = useState(false);
@@ -140,8 +141,8 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
   }, [comment, local]);
 
   const handleSave = useCallback(async () => {
-    setSaving(true); await onUpdate(local); setSaving(false); onClose();
-  }, [local, onUpdate, onClose]);
+    setSaving(true); await onUpdate(local, changedBy, saveComment.trim() || null); setSaving(false); setSaveComment(""); onClose();
+  }, [local, onUpdate, onClose, changedBy, saveComment]);
 
   const handleDelete = useCallback(async () => {
     if (!confirmDel) { setConfirmDel(true); return; }
@@ -345,10 +346,98 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team })
             }
 
             <div style={{ height:2 }} />
+
+            {/* ── CHANGELOG SECTION ── */}
+            {local.changelog && local.changelog.length > 0 && (
+              <>
+                <div style={{ height:1, background:C.red, opacity:.6, margin:"6px 0 2px" }} />
+                <Div label="Edit History" />
+                <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                  {local.changelog.map((entry, i) => {
+                    const hasChanges = entry.changes && entry.changes.length > 0;
+                    return (
+                      <div key={i} style={{
+                        background: C.cardAlt,
+                        border: `1px solid ${C.border}`,
+                        borderLeft: `3px solid #f59e0b`,
+                        borderRadius: 10,
+                        padding: "9px 11px",
+                        fontFamily: "Archivo, sans-serif",
+                      }}>
+                        {/* Header: من + امتى */}
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: hasChanges || entry.comment ? 7 : 0 }}>
+                          <span style={{ fontSize:".63rem", fontWeight:800, color:"#f59e0b", display:"flex", alignItems:"center", gap:4 }}>
+                            <svg width="10" height="10" viewBox="0 0 256 256" fill="#f59e0b"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
+                            {entry.by || "Unknown"}
+                          </span>
+                          <span style={{ fontSize:".58rem", color: C.gray, fontFamily:"Archivo,sans-serif" }}>
+                            {new Date(entry.at).toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" })}
+                          </span>
+                        </div>
+
+                        {/* التغييرات: من → إلى */}
+                        {hasChanges && entry.changes.map((c, j) => (
+                          <div key={j} style={{
+                            display:"flex", alignItems:"center", gap:5, flexWrap:"wrap",
+                            fontSize:".65rem", marginBottom: j < entry.changes.length - 1 ? 4 : 0,
+                            fontFamily:"Archivo,sans-serif",
+                          }}>
+                            <span style={{ color: C.gray, minWidth:60 }}>{c.field}:</span>
+                            <span style={{
+                              background:"#ef444420", border:"1px solid #ef444440",
+                              color:"#ef4444", padding:"1px 7px", borderRadius:4, fontWeight:700,
+                              maxWidth:90, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
+                            }}>{String(c.from || "—")}</span>
+                            <span style={{ color: C.gray, fontSize:".6rem" }}>→</span>
+                            <span style={{
+                              background:"#10b98120", border:"1px solid #10b98140",
+                              color:"#10b981", padding:"1px 7px", borderRadius:4, fontWeight:700,
+                              maxWidth:90, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
+                            }}>{String(c.to || "—")}</span>
+                          </div>
+                        ))}
+
+                        {/* كومنت مع التعديل لو فيه */}
+                        {entry.comment && (
+                          <div style={{
+                            marginTop: hasChanges ? 7 : 0,
+                            fontSize: ".64rem", color: C.silver,
+                            background: C.card,
+                            borderRadius: 6, padding: "5px 9px",
+                            borderLeft: `2px solid ${C.blue}`,
+                            lineHeight: 1.5,
+                            fontFamily:"Archivo,sans-serif",
+                          }}>
+                            <span style={{ color: C.blue, fontWeight:700, marginRight:4 }}>💬</span>
+                            {entry.comment}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            <div style={{ height:2 }} />
           </div>
 
           {/* Footer */}
           <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.card }}>
+            {/* Optional note with save */}
+            <div style={{ marginBottom:8 }}>
+              <input
+                value={saveComment}
+                onChange={e => setSaveComment(e.target.value)}
+                placeholder="ملاحظة مع الحفظ (اختياري)…"
+                style={{
+                  ...inputBase,
+                  fontSize:".72rem", padding:"8px 12px",
+                  background: C.surface,
+                  border:`1px solid ${C.border}`,
+                }}
+              />
+            </div>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Confirm permanent delete?</span>
@@ -835,6 +924,28 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // ✅ Realtime: أي تغيير في DB يظهر فورًا (INSERT / UPDATE / DELETE)
+  useEffect(() => {
+    const unsub = subscribeToLeads(({ type, lead, id }) => {
+      if (type === "INSERT") {
+        setLeads(prev => {
+          // امنع التكرار لو الليد موجود أصلًا (من handleAddLead optimistic update)
+          if (prev.some(l => l.id === lead.id)) return prev;
+          return [lead, ...prev];
+        });
+      }
+      if (type === "UPDATE") {
+        setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
+        // لو المودال مفتوح على نفس الليد، حدّث الـ selected عشان الـ changelog يظهر
+        setSelected(prev => prev && prev.id === lead.id ? { ...lead, comments: lead.comments } : prev);
+      }
+      if (type === "DELETE") {
+        setLeads(prev => prev.filter(l => l.id !== id));
+      }
+    });
+    return unsub;
+  }, []);
+
   // Hide BottomNav when any modal is open
   const anyModalOpen = detailOpen || !!modal || !!deleteTarget || externalModalOpen;
   useEffect(() => {
@@ -871,8 +982,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     if (newLead) setLeads(prev => [newLead, ...prev]);
   };
 
-  const handleUpdateLead = async updated => {
-    const result = await dbUpdateLead(updated);
+  const handleUpdateLead = async (updated, changedBy = "Admin", comment = null) => {
+    const result = await dbUpdateLead(updated, changedBy, comment);
     if (result) {
       setLeads(prev => prev.map(l => l.id===updated.id ? { ...result, comments:updated.comments } : l));
       setSelected({ ...result, comments:updated.comments });

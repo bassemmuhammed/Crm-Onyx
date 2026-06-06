@@ -4,6 +4,7 @@ import BottomNav         from "./BottomNav";
 import NotificationPanel from "./NotificationPanel";
 import ProfileModal      from "./ProfileModal";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, subscribeToLeads, supabase } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
@@ -40,10 +41,6 @@ const STATUS_META = {
 const STATUS_ORDER = ["new","callback","pendingMeeting","meetingDone","deal","onGoing","lowBudget","noAnswer","notInterested","chooseCompetitor","longTerm","closed"];
 const ALL_STATUSES = ["all", ...STATUS_ORDER];
 
-const LEADS_INIT = [
-  { id:1, name:"Mohamed Abdullah", phone:"+20 101 234 5678", source:"Facebook Ad", status:"new",      project:"Scenario – New Capital", priority:"high", comments:[], callbackDate:"", callbackTime:"", clientInfo:{ type:"", budget:"" } },
-  { id:2, name:"Sara Hassan",      phone:"+20 112 345 6789", source:"Website",     status:"callback", project:"Azha – North Coast",     priority:"high", comments:[], callbackDate:"2026-06-02", callbackTime:"10:00", clientInfo:{ type:"", budget:"" } },
-];
 
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 
@@ -55,6 +52,7 @@ const STYLES = `
   @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
   @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
   @keyframes spin     { to{transform:rotate(360deg)} }
+  @keyframes pulse2   { 0%,100%{opacity:1} 50%{opacity:.35} }
   .lead-card  { transition: transform .15s ease }
   .lead-card:active { transform: scale(.985) }
   .chip-btn   { transition: all .15s ease }
@@ -86,7 +84,7 @@ const Div = ({ label }) => (
 );
 
 // ─── LeadDetailModal ─────────────────────────────────────────────
-function LeadDetailModal({ lead, open, onClose, onUpdate }) {
+function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" }) {
   const [local, setLocal]     = useState(null);
   const [comment, setComment] = useState("");
   const [saving, setSaving]   = useState(false);
@@ -109,14 +107,19 @@ function LeadDetailModal({ lead, open, onClose, onUpdate }) {
 
   const set = useCallback((k, v) => setLocal(l => ({ ...l, [k]: v })), []);
 
-  const handleAddComment = useCallback(() => {
+  const handleAddComment = useCallback(async () => {
     const text = comment.trim();
     if (!text || !local) return;
-    const entry = { id: Date.now(), text, by: "Me", time: new Date().toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" }) };
+    const time = new Date().toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" });
+    // حفظ الكومنت في Supabase
+    const saved = await dbAddComment(local.id, { text, by: salesName, time });
+    const entry = saved
+      ? { id: saved.id, text: saved.text, by: saved.by, time: saved.time }
+      : { id: Date.now(), text, by: salesName, time };
     setLocal(l => ({ ...l, comments: [entry, ...l.comments] }));
     setComment("");
     inputRef.current?.focus();
-  }, [comment, local]);
+  }, [comment, local, salesName]);
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -364,7 +367,7 @@ function LeadDetailModal({ lead, open, onClose, onUpdate }) {
 }
 
 // ─── Lead Card (نفس AdminLeadCard بالظبط) ───────────────────────
-const LeadCard = ({ lead, onClick }) => {
+const LeadCard = ({ lead, onClick, isNew = false }) => {
   const meta        = STATUS_META[lead.status] || STATUS_META.new;
   const hasCallback = lead.status === "callback" && lead.callbackDate && lead.callbackTime;
   const initial     = (lead.name || "?").charAt(0).toUpperCase();
@@ -468,6 +471,16 @@ const LeadCard = ({ lead, onClick }) => {
               border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
             }}>💰 {lead.clientInfo.budget}</div>
           )}
+
+          {/* NEW badge — بيظهر للليدز اللي status = new */}
+          {lead.status === "new" && (
+            <div style={{
+              fontSize:".58rem", fontWeight:800, color:"#10b981",
+              background:"#10b98118", padding:"3px 8px", borderRadius:5,
+              border:"1px solid #10b98144", fontFamily:"Archivo,sans-serif",
+              letterSpacing:.4, animation:"pulse2 2s ease infinite",
+            }}>✦ NEW</div>
+          )}
         </div>
 
       </div>
@@ -476,28 +489,86 @@ const LeadCard = ({ lead, onClick }) => {
 };
 
 // ─── MAIN PAGE ───────────────────────────────────────────────────
-export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads: externalLeads, onUpdateLead: externalUpdateLead, initialFilter }) {
-  const [localLeads, setLocalLeads] = useState(() => {
-    try { const saved = localStorage.getItem("onyx_leads"); return saved ? JSON.parse(saved) : LEADS_INIT; }
-    catch { return LEADS_INIT; }
-  });
-  const leads = externalLeads ?? localLeads;
+export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, currentUser, initialFilter }) {
+  // ── State ──────────────────────────────────────────────────────
+  const [leads,        setLeads]      = useState([]);
+  const [loading,      setLoading]    = useState(true);
+  const [search,       setSearch]     = useState("");
+  const [statusFilter, setStatus]     = useState(initialFilter || "all");
+  const [selectedLead, setSelected]   = useState(null);
+  const [detailOpen,   setDetail]     = useState(false);
+  const [showFilters,  setFilters]    = useState(false);
+  const [notifOpen,    setNotifOpen]  = useState(false);
+  const [profileOpen,  setProfileOpen]= useState(false);
+  const [notifs,       setNotifs]     = useState([]);
+  const [newBadge,     setNewBadge]   = useState(0); // عداد الليدز الجديدة اللي وصلت real-time
 
-  const [search,       setSearch]   = useState("");
-  const [statusFilter, setStatus]   = useState(initialFilter || "all");
-  const [selectedLead, setSelected] = useState(null);
-  const [detailOpen,   setDetail]   = useState(false);
-  const [showFilters,  setFilters]  = useState(false);
-  const [notifOpen,    setNotifOpen]   = useState(false);
-  const [profileOpen,  setProfileOpen] = useState(false);
-  const [notifs, setNotifs] = useState([
-    { id:1, text:"New lead assigned: Mohamed Abdullah",   time:"2 min ago",  color:C.blue,    unread:true  },
-    { id:2, text:"Sara Hassan replied to your proposal",  time:"18 min ago", color:"#10b981", unread:true  },
-    { id:3, text:"Meeting reminder: Site visit at 10 AM", time:"1 hr ago",   color:"#f59e0b", unread:true  },
-    { id:4, text:"Deal closed with Khaled Ibrahim 🎉",    time:"Yesterday",  color:C.red,     unread:false },
-  ]);
+  const salesName = currentUser?.name || currentUser?.email || "Sales";
+
+  // ── جيب الليدز بتاعتي من Supabase (المخصصة ليا بس) ──────────
+  const loadMyLeads = useCallback(async () => {
+    if (!currentUser?.id) return;
+    setLoading(true);
+    const all = await fetchLeads();
+    // فلتر على الليدز المخصصة للسيلز ده
+    const mine = all.filter(l => l.assignedTo === currentUser.id);
+    setLeads(mine);
+    setLoading(false);
+  }, [currentUser?.id]);
+
+  useEffect(() => { loadMyLeads(); }, [loadMyLeads]);
+
+  // ── Realtime: ليدز جديدة أو محدّثة تظهر فورًا ────────────────
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    const unsub = subscribeToLeads(({ type, lead, id }) => {
+      if (type === "INSERT") {
+        // لو الليد الجديد مخصص ليا
+        if (lead.assignedTo === currentUser.id) {
+          setLeads(prev => {
+            if (prev.some(l => l.id === lead.id)) return prev;
+            return [lead, ...prev];
+          });
+          // أضف notification وزوّد الـ badge
+          const notif = {
+            id: Date.now(),
+            text: `New lead: ${lead.name}`,
+            time: "Just now",
+            color: "#10b981",
+            unread: true,
+          };
+          setNotifs(prev => [notif, ...prev]);
+          setNewBadge(b => b + 1);
+        }
+      }
+      if (type === "UPDATE") {
+        if (lead.assignedTo === currentUser.id) {
+          // ليد موجود اتحدّث
+          setLeads(prev => {
+            const exists = prev.some(l => l.id === lead.id);
+            if (exists) return prev.map(l => l.id === lead.id ? lead : l);
+            // ممكن يكون اتحوّل إليّا دلوقتي
+            return [lead, ...prev];
+          });
+          // لو المودال مفتوح على نفس الليد، حدّث الـ selected
+          setSelected(prev => prev && prev.id === lead.id ? lead : prev);
+        } else {
+          // اتحوّل لحد تاني — شيله من ليستي
+          setLeads(prev => prev.filter(l => l.id !== lead.id));
+        }
+      }
+      if (type === "DELETE") {
+        setLeads(prev => prev.filter(l => l.id !== id));
+      }
+    });
+    return unsub;
+  }, [currentUser?.id]);
+
   const unreadCount = notifs.filter(n => n.unread).length;
-  const markAllRead = () => setNotifs(prev => prev.map(n => ({ ...n, unread:false })));
+  const markAllRead = () => {
+    setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
+    setNewBadge(0);
+  };
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -526,18 +597,14 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
   const openDetail  = useCallback((lead) => { setSelected(lead); setDetail(true); }, []);
   const closeDetail = useCallback(() => setDetail(false), []);
 
-  const updateLead = useCallback((updated) => {
-    if (externalUpdateLead) {
-      externalUpdateLead(updated);
-    } else {
-      setLocalLeads(prev => {
-        const next = prev.map(l => l.id === updated.id ? updated : l);
-        try { localStorage.setItem("onyx_leads", JSON.stringify(next)); } catch {}
-        return next;
-      });
+  // ── Update Lead: بيحفظ في Supabase ويسجّل الـ changelog ─────
+  const updateLead = useCallback(async (updated) => {
+    const result = await dbUpdateLead(updated, salesName);
+    if (result) {
+      setLeads(prev => prev.map(l => l.id === updated.id ? { ...result, comments: updated.comments } : l));
+      setSelected({ ...result, comments: updated.comments });
     }
-    setSelected(updated);
-  }, [externalUpdateLead]);
+  }, [salesName]);
 
   return (
     <div style={{
@@ -548,7 +615,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
       <style>{STYLES}</style>
       <link href={FONT_URL} rel="stylesheet" />
 
-      <LeadDetailModal lead={selectedLead} open={detailOpen} onClose={closeDetail} onUpdate={updateLead} />
+      <LeadDetailModal lead={selectedLead} open={detailOpen} onClose={closeDetail} onUpdate={updateLead} salesName={salesName} />
       <NotificationPanel open={notifOpen}   onClose={() => setNotifOpen(false)}   notifs={notifs} onMarkAll={markAllRead} />
       <ProfileModal      open={profileOpen} onClose={() => setProfileOpen(false)} onSignOut={onSignOut} />
 
@@ -621,7 +688,9 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, leads
 
         {/* Lead list */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
-          {filtered.length === 0
+          {loading
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"fadeInUp .3s ease" }}>⏳ Loading your leads...</div>
+            : filtered.length === 0
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif" }}>No leads found 🔍</div>
             : filtered.map((lead, i) => (
                 <div key={lead.id} className="lead-item" style={{ animationDelay:`${i * 22}ms` }}>
