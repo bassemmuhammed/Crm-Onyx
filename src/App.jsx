@@ -566,6 +566,18 @@ export default function App() {
 
   // ── SALES ──────────────────────────────────────────────────────
   const renderSalesPage = () => {
+    // AddProjectPage يتعرض من أي tab — مش مقيد بـ TAB_PROJECTS
+    if (showAddProject) {
+      return (
+        <AddProjectPage
+          onProjectSaved={handleProjectSaved}
+          onTabChange={(tab) => { setShowAddProject(false); setActiveSalesTab(tab); }}
+          onSignOut={handleSignOut}
+          editProject={editProject}
+        />
+      );
+    }
+
     switch (activeSalesTab) {
       case TAB_HOME:
         return (
@@ -593,14 +605,7 @@ export default function App() {
       case TAB_SCHEDULE:
         return <TimelinePage activeTab={activeSalesTab} onTabChange={setActiveSalesTab} onSignOut={handleSignOut} />;
       case TAB_PROJECTS:
-        return showAddProject ? (
-          <AddProjectPage
-            onProjectSaved={handleProjectSaved}
-            onTabChange={(tab) => { setShowAddProject(false); setActiveSalesTab(tab); }}
-            onSignOut={handleSignOut}
-            editProject={editProject}
-          />
-        ) : (
+        return (
           <ProjectsPage
             projects={projects}
             loading={projectsLoading}
@@ -669,9 +674,7 @@ export default function App() {
       <BottomNav
         activeTab={activeSalesTab}
         onTabChange={(tab) => {
-          if (tab === TAB_PROJECTS && activeSalesTab === TAB_PROJECTS) {
-            setShowAddProject(false);
-          }
+          setShowAddProject(false);
           setActiveSalesTab(tab);
         }}
       />
