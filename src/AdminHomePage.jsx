@@ -71,19 +71,19 @@ const METRICS = Object.entries(STATUS_META).map(([key, m]) => ({ key, label: m.l
 
 // ─── Lead Overview Cards Meta ──────────────────────────────────
 const LEAD_OVERVIEW_CARDS = [
-  { key: "all",             label: "ALL LEADS",        iconKey: "sparkle",    color: "#10b981", accentLine: "#10b981" },
-  { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",    color: "#10b981", accentLine: "#10b981", accent: true },
-  { key: "callback",        label: "CALL BACK",        iconKey: "phone",      color: "#f59e0b", accentLine: "#f59e0b" },
-  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",   color: "#253FF6", accentLine: "#253FF6" },
+  { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#10b981", accentLine: "#10b981" },
+  { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#10b981", accentLine: "#10b981", accent: true },
+  { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#f59e0b", accentLine: "#f59e0b" },
+  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#253FF6", accentLine: "#253FF6" },
   { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#a855f7", accentLine: "#a855f7" },
-  { key: "deal",            label: "DEAL",             iconKey: "handshake",  color: "#CC1515", accentLine: "#CC1515" },
-  { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",  color: "#06b6d4", accentLine: "#06b6d4" },
-  { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",      color: "#f97316", accentLine: "#f97316" },
-  { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneMissed",color: "#8b949e", accentLine: "#8b949e" },
-  { key: "notInterested",   label: "NOT INTERESTED",   iconKey: "block",      color: "#6b7280", accentLine: "#6b7280" },
-  { key: "chooseCompetitor",label: "COMPETITOR",       iconKey: "flag",       color: "#ec4899", accentLine: "#ec4899" },
-  { key: "longTerm",        label: "LONG TERM",        iconKey: "timer",      color: "#8b5cf6", accentLine: "#8b5cf6" },
-  { key: "closed",          label: "CLOSED",           iconKey: "checkSquare",color: "#374151", accentLine: "#374151" },
+  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#CC1515", accentLine: "#CC1515" },
+  { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#06b6d4", accentLine: "#06b6d4" },
+  { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#f97316", accentLine: "#f97316" },
+  { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8b949e", accentLine: "#8b949e" },
+  { key: "notInterested",   label: "NOT INTERESTED",   iconKey: "prohibit",      color: "#6b7280", accentLine: "#6b7280" },
+  { key: "chooseCompetitor",label: "COMPETITOR",       iconKey: "flag",          color: "#ec4899", accentLine: "#ec4899" },
+  { key: "longTerm",        label: "LONG TERM",        iconKey: "hourglass",     color: "#8b5cf6", accentLine: "#8b5cf6" },
+  { key: "closed",          label: "CLOSED",           iconKey: "checkSquare",   color: "#374151", accentLine: "#374151" },
 ];
 
 // ─── Icon renderer — wraps Icons[key] with a color tint via CSS filter ───
