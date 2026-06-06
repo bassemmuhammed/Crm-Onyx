@@ -1,17 +1,17 @@
-// ── ProjectsPage.jsx — ONYX Design System ────────────────────
+// ── ProjectsPage.jsx — ONYX Design System (Updated) ──────────
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import Icons from "./Icons";
 
-// ─── ONYX Tokens ─────────────────────────────────────────────
+// ─── ONYX Tokens — matched to TimelinePage reference ─────────
 const C = {
   black:    "#000000",
-  surface:  "#0A0A0A",
-  card:     "#111111",
-  border:   "#1E1E1E",
-  cardAlt:  "#252525",
-  cardHov:  "#2E2E2E",
-  gray:     "#595A5F",
+  surface:  "#0D0D0D",
+  card:     "#161618",
+  border:   "#2A2A2E",
+  cardAlt:  "#1E1E22",
+  cardHov:  "#252528",
+  gray:     "#6B6C73",
   silver:   "#CECECE",
   white:    "#FFFFFF",
   red:      "#CC1515",
@@ -20,32 +20,53 @@ const C = {
   green:    "#10b981",
   orange:   "#f97316",
   amber:    "#f59e0b",
+  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
 };
 
+// ─── Global Styles ─────────────────────────────────────────────
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
   :root { color-scheme: dark only; }
-  html,body { margin:0; padding:0; background:#0A0A0A; }
-  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:dark; -webkit-user-select:none; user-select:none; }
-  @keyframes fadeInUp  { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes spin      { to{transform:rotate(360deg)} }
-  @keyframes pulse-ring{ 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
-  @keyframes float     { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
-  @keyframes shimmer   { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+  html,body { margin:0; padding:0; background:#0D0D0D; }
+  *, *::before, *::after {
+    -webkit-tap-highlight-color:transparent;
+    box-sizing:border-box;
+    color-scheme:dark;
+    -webkit-user-select:none;
+    user-select:none;
+    font-family:'Archivo',sans-serif !important;
+  }
+  @keyframes fadeInUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInScale{ from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+  @keyframes spin       { to{transform:rotate(360deg)} }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
+  @keyframes float      { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+  @keyframes swipeHint  { 0%{opacity:0;transform:translateX(0)} 20%{opacity:1} 60%{opacity:1;transform:translateX(-8px)} 80%{opacity:0;transform:translateX(-8px)} 100%{opacity:0} }
   .onyx-card  { animation: fadeInUp .35s ease both; }
-  .tap-scale:active { transform:scale(.96); }
+  .card-enter { animation: fadeInScale .28s ease both; }
+  .tap-scale:active { transform:scale(.96); transition:transform .1s ease; }
   ::-webkit-scrollbar { width:3px; height:3px }
   ::-webkit-scrollbar-track { background:transparent }
   ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
+  .swipe-hint { animation: swipeHint 2.2s ease 0.8s both; }
 `;
 
-const DEFAULT_NOTIFS = [
-  { id:1, text:"New lead on your project",      time:"2 min ago",  color:C.blue,   unread:true  },
-  { id:2, text:"Meeting scheduled for tomorrow", time:"1 hr ago",   color:C.green,  unread:true  },
-  { id:3, text:"Project updated by admin",       time:"3 hrs ago",  color:C.orange, unread:false },
-];
+// ─── ONYX Logo SVG (for black cover fallback) ─────────────────
+function OnyxLogo({ size = 80, opacity = 0.18 }) {
+  return (
+    <div style={{ opacity, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <svg width={size} height={size * 0.38} viewBox="0 0 220 84" fill="none">
+        {/* ONYX text */}
+        <text x="0" y="68" fontSize="80" fontWeight="900" fill="white" fontFamily="Archivo,sans-serif" letterSpacing="-2">ONYX</text>
+        {/* Red X slash overlay */}
+        <line x1="178" y1="10" x2="218" y2="74" stroke="#CC1515" strokeWidth="6" strokeLinecap="round"/>
+        <line x1="218" y1="10" x2="178" y2="74" stroke="#CC1515" strokeWidth="6" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+}
 
-// ─── Story Viewer ─────────────────────────────────────────────
+// ─── Story Viewer ──────────────────────────────────────────────
 function StoryViewer({ stories, open, onClose }) {
   const [current,  setCurrent]  = useState(0);
   const [progress, setProgress] = useState(0);
@@ -98,10 +119,7 @@ function StoryViewer({ stories, open, onClose }) {
       <button onClick={onClose} style={{ position:"absolute", top:48, right:16, background:"rgba(0,0,0,.5)", border:`1px solid ${C.border}`, color:C.white, borderRadius:"50%", width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>
         {Icons.x}
       </button>
-      <div style={{ position:"absolute", top:62, left:16, color:"rgba(255,255,255,.7)", fontSize:".68rem", fontWeight:700, fontFamily:"Archivo,sans-serif" }}>
-        {current+1} / {stories.length}
-      </div>
-      <div style={{ position:"absolute", bottom:28, left:"50%", transform:"translateX(-50%)", color:"rgba(255,255,255,.4)", fontSize:".6rem", fontWeight:600, fontFamily:"Archivo,sans-serif", display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
+      <div style={{ position:"absolute", bottom:28, left:"50%", transform:"translateX(-50%)", color:"rgba(255,255,255,.4)", fontSize:".6rem", fontWeight:600, display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
         <svg width="13" height="13" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>
         اسحب للإغلاق
       </div>
@@ -111,14 +129,14 @@ function StoryViewer({ stories, open, onClose }) {
   );
 }
 
-// ─── Video Popup ──────────────────────────────────────────────
+// ─── Video Popup ───────────────────────────────────────────────
 function VideoPopup({ src, open, onClose }) {
   if (!open) return null;
   return (
     <div onClick={onClose} style={{ position:"fixed", inset:0, zIndex:500, background:"rgba(0,0,0,.88)", backdropFilter:"blur(10px)", display:"flex", alignItems:"center", justifyContent:"center" }}>
       <div onClick={e=>e.stopPropagation()} style={{ width:"92%", maxWidth:440, borderRadius:20, overflow:"hidden", border:`1px solid ${C.border}`, boxShadow:`0 24px 80px rgba(204,21,21,.2)`, background:C.card }}>
         <video src={src} controls autoPlay style={{ width:"100%", display:"block", maxHeight:"70vh" }} />
-        <button onClick={onClose} style={{ width:"100%", padding:"14px", background:C.cardAlt, border:"none", borderTop:`1px solid ${C.border}`, color:C.silver, fontFamily:"Archivo,sans-serif", fontSize:".85rem", fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
+        <button onClick={onClose} style={{ width:"100%", padding:"14px", background:C.cardAlt, border:"none", borderTop:`1px solid ${C.border}`, color:C.silver, fontSize:".85rem", fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:8 }}>
           {Icons.x} إغلاق الفيديو
         </button>
       </div>
@@ -126,10 +144,10 @@ function VideoPopup({ src, open, onClose }) {
   );
 }
 
-// ─── Empty State ──────────────────────────────────────────────
+// ─── Empty State ───────────────────────────────────────────────
 function EmptyState() {
   return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"62vh", padding:"40px 28px", textAlign:"center", fontFamily:"Archivo,sans-serif" }}>
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"62vh", padding:"40px 28px", textAlign:"center" }}>
       <div style={{ marginBottom:28, position:"relative" }}>
         <div style={{ position:"absolute", inset:-14, borderRadius:"50%", border:`1px solid ${C.red}33`, animation:"pulse-ring 2.8s ease-in-out infinite" }} />
         <div style={{ position:"absolute", inset:-6, borderRadius:"50%", border:`1px solid ${C.border}` }} />
@@ -147,42 +165,414 @@ function EmptyState() {
   );
 }
 
+// ─── Project Avatar ────────────────────────────────────────────
+function ProjectAvatar({ project, size = 52 }) {
+  const initials = (project.name || "P").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: size * 0.25,
+      background: project.profilePic ? "transparent" : C.cardAlt,
+      border: `1.5px solid ${C.border}`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      overflow: "hidden", flexShrink: 0,
+    }}>
+      {project.profilePic
+        ? <img src={project.profilePic} alt={project.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+        : <span style={{ fontSize: size * 0.28 + "px", fontWeight: 900, color: C.silver }}>{initials}</span>
+      }
+    </div>
+  );
+}
+
+// ─── Project List Card (shown on entry screen) ─────────────────
+function ProjectListCard({ project, index, onSelect }) {
+  return (
+    <div
+      className="onyx-card tap-scale"
+      onClick={() => onSelect(index)}
+      style={{
+        background:    C.cardGrad1,
+        borderRadius:  16,
+        border:        `1px solid ${C.border}`,
+        overflow:      "hidden",
+        position:      "relative",
+        cursor:        "pointer",
+        animationDelay:`${index * 70}ms`,
+        boxShadow:     "0 4px 20px rgba(0,0,0,.4)",
+      }}
+    >
+      {/* Left red accent bar */}
+      <div style={{
+        position: "absolute", top:0, left:0, bottom:0, width:3,
+        background: `linear-gradient(180deg, ${C.red} 0%, rgba(204,21,21,0.05) 100%)`,
+        borderRadius: "16px 0 0 16px",
+      }} />
+
+      <div style={{ padding: "14px 14px 14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+        {/* Avatar */}
+        <ProjectAvatar project={project} size={52} />
+
+        {/* Info */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: ".92rem", fontWeight: 900, color: C.white, lineHeight: 1.2 }}>
+            {project.name}
+          </div>
+          {project.developer && (
+            <div style={{ fontSize: ".62rem", color: C.red, fontWeight: 700, marginTop: 3 }}>
+              {project.developer}
+            </div>
+          )}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 7 }}>
+            {project.location && (
+              <span style={{ fontSize: ".56rem", fontWeight: 600, color: C.gray, background: C.cardAlt, border: `1px solid ${C.border}`, padding: "2px 8px", borderRadius: 5, display:"flex", alignItems:"center", gap:3 }}>
+                <svg width="8" height="8" viewBox="0 0 256 256" fill={C.gray}><path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,192Zm0-104a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V96A8,8,0,0,0,128,88Zm0-32a12,12,0,1,0,12,12A12,12,0,0,0,128,56Z"/></svg>
+                {project.location}
+              </span>
+            )}
+            {project.category && (
+              <span style={{ fontSize: ".56rem", fontWeight: 700, color: C.silver, background: C.cardAlt, border: `1px solid ${C.border}`, padding: "2px 8px", borderRadius: 5 }}>
+                {project.category}
+              </span>
+            )}
+            {project.status && (
+              <span style={{ fontSize: ".56rem", fontWeight: 800, color: C.white, background: project.statusColor || C.red, padding: "2px 8px", borderRadius: 5 }}>
+                {project.status}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Chevron */}
+        <div style={{ color: C.gray, flexShrink: 0 }}>
+          <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66A8,8,0,0,1,101.66,42.34l80,80A8,8,0,0,1,181.66,133.66Z"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* Bottom quick info row */}
+      {(project.price || project.delivery || project.area) && (
+        <div style={{ padding: "0 18px 12px", display: "flex", gap: 6 }}>
+          {[
+            { label: "Starting Price", value: project.price,    color: C.green  },
+            { label: "Unit Size",      value: project.area,     color: C.blue   },
+            { label: "Delivery",       value: project.delivery, color: C.orange },
+          ].filter(d => d.value).map((d, i) => (
+            <div key={i} style={{ flex: 1, background: C.cardAlt, borderRadius: 8, padding: "6px 8px", border: `1px solid ${C.border}`, textAlign: "center" }}>
+              <div style={{ fontSize: ".44rem", color: d.color, fontWeight: 800, textTransform: "uppercase", letterSpacing: .3, marginBottom: 2 }}>{d.label}</div>
+              <div style={{ fontSize: ".65rem", color: C.white, fontWeight: 800 }}>{d.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Info Card ────────────────────────────────────────────────
 function InfoCard({ label, value, color }) {
   return (
     <div style={{ background:C.cardAlt, borderRadius:12, padding:"10px 12px", border:`1px solid ${C.border}` }}>
-      <div style={{ fontSize:".55rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.8, marginBottom:4, fontFamily:"Archivo,sans-serif" }}>{label}</div>
-      <div style={{ fontSize:".8rem", fontWeight:800, color: color || C.white, fontFamily:"Archivo,sans-serif" }}>{value}</div>
+      <div style={{ fontSize:".55rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.8, marginBottom:4 }}>{label}</div>
+      <div style={{ fontSize:".8rem", fontWeight:800, color: color || C.white }}>{value}</div>
     </div>
   );
 }
 
-// ─── Stat Chip ────────────────────────────────────────────────
-function StatChip({ icon, value, label, color }) {
-  return (
-    <div style={{ flex:1, background:C.card, borderRadius:14, padding:"12px 10px", textAlign:"center", border:`1px solid ${C.border}`, borderTop:`2px solid ${color}` }}>
-      <div style={{ color, display:"flex", justifyContent:"center", marginBottom:4 }}>{icon}</div>
-      <div style={{ fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif" }}>{value}</div>
-      <div style={{ fontSize:".58rem", color:C.gray, fontWeight:700, textTransform:"uppercase", letterSpacing:.4, fontFamily:"Archivo,sans-serif" }}>{label}</div>
-    </div>
-  );
-}
-
-// ─── Section Title ────────────────────────────────────────────
+// ─── Section Title ─────────────────────────────────────────────
 function SectionTitle({ children }) {
   return (
     <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-      <div style={{ width:4, height:14, borderRadius:99, background:C.red, flexShrink:0 }} />
-      <span style={{ fontSize:".65rem", fontWeight:800, color:C.silver, textTransform:"uppercase", letterSpacing:.8, fontFamily:"Archivo,sans-serif" }}>{children}</span>
+      <div style={{ width:3, height:14, borderRadius:99, background:C.red, flexShrink:0 }} />
+      <span style={{ fontSize:".65rem", fontWeight:800, color:C.white, textTransform:"uppercase", letterSpacing:.8 }}>{children}</span>
     </div>
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────
+// ─── Swipe Gesture Handler ─────────────────────────────────────
+function useSwipe(onPrev, onNext) {
+  const startX = useRef(null);
+  const startY = useRef(null);
+
+  const onTouchStart = (e) => {
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+  };
+
+  const onTouchEnd = (e) => {
+    if (startX.current === null) return;
+    const dx = e.changedTouches[0].clientX - startX.current;
+    const dy = Math.abs(e.changedTouches[0].clientY - startY.current);
+    if (Math.abs(dx) < 50 || dy > Math.abs(dx)) return;
+    if (dx < 0) onNext();
+    if (dx > 0) onPrev();
+    startX.current = null;
+  };
+
+  return { onTouchStart, onTouchEnd };
+}
+
+// ─── Project Detail View ───────────────────────────────────────
+function ProjectDetail({ project: p, onBack, onPrev, onNext, hasPrev, hasNext, onEditProject }) {
+  const [storyOpen, setStoryOpen] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [showHint,  setShowHint]  = useState(true);
+  const swipe = useSwipe(onPrev, onNext);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(false), 3200);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <div
+      {...swipe}
+      className="card-enter"
+      style={{ fontFamily:"Archivo,sans-serif", color:C.white, paddingBottom:20 }}
+    >
+      {/* ── Back button ── */}
+      <div style={{ padding: "12px 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
+        <button
+          onClick={onBack}
+          className="tap-scale"
+          style={{ display:"flex", alignItems:"center", gap:6, background: C.cardAlt, border:`1px solid ${C.border}`, borderRadius:8, padding:"6px 12px", color:C.silver, cursor:"pointer", fontSize:".68rem", fontWeight:700 }}
+        >
+          <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/>
+          </svg>
+          Back
+        </button>
+
+        {/* Swipe hint — only shows for first 3 sec, then fades */}
+        {(hasPrev || hasNext) && (
+          <div className="swipe-hint" style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:5, fontSize:".58rem", color:C.gray, fontWeight:600 }}>
+            <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
+              <path d="M229.66,133.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,136H88a8,8,0,0,1,0-16H204.69L170.34,85.66A8,8,0,0,1,181.66,74.34l48,48A8,8,0,0,1,229.66,133.66ZM74.34,181.66a8,8,0,0,0-11.32-11.32L26.34,133.66a8,8,0,0,0,0-11.32L63,85.66A8,8,0,0,0,51.66,74.34l-48,48a8,8,0,0,0,0,11.32l48,48A8,8,0,0,0,74.34,181.66Z"/>
+            </svg>
+            اسحب للتنقل
+          </div>
+        )}
+      </div>
+
+      {/* ── COVER SECTION ── */}
+      <div style={{ position:"relative", marginTop:12 }}>
+        <div
+          onClick={() => p.coverVideo && setVideoOpen(true)}
+          style={{
+            position:"relative", width:"100%", height:220,
+            background: C.black,
+            cursor: p.coverVideo ? "pointer" : "default",
+            overflow:"hidden",
+          }}
+        >
+          {/* Cover media */}
+          {p.coverVideo ? (
+            <video src={p.coverVideo} muted autoPlay loop playsInline style={{ width:"100%", height:"100%", objectFit:"cover", opacity:.65 }} />
+          ) : p.coverThumb ? (
+            <img src={p.coverThumb} alt="cover" style={{ width:"100%", height:"100%", objectFit:"cover", opacity:.65 }} />
+          ) : (
+            /* Black fallback with ONYX logo centered */
+            <div style={{ width:"100%", height:"100%", background:C.black, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <OnyxLogo size={100} opacity={0.15} />
+            </div>
+          )}
+
+          {/* Gradient overlay */}
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, rgba(0,0,0,.3) 0%, transparent 40%, rgba(0,0,0,.7) 100%)" }} />
+
+          {/* Play button — only if video */}
+          {p.coverVideo && (
+            <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <div style={{ width:60, height:60, borderRadius:"50%", background:"rgba(204,21,21,.25)", border:`2px solid ${C.red}88`, backdropFilter:"blur(8px)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 0 32px ${C.red}44` }}>
+                <svg width="22" height="22" viewBox="0 0 256 256" fill="white">
+                  <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/>
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {/* Status badge */}
+          {p.status && (
+            <div style={{ position:"absolute", top:12, right:12, background: p.statusColor || C.red, color:"#fff", fontSize:".6rem", fontWeight:800, padding:"4px 10px", borderRadius:99, boxShadow:"0 2px 10px rgba(0,0,0,.4)" }}>
+              {p.status}
+            </div>
+          )}
+
+          {/* Edit button */}
+          {onEditProject && (
+            <button onClick={e => { e.stopPropagation(); onEditProject(p); }} className="tap-scale" style={{ position:"absolute", top:12, left:12, background:"rgba(0,0,0,.6)", border:`1px solid ${C.border}`, backdropFilter:"blur(6px)", color:C.silver, borderRadius:8, padding:"5px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, fontSize:".6rem", fontWeight:700 }}>
+              <svg width="11" height="11" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
+              Edit
+            </button>
+          )}
+
+          {/* Tap to watch */}
+          {p.coverVideo && (
+            <div style={{ position:"absolute", bottom:12, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,.55)", color:C.silver, fontSize:".6rem", fontWeight:700, padding:"4px 12px", borderRadius:99, backdropFilter:"blur(4px)", whiteSpace:"nowrap" }}>
+              اضغط لمشاهدة الفيديو
+            </div>
+          )}
+        </div>
+
+        {/* Profile Pic / Story ring */}
+        {p.profilePic && (
+          <div style={{ position:"absolute", bottom:-36, left:18 }}>
+            <div
+              onClick={() => p.stories?.length && setStoryOpen(true)}
+              style={{ width:74, height:74, borderRadius:"50%", cursor: p.stories?.length ? "pointer":"default", background:`linear-gradient(135deg, ${C.red}, ${C.redLight}, ${C.orange})`, padding:3, boxShadow:`0 4px 20px ${C.red}55` }}
+            >
+              <div style={{ width:"100%", height:"100%", borderRadius:"50%", border:`2.5px solid ${C.surface}`, overflow:"hidden" }}>
+                <img src={p.profilePic} alt="project logo" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+              </div>
+            </div>
+            {p.stories?.length > 0 && (
+              <div style={{ position:"absolute", bottom:2, right:2, width:14, height:14, borderRadius:"50%", background:C.red, border:`2px solid ${C.surface}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <svg width="7" height="7" viewBox="0 0 256 256" fill="white"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34Z"/></svg>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── PROJECT IDENTITY ── */}
+      <div className="onyx-card" style={{ padding:`${p.profilePic ? "46px" : "14px"} 16px 0`, animationDelay:"0ms" }}>
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:10 }}>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:"1.2rem", fontWeight:900, color:C.white, lineHeight:1.2 }}>{p.name}</div>
+            {p.developer && <div style={{ fontSize:".75rem", color:C.red, fontWeight:700, marginTop:4 }}>{p.developer}</div>}
+            {p.location && (
+              <div style={{ display:"flex", alignItems:"center", gap:5, marginTop:6, color:C.gray, fontSize:".72rem", fontWeight:600 }}>
+                <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,192Zm0-104a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V96A8,8,0,0,0,128,88Zm0-32a12,12,0,1,0,12,12A12,12,0,0,0,128,56Z"/></svg>
+                {p.location}
+              </div>
+            )}
+          </div>
+          {p.category && (
+            <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, color:C.silver, fontSize:".58rem", fontWeight:800, padding:"4px 10px", borderRadius:6, flexShrink:0, whiteSpace:"nowrap" }}>
+              {p.category}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── KEY INFO ── */}
+      <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"60ms" }}>
+        <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
+          <SectionTitle>Key Info</SectionTitle>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+            {[
+              { label:"Starting Price", value:p.price,       color:C.green  },
+              { label:"Unit Size",      value:p.area,        color:C.blue   },
+              { label:"Delivery",       value:p.delivery,    color:C.orange },
+              { label:"Status",         value:p.status,      color: p.statusColor || C.red },
+              { label:"Project Area",   value:p.projectArea, color:C.silver },
+              { label:"Parking",        value:p.parking,     color:C.silver },
+              { label:"Maintenance",    value:p.maintenance, color:C.silver },
+              { label:"Previous Work",  value:p.prevWork,    color:C.silver },
+            ].filter(x => x.value).map((item,i) => (
+              <InfoCard key={i} label={item.label} value={item.value} color={item.color} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── DESCRIPTION ── */}
+      {p.description && (
+        <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"100ms" }}>
+          <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
+            <SectionTitle>About This Project</SectionTitle>
+            <div style={{ fontSize:".8rem", color:C.white, lineHeight:1.7, fontWeight:500 }}>
+              {p.description}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── AMENITIES ── */}
+      {p.amenities?.length > 0 && (
+        <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"130ms" }}>
+          <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
+            <SectionTitle>Facilities & Amenities</SectionTitle>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+              {p.amenities.map((a,i) => (
+                <div key={i} style={{ background:`${C.red}18`, border:`1px solid ${C.red}44`, color:C.white, fontSize:".63rem", fontWeight:700, padding:"4px 10px", borderRadius:6, display:"flex", alignItems:"center", gap:5 }}>
+                  <div style={{ width:4, height:4, borderRadius:"50%", background:C.red, flexShrink:0 }} />
+                  {a}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── AVAILABLE UNITS ── */}
+      {p.units?.filter(u=>u.type).length > 0 && (
+        <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"160ms" }}>
+          <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
+            <SectionTitle>Available Units</SectionTitle>
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+              {p.units.filter(u=>u.type).map((u,i) => (
+                <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 12px", borderRadius:10, background:C.cardAlt, border:`1px solid ${C.border}` }}>
+                  <div>
+                    <div style={{ fontSize:".82rem", fontWeight:800, color:C.white }}>{u.type}</div>
+                    {u.size && <div style={{ fontSize:".65rem", color:C.gray, fontWeight:600, marginTop:1 }}>{u.size}</div>}
+                  </div>
+                  <div style={{ textAlign:"right" }}>
+                    {u.price && <div style={{ fontSize:".78rem", fontWeight:800, color:C.red }}>{u.price}</div>}
+                    {u.available !== undefined && (
+                      <div style={{ fontSize:".6rem", fontWeight:700, marginTop:2, color: u.available > 3 ? C.green : C.orange }}>
+                        {u.available} available
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PAYMENT PLANS ── */}
+      {p.paymentPlans?.filter(pl=>pl.downPayment||pl.duration).length > 0 && (
+        <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"190ms" }}>
+          <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
+            <SectionTitle>Payment Plans</SectionTitle>
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {p.paymentPlans.filter(pl=>pl.downPayment||pl.duration).map((pl,i) => (
+                <div key={i} style={{ background:C.cardAlt, borderRadius:10, padding:"12px", border:`1px solid ${C.border}` }}>
+                  <div style={{ fontSize:".6rem", fontWeight:800, color:C.red, textTransform:"uppercase", letterSpacing:.6, marginBottom:8 }}>Plan {i+1}</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                    {[
+                      { label:"Down Payment", value:pl.downPayment },
+                      { label:"Installment",  value:pl.installment },
+                      { label:"Duration",     value:pl.duration    },
+                      { label:"On Delivery",  value:pl.onDelivery  },
+                    ].filter(x=>x.value).map((item,j) => (
+                      <div key={j}>
+                        <div style={{ fontSize:".55rem", color:C.gray, fontWeight:700, textTransform:"uppercase", letterSpacing:.5 }}>{item.label}</div>
+                        <div style={{ fontSize:".78rem", color:C.white, fontWeight:700, marginTop:2 }}>{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {pl.notes && <div style={{ marginTop:8, fontSize:".7rem", color:C.gray, fontWeight:600, borderTop:`1px solid ${C.border}`, paddingTop:8 }}>{pl.notes}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div style={{ height:20 }} />
+
+      <StoryViewer stories={p.stories||[]} open={storyOpen && p.stories?.length>0} onClose={()=>setStoryOpen(false)} />
+      <VideoPopup src={p.coverVideo} open={videoOpen && !!p.coverVideo} onClose={()=>setVideoOpen(false)} />
+    </div>
+  );
+}
+
+// ─── Main Component ────────────────────────────────────────────
 export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) {
-  const [storyOpen,   setStoryOpen]   = useState(false);
-  const [videoOpen,   setVideoOpen]   = useState(false);
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [selectedIdx, setSelectedIdx] = useState(null); // null = list view
   const [projects,    setProjects]    = useState([]);
   const [loading,     setLoading]     = useState(true);
 
@@ -214,7 +604,6 @@ export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) 
         units:        r.units         || [],
         stories:      r.stories       || [],
         paymentPlans: r.payment_plans || [],
-        stats:        r.stats         || { leads:0, deals:0 },
         agent:        r.agent         || {},
       })));
     }
@@ -229,263 +618,62 @@ export default function ProjectsPage({ onTabChange, onSignOut, onEditProject }) 
     return () => supabase.removeChannel(ch);
   }, []);
 
-  const p = projects.length > 0 ? (projects[selectedIdx] ?? projects[0]) : null;
+  const goToPrev = () => setSelectedIdx(i => Math.max(0, i - 1));
+  const goToNext = () => setSelectedIdx(i => Math.min(projects.length - 1, i + 1));
 
   return (
-    <div style={{ fontFamily:"Archivo,sans-serif", color:C.white, paddingBottom:20 }}>
+    <div style={{ fontFamily:"Archivo,sans-serif", color:C.white }}>
       <style>{STYLES}</style>
-
-      {/* ── Project Tabs ── */}
-      {projects.length > 1 && (
-        <div style={{ display:"flex", gap:6, overflowX:"auto", padding:"10px 14px", borderBottom:`1px solid ${C.border}`, scrollbarWidth:"none" }}>
-          {projects.map((proj, i) => {
-            const active = i === selectedIdx;
-            return (
-              <button key={proj.id ?? i} onClick={() => setSelectedIdx(i)} className="tap-scale" style={{
-                flexShrink:0, padding:"5px 13px", borderRadius:6,
-                border:`1px solid ${active ? C.red+"66" : C.border}`,
-                background: active ? `${C.red}18` : C.cardAlt,
-                color: active ? C.white : C.gray,
-                fontSize:".63rem", fontWeight:700, cursor:"pointer",
-                display:"flex", alignItems:"center", gap:5,
-                fontFamily:"Archivo,sans-serif", transition:"all .15s ease",
-              }}>
-                {active && <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />}
-                {proj.name || `Project ${i+1}`}
-              </button>
-            );
-          })}
-        </div>
-      )}
 
       {/* ── Loading ── */}
       {loading ? (
-        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"60vh", gap:16, fontFamily:"Archivo,sans-serif" }}>
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:"60vh", gap:16 }}>
           <div style={{ width:40, height:40, borderRadius:"50%", border:`3px solid ${C.border}`, borderTop:`3px solid ${C.red}`, animation:"spin .8s linear infinite" }} />
           <div style={{ fontSize:".72rem", color:C.gray, fontWeight:700, letterSpacing:.5 }}>LOADING PROJECTS...</div>
         </div>
-      ) : !p ? (
+
+      ) : projects.length === 0 ? (
         <EmptyState />
+
+      ) : selectedIdx === null ? (
+        /* ── LIST VIEW ── */
+        <div style={{ fontFamily:"Archivo,sans-serif", color:C.white }}>
+          {/* Section header */}
+          <div style={{ padding:"14px 16px 0", display:"flex", alignItems:"center", gap:8 }}>
+            <div style={{ width:3, height:18, background:C.red, borderRadius:99 }} />
+            <span style={{ fontSize:".72rem", fontWeight:900, color:C.white, textTransform:"uppercase", letterSpacing:"2px" }}>
+              Projects
+            </span>
+            <span style={{ marginLeft:"auto", background:C.cardAlt, border:`1px solid ${C.border}`, color:C.gray, fontSize:".58rem", fontWeight:800, padding:"2px 10px", borderRadius:99 }}>
+              {projects.length}
+            </span>
+          </div>
+
+          {/* Cards list */}
+          <div style={{ padding:"12px 16px 110px", display:"flex", flexDirection:"column", gap:10 }}>
+            {projects.map((proj, i) => (
+              <ProjectListCard
+                key={proj.id ?? i}
+                project={proj}
+                index={i}
+                onSelect={setSelectedIdx}
+              />
+            ))}
+          </div>
+        </div>
+
       ) : (
-        <>
-          {/* ── COVER SECTION ── */}
-          <div style={{ position:"relative" }}>
-            <div
-              onClick={() => p.coverVideo && setVideoOpen(true)}
-              style={{
-                position:"relative", width:"100%", height:220,
-                background:`linear-gradient(135deg, #0a0a0a 0%, #1a0505 50%, #2a0808 100%)`,
-                cursor: p.coverVideo ? "pointer" : "default",
-                overflow:"hidden",
-              }}
-            >
-              {/* Cover media */}
-              {p.coverVideo ? (
-                <video src={p.coverVideo} muted autoPlay loop playsInline style={{ width:"100%", height:"100%", objectFit:"cover", opacity:.65 }} />
-              ) : p.coverThumb ? (
-                <img src={p.coverThumb} alt="cover" style={{ width:"100%", height:"100%", objectFit:"cover", opacity:.65 }} />
-              ) : (
-                <div style={{ width:"100%", height:"100%", background:`radial-gradient(ellipse 80% 60% at 50% 50%, ${C.red}18 0%, transparent 70%)` }} />
-              )}
-
-              {/* Gradient overlay */}
-              <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, rgba(0,0,0,.3) 0%, transparent 40%, rgba(0,0,0,.7) 100%)" }} />
-
-              {/* Play button */}
-              {p.coverVideo && (
-                <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <div style={{ width:60, height:60, borderRadius:"50%", background:"rgba(204,21,21,.25)", border:`2px solid ${C.red}88`, backdropFilter:"blur(8px)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 0 32px ${C.red}44` }}>
-                    <svg width="22" height="22" viewBox="0 0 256 256" fill="white">
-                      <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/>
-                    </svg>
-                  </div>
-                </div>
-              )}
-
-              {/* Status badge */}
-              {p.status && (
-                <div style={{ position:"absolute", top:12, right:12, background: p.statusColor || C.red, color:"#fff", fontSize:".6rem", fontWeight:800, padding:"4px 10px", borderRadius:99, boxShadow:"0 2px 10px rgba(0,0,0,.4)", fontFamily:"Archivo,sans-serif" }}>
-                  {p.status}
-                </div>
-              )}
-
-              {/* Edit button */}
-              {onEditProject && (
-                <button onClick={e => { e.stopPropagation(); onEditProject(p); }} className="tap-scale" style={{ position:"absolute", top:12, left:12, background:"rgba(0,0,0,.6)", border:`1px solid ${C.border}`, backdropFilter:"blur(6px)", color:C.silver, borderRadius:8, padding:"5px 10px", cursor:"pointer", display:"flex", alignItems:"center", gap:5, fontSize:".6rem", fontWeight:700, fontFamily:"Archivo,sans-serif" }}>
-                  <svg width="11" height="11" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
-                  Edit
-                </button>
-              )}
-
-              {/* Tap to watch */}
-              {p.coverVideo && (
-                <div style={{ position:"absolute", bottom:12, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,.55)", color:C.silver, fontSize:".6rem", fontWeight:700, padding:"4px 12px", borderRadius:99, backdropFilter:"blur(4px)", whiteSpace:"nowrap", fontFamily:"Archivo,sans-serif" }}>
-                  اضغط لمشاهدة الفيديو
-                </div>
-              )}
-            </div>
-
-            {/* Profile Pic / Story */}
-            {p.profilePic && (
-              <div style={{ position:"absolute", bottom:-36, left:18 }}>
-                <div
-                  onClick={() => p.stories?.length && setStoryOpen(true)}
-                  style={{ width:74, height:74, borderRadius:"50%", cursor: p.stories?.length ? "pointer":"default", background:`linear-gradient(135deg, ${C.red}, ${C.redLight}, ${C.orange})`, padding:3, boxShadow:`0 4px 20px ${C.red}55` }}
-                >
-                  <div style={{ width:"100%", height:"100%", borderRadius:"50%", border:`2.5px solid ${C.surface}`, overflow:"hidden" }}>
-                    <img src={p.profilePic} alt="project logo" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                  </div>
-                </div>
-                {p.stories?.length > 0 && (
-                  <div style={{ position:"absolute", bottom:2, right:2, width:14, height:14, borderRadius:"50%", background:C.red, border:`2px solid ${C.surface}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                    <svg width="7" height="7" viewBox="0 0 256 256" fill="white"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34Z"/></svg>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* ── PROJECT IDENTITY ── */}
-          <div className="onyx-card" style={{ padding:"46px 16px 0", animationDelay:"0ms" }}>
-            <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:10 }}>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:"1.2rem", fontWeight:900, color:C.white, lineHeight:1.2, fontFamily:"Archivo,sans-serif" }}>{p.name}</div>
-                {p.developer && <div style={{ fontSize:".75rem", color:C.red, fontWeight:700, marginTop:4, fontFamily:"Archivo,sans-serif" }}>{p.developer}</div>}
-                {p.location && (
-                  <div style={{ display:"flex", alignItems:"center", gap:5, marginTop:6, color:C.gray, fontSize:".72rem", fontWeight:600, fontFamily:"Archivo,sans-serif" }}>
-                    <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M128,16a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,16Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,192Zm0-104a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V96A8,8,0,0,0,128,88Zm0-32a12,12,0,1,0,12,12A12,12,0,0,0,128,56Z"/></svg>
-                    {p.location}
-                  </div>
-                )}
-              </div>
-              {p.category && (
-                <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, color:C.silver, fontSize:".58rem", fontWeight:800, padding:"4px 10px", borderRadius:6, flexShrink:0, fontFamily:"Archivo,sans-serif", whiteSpace:"nowrap" }}>
-                  {p.category}
-                </div>
-              )}
-            </div>
-
-            {/* Stats */}
-            <div style={{ display:"flex", gap:8, marginTop:16 }}>
-              <StatChip icon={Icons.users}     value={p.stats?.leads ?? 0} label="Leads"  color={C.green}  />
-              <StatChip icon={Icons.handshake} value={p.stats?.deals ?? 0} label="Deals"  color={C.orange} />
-            </div>
-          </div>
-
-          {/* ── KEY INFO ── */}
-          <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"60ms" }}>
-            <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
-              <SectionTitle>Key Info</SectionTitle>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-                {[
-                  { label:"Starting Price", value:p.price,       color:C.green  },
-                  { label:"Unit Size",      value:p.area,        color:C.blue   },
-                  { label:"Delivery",       value:p.delivery,    color:C.orange },
-                  { label:"Status",         value:p.status,      color: p.statusColor || C.red },
-                  { label:"Project Area",   value:p.projectArea, color:C.silver },
-                  { label:"Parking",        value:p.parking,     color:C.silver },
-                  { label:"Maintenance",    value:p.maintenance, color:C.silver },
-                  { label:"Previous Work",  value:p.prevWork,    color:C.silver },
-                ].filter(x => x.value).map((item,i) => (
-                  <InfoCard key={i} label={item.label} value={item.value} color={item.color} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── DESCRIPTION ── */}
-          {p.description && (
-            <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"100ms" }}>
-              <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
-                <SectionTitle>About This Project</SectionTitle>
-                <div style={{ fontSize:".8rem", color:C.silver, lineHeight:1.7, fontWeight:500, fontFamily:"Archivo,sans-serif" }}>
-                  {p.description}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── AMENITIES ── */}
-          {p.amenities?.length > 0 && (
-            <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"130ms" }}>
-              <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
-                <SectionTitle>Facilities & Amenities</SectionTitle>
-                <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-                  {p.amenities.map((a,i) => (
-                    <div key={i} style={{ background:`${C.red}18`, border:`1px solid ${C.red}44`, color:C.white, fontSize:".63rem", fontWeight:700, padding:"4px 10px", borderRadius:6, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
-                      <div style={{ width:4, height:4, borderRadius:"50%", background:C.red, flexShrink:0 }} />
-                      {a}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── AVAILABLE UNITS ── */}
-          {p.units?.filter(u=>u.type).length > 0 && (
-            <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"160ms" }}>
-              <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
-                <SectionTitle>Available Units</SectionTitle>
-                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                  {p.units.filter(u=>u.type).map((u,i) => (
-                    <div key={i} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 12px", borderRadius:10, background:C.cardAlt, border:`1px solid ${C.border}` }}>
-                      <div>
-                        <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{u.type}</div>
-                        {u.size && <div style={{ fontSize:".65rem", color:C.gray, fontWeight:600, marginTop:1, fontFamily:"Archivo,sans-serif" }}>{u.size}</div>}
-                      </div>
-                      <div style={{ textAlign:"right" }}>
-                        {u.price && <div style={{ fontSize:".78rem", fontWeight:800, color:C.red, fontFamily:"Archivo,sans-serif" }}>{u.price}</div>}
-                        {u.available !== undefined && (
-                          <div style={{ fontSize:".6rem", fontWeight:700, marginTop:2, color: u.available > 3 ? C.green : C.orange, fontFamily:"Archivo,sans-serif" }}>
-                            {u.available} available
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── PAYMENT PLANS ── */}
-          {p.paymentPlans?.filter(pl=>pl.downPayment||pl.duration).length > 0 && (
-            <div className="onyx-card" style={{ padding:"14px 16px 0", animationDelay:"190ms" }}>
-              <div style={{ background:C.card, borderRadius:14, padding:"14px", border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}` }}>
-                <SectionTitle>Payment Plans</SectionTitle>
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {p.paymentPlans.filter(pl=>pl.downPayment||pl.duration).map((pl,i) => (
-                    <div key={i} style={{ background:C.cardAlt, borderRadius:10, padding:"12px", border:`1px solid ${C.border}` }}>
-                      <div style={{ fontSize:".6rem", fontWeight:800, color:C.red, textTransform:"uppercase", letterSpacing:.6, fontFamily:"Archivo,sans-serif", marginBottom:8 }}>Plan {i+1}</div>
-                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-                        {[
-                          { label:"Down Payment",  value:pl.downPayment  },
-                          { label:"Installment",   value:pl.installment  },
-                          { label:"Duration",      value:pl.duration     },
-                          { label:"On Delivery",   value:pl.onDelivery   },
-                        ].filter(x=>x.value).map((item,j) => (
-                          <div key={j}>
-                            <div style={{ fontSize:".55rem", color:C.gray, fontWeight:700, textTransform:"uppercase", letterSpacing:.5, fontFamily:"Archivo,sans-serif" }}>{item.label}</div>
-                            <div style={{ fontSize:".78rem", color:C.white, fontWeight:700, marginTop:2, fontFamily:"Archivo,sans-serif" }}>{item.value}</div>
-                          </div>
-                        ))}
-                      </div>
-                      {pl.notes && <div style={{ marginTop:8, fontSize:".7rem", color:C.gray, fontWeight:600, fontFamily:"Archivo,sans-serif", borderTop:`1px solid ${C.border}`, paddingTop:8 }}>{pl.notes}</div>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={{ height:20 }} />
-
-          <StoryViewer stories={p.stories||[]} open={storyOpen && p.stories?.length>0} onClose={()=>setStoryOpen(false)} />
-          <VideoPopup src={p.coverVideo} open={videoOpen && !!p.coverVideo} onClose={()=>setVideoOpen(false)} />
-        </>
+        /* ── DETAIL VIEW ── */
+        <ProjectDetail
+          project={projects[selectedIdx]}
+          onBack={() => setSelectedIdx(null)}
+          onPrev={goToPrev}
+          onNext={goToNext}
+          hasPrev={selectedIdx > 0}
+          hasNext={selectedIdx < projects.length - 1}
+          onEditProject={onEditProject}
+        />
       )}
-
     </div>
   );
 }
