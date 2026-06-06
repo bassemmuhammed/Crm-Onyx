@@ -17,6 +17,8 @@ const C = {
   red:     "#CC1515",
   redLight:"#FF2020",
   blue:    "#253FF6",
+  cardGrad1: "linear-gradient(145deg,#1A1A1A 0%,#111111 100%)",
+  cardGrad2: "linear-gradient(145deg,#1C1C1C 0%,#141414 100%)",
 };
 
 const STATUS_META = {
@@ -91,7 +93,7 @@ function LoadingBar({ show }) {
 // ─── Divider ──────────────────────────────────────────────────────
 const Div = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-    {label && <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
+    {label && <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
     <div style={{ flex:1, height:1, background:C.border }} />
   </div>
 );
@@ -173,9 +175,12 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
         <div onClick={e=>e.stopPropagation()} style={{
           width:"100%", maxWidth:430,
           background:C.card, borderRadius:"22px 22px 0 0",
-          borderTop:`2px solid ${C.red}`,
+          borderTop:`2px solid transparent`,
+          backgroundImage:`linear-gradient(${C.card}, ${C.card}), linear-gradient(90deg, ${C.red} 0%, ${C.red} 40%, transparent 100%)`,
+          backgroundOrigin:"border-box",
+          backgroundClip:"padding-box, border-box",
           boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
-          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 80px)",
+          display:"flex", flexDirection:"column", maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
         }}>
           {/* Handle */}
@@ -184,40 +189,39 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           </div>
 
           {/* Lead header */}
-          <div style={{ padding:"14px 16px 0", flexShrink:0 }}>
+          <div style={{ padding:"16px 18px 0", flexShrink:0 }}>
             <div style={{
-              background:C.cardAlt,
-              border:`1px solid ${C.border}`,
+              background:C.cardAlt, border:`1px solid ${C.border}`,
               borderLeft:`3px solid ${C.red}`,
-              borderRadius:14, padding:"12px 14px",
-              display:"flex", alignItems:"center", gap:12,
+              borderRadius:14, padding:"14px 16px",
+              display:"flex", alignItems:"center", gap:14,
             }}>
               {/* Avatar */}
               <div style={{
-                width:44, height:44, borderRadius:10, flexShrink:0,
-                background:"#1a1a1a", border:`1px solid ${C.border}`,
+                width:46, height:46, borderRadius:12, flexShrink:0,
+                background:C.black, border:`1px solid ${C.border}`,
                 display:"flex", alignItems:"center", justifyContent:"center",
                 fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
               }}>{(local.name||"?").charAt(0)}</div>
 
               <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ fontSize:".92rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
-                <div style={{ fontSize:".65rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
               </div>
 
               {/* Status pill */}
-              <div style={{ background:C.card, borderRadius:6, padding:"4px 10px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
-                <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />
+              <div style={{ background:C.card, borderRadius:6, padding:"5px 11px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
+                <div style={{ width:6, height:6, borderRadius:"50%", background:meta.color }} />
                 <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{meta.label}</span>
               </div>
             </div>
           </div>
 
           {/* Scrollable */}
-          <div style={{ overflowY:"auto", padding:"10px 16px 12px", display:"flex", flexDirection:"column", gap:6, WebkitOverflowScrolling:"touch" }}>
+          <div style={{ overflowY:"auto", padding:"14px 18px 16px", display:"flex", flexDirection:"column", gap:10, WebkitOverflowScrolling:"touch" }}>
 
             {/* ── ACTIONS SECTION ── */}
-            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
+            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
             <Div label="Actions" />
 
             {/* Assign */}
@@ -238,7 +242,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             </div>
 
             {/* ── STATUS SECTION ── */}
-            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
+            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
             <Div label="Status" />
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
               {STATUS_ORDER.filter(s => s !== "new").map(s => {
@@ -287,7 +291,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             )}
 
             {/* ── BUDGET SECTION ── */}
-            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
+            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
             <Div label="Client" />
             <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
               {/* Property type */}
@@ -315,7 +319,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             </div>
 
             {/* ── COMMENTS SECTION ── */}
-            <div style={{ height:1, background:C.red, opacity:.6, margin:"2px 0" }} />
+            <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"2px 0" }} />
             <Div label="Comments" />
             <div style={{ display:"flex", gap:8 }}>
               <input ref={inputRef} value={comment} onChange={e => setComment(e.target.value)}
@@ -350,7 +354,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             {/* ── CHANGELOG SECTION ── */}
             {local.changelog && local.changelog.length > 0 && (
               <>
-                <div style={{ height:1, background:C.red, opacity:.6, margin:"6px 0 2px" }} />
+                <div style={{ height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)`, margin:"6px 0 2px" }} />
                 <Div label="Edit History" />
                 <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
                   {local.changelog.map((entry, i) => {
@@ -580,14 +584,21 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
   return (
     <div className="lead-card" onClick={onClick} style={{
-      background: C.card,
+      background: C.cardGrad1,
       border: `1px solid ${C.border}`,
-      borderLeft: `3px solid ${C.red}`,
       borderRadius: 14,
       cursor: "pointer",
       overflow: "hidden",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.45)",
+      position: "relative",
     }}>
-      <div style={{ padding:"13px 14px", display:"flex", flexDirection:"column", gap:10 }}>
+      {/* Left gradient border — thick at top, fades down */}
+      <div style={{
+        position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
+        background: `linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
+        borderRadius: "14px 0 0 14px",
+      }} />
+      <div style={{ padding:"13px 14px 13px 17px", display:"flex", flexDirection:"column", gap:10 }}>
 
         {/* Row 1: Avatar + Name/Phone + Call + WA */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
@@ -640,7 +651,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
             display:"flex", alignItems:"center", gap:4,
           }}>
-            <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />
+            <div style={{ width:5, height:5, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
             {meta.label}
           </div>
 
