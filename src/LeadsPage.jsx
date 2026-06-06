@@ -461,8 +461,8 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
           }}>{initial}</div>
 
-          {/* Name + phone — full flex, no maxWidth cap */}
-          <div style={{ flex:1, minWidth:0 }}>
+          {/* Name + phone — centered */}
+          <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
             <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
             <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.phone}</div>
           </div>
