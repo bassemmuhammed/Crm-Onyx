@@ -470,8 +470,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
           fontFamily:"Archivo,sans-serif",
-          animation:"slideUp .12s ease-out both",
-          willChange:"transform, opacity",
+          willChange:"transform",
         }}>
           {/* Handle */}
           <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
