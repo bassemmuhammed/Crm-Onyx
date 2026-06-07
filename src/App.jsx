@@ -240,17 +240,21 @@ export default function App() {
     if (!currentUser?.id) return;
     const fetchLeadsStats = () => supabase
       .from("leads")
-      .select("id, name, status, assigned_to, callback_date, callback_time")
+      .select("id, name, phone, status, assigned_to, callback_date, callback_time, client_info, comments")
       .eq("assigned_to", currentUser.id)
       .then(({ data }) => {
         if (data) setLeads(data.map(r => ({
           id:           r.id,
           name:         r.name,
+          phone:        r.phone         || "",
           status:       r.status,
+          assignedTo:   r.assigned_to,
           callbackDate: r.callback_date || "",
           callbackTime: r.callback_time || "",
           meetingDate:  r.callback_date || "",
           meetingTime:  r.callback_time || "",
+          clientInfo:   r.client_info   || {},
+          comments:     r.comments      || [],
         })));
       });
     fetchLeadsStats();
@@ -593,6 +597,7 @@ export default function App() {
             onTabChange={setActiveSalesTab}
             onSignOut={handleSignOut}
             leads={leads}
+            currentUser={currentUser}
             onLeadsFilter={(filterKey) => {
               setLeadsFilter(filterKey);
               setActiveSalesTab(TAB_LEADS);

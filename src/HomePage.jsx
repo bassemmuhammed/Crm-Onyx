@@ -9,9 +9,11 @@
 //   leads          {array}     — optional: live leads data
 //   tasks          {array}     — optional: live tasks data
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Icons             from "./Icons";
 import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList } from "lucide-react";
+import { LeadDetailModal } from "./LeadsPage";
+import { updateLead as dbUpdateLead } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -237,7 +239,7 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
 // ✅ تعديل 1: Swipe to delete
 // ✅ تعديل 3: إخفاء badge الـ MED/HIGH
 // ✅ تعديل 4: أيقونات Lucide بدل الإيموجي
-function SwipeableTaskCard({ t, onToggle, onDelete }) {
+function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
   const [offsetX, setOffsetX]   = useState(0);
   const [swiping, setSwiping]   = useState(false);
   const [deleted, setDeleted]   = useState(false);
@@ -352,14 +354,23 @@ function SwipeableTaskCard({ t, onToggle, onDelete }) {
           </div>
         </div>
 
-        {/* Arrow */}
-        <div style={{
-          width:28, height:28, borderRadius:7,
-          background: t.done ? `${C.red}18` : C.cardAlt,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          color: t.done ? C.red : C.gray, flexShrink:0,
-          transition:"all .2s",
-        }}>
+        {/* Arrow — لو تاسك ليد يفتح الليد، لو مش ليد مش بيعمل حاجة */}
+        <div
+          onClick={e => {
+            e.stopPropagation();
+            if (t.isLead && onOpenLead) onOpenLead();
+          }}
+          style={{
+            width:28, height:28, borderRadius:7,
+            background: t.done ? `${C.red}18` : C.cardAlt,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            color: t.done ? C.red : (t.isLead ? C.silver : C.gray),
+            flexShrink:0,
+            transition:"all .2s",
+            cursor: t.isLead ? "pointer" : "default",
+            border: t.isLead && !t.done ? `1px solid ${C.border}` : "none",
+          }}
+        >
           {t.done
             ? <CheckCheck size={14} />
             : <ChevronRight size={14} />
@@ -371,7 +382,7 @@ function SwipeableTaskCard({ t, onToggle, onDelete }) {
 }
 
 // ─── All Tasks Modal (تعديل 2) ────────────────────────────────────────
-function AllTasksModal({ open, onClose, tasks, onToggle, onDelete }) {
+function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, leads }) {
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("default"); // "default" | "priority" | "date"
 
@@ -542,6 +553,12 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete }) {
               t={t}
               onToggle={() => onToggle(t.id)}
               onDelete={onDelete}
+              onOpenLead={() => {
+                if (t.isLead && leads) {
+                  const lead = leads.find(l => l.id === t.leadId);
+                  if (lead) { onClose(); onOpenLead(lead); }
+                }
+              }}
             />
           ))}
         </div>
@@ -569,12 +586,18 @@ export default function HomePage({
   onLeadsFilter,
   leads: leadsFromProps,
   tasks: tasksFromProps,
+  currentUser,
 }) {
   const [animate,      setAnimate]      = useState(false);
   const [viewAllOpen,  setViewAllOpen]  = useState(false);
   const [manualTasks,  setManualTasks]  = useState(tasksFromProps || TASKS_DEFAULT);
   const [doneLeadIds,  setDoneLeadIds]  = useState(new Set());
   const [deletedIds,   setDeletedIds]   = useState(new Set());
+  // ── Lead Detail Modal state ──
+  const [leadDetail,   setLeadDetail]   = useState(null);
+  const [leadOpen,     setLeadOpen]     = useState(false);
+
+  const salesName = currentUser?.name || currentUser?.email || "Sales";
 
   useEffect(() => {
     document.body.style.overflow = viewAllOpen ? "hidden" : "";
@@ -644,6 +667,16 @@ export default function HomePage({
     }
   };
 
+  // ── Lead Detail ──
+  const updateLead = useCallback(async (updated) => {
+    await dbUpdateLead(updated, salesName, null);
+  }, [salesName]);
+
+  const openLead = useCallback((lead) => {
+    setLeadDetail(lead);
+    setLeadOpen(true);
+  }, []);
+
   const doneTasks  = tasks.filter(t => t.done).length;
   const totalTasks = tasks.length;
 
@@ -662,6 +695,15 @@ export default function HomePage({
       WebkitUserSelect: "none",
     }}>
 
+      {/* ── Lead Detail Modal (من التاسك) ── */}
+      <LeadDetailModal
+        lead={leadDetail}
+        open={leadOpen}
+        onClose={() => setLeadOpen(false)}
+        onUpdate={updateLead}
+        salesName={salesName}
+      />
+
       {/* ── Modals ── */}
       <AllTasksModal
         open={viewAllOpen}
@@ -669,6 +711,8 @@ export default function HomePage({
         tasks={tasks}
         onToggle={toggleTask}
         onDelete={deleteTask}
+        onOpenLead={openLead}
+        leads={leads}
       />
 
       {/* ── Scroll Content ── */}
@@ -753,6 +797,10 @@ export default function HomePage({
                 t={t}
                 onToggle={() => toggleTask(t.id)}
                 onDelete={deleteTask}
+                onOpenLead={t.isLead ? () => {
+                  const lead = leads.find(l => l.id === t.leadId);
+                  if (lead) openLead(lead);
+                } : null}
               />
             ))}
             {tasks.length === 0 && (
