@@ -1,32 +1,47 @@
 // ── NotificationContext.jsx — ONYX CRM ───────────────────────────
 // Global notifications state shared across all pages
-// Wrap your app root with <NotificationProvider> once,
-// then use useNotifications() anywhere.
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "./lib/supabase";
 
 const NotificationContext = createContext(null);
 
-// ── Push Notification Helper ──
-function sendPush(title, body) {
-  if (!("Notification" in window)) return;
-  if (Notification.permission === "granted") {
-    new Notification(title, { body, icon: "/favicon.ico" });
-  } else if (Notification.permission !== "denied") {
-    Notification.requestPermission().then(p => {
-      if (p === "granted") new Notification(title, { body, icon: "/favicon.ico" });
+// ── Request Notification Permission ──────────────────────────────
+async function requestPermission() {
+  if (!("Notification" in window)) return false;
+  if (Notification.permission === "granted") return true;
+  const result = await Notification.requestPermission();
+  return result === "granted";
+}
+
+// ── Send Push via Service Worker ─────────────────────────────────
+async function sendPush(title, body, tag = "onyx-notif") {
+  const allowed = await requestPermission();
+  if (!allowed) return;
+
+  // لو الـ Service Worker شغال — ابعت منه (أفضل على موبايل)
+  if (navigator.serviceWorker?.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: "SCHEDULE_NOTIFICATION",
+      id: tag,
+      title,
+      body,
+      triggerTime: Date.now(), // فوري
     });
+  } else {
+    // fallback: notification عادية
+    new Notification(title, { body, icon: "/favicon.ico", tag });
   }
 }
 
-// ── Insert notification into Supabase ──
+// ── Insert notification into Supabase ────────────────────────────
 async function insertNotif(text, color = "#CC1515", userId = null, type = "general") {
   await supabase.from("notifications").insert({ text, color, is_read: false, user_id: userId, type });
 }
 
-// ── Schedule push for upcoming meeting/callback ──
-function scheduleLeadReminder(lead, scheduledIds, userId) {
+// ── Schedule Reminders via Service Worker ─────────────────────────
+// بيشتغل حتى لو الـ app في الـ background
+async function scheduleLeadReminder(lead, scheduledIds, userId) {
   const dateStr = lead.callbackDate || lead.meetingDate || lead.callback_date || lead.meeting_date;
   const timeStr = lead.callbackTime || lead.meetingTime || lead.callback_time || lead.meeting_time;
   if (!dateStr || !timeStr) return;
@@ -34,39 +49,106 @@ function scheduleLeadReminder(lead, scheduledIds, userId) {
   const meetingTime = new Date(`${dateStr}T${timeStr}`);
   if (isNaN(meetingTime.getTime())) return;
 
-  const notifyAt60 = meetingTime.getTime() - 60 * 60 * 1000;
-  const notifyAt15 = meetingTime.getTime() - 15 * 60 * 1000;
-  const now = Date.now();
-
   const key = `${lead.id}-${dateStr}-${timeStr}`;
   if (scheduledIds.current.has(key)) return;
   scheduledIds.current.add(key);
 
-  const label = (lead.status === "callback") ? "Call Back" : "Pending Meeting";
+  const now = Date.now();
+  const label = lead.status === "callback" ? "Call Back" : "Pending Meeting";
+  const name  = lead.name || "Lead";
 
-  if (notifyAt60 > now) {
-    setTimeout(() => {
-      sendPush(`${label} in 1 hour`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      const type60 = lead.status === "callback" ? "callback_1h" : "meeting_1h";
-      insertNotif(`${label} in 1 hour: ${lead.name} (${dateStr} ${timeStr})`, "#f59e0b", userId, type60);
-    }, notifyAt60 - now);
-  }
+  const allowed = await requestPermission();
+  if (!allowed) return;
 
-  if (notifyAt15 > now) {
-    setTimeout(() => {
-      sendPush(`${label} in 15 min`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      const type15 = lead.status === "callback" ? "callback_15m" : "meeting_15m";
-      insertNotif(`${label} in 15 min: ${lead.name} (${dateStr} ${timeStr})`, "#CC1515", userId, type15);
-    }, notifyAt15 - now);
+  const sw = navigator.serviceWorker?.controller;
+
+  // ── التوقيتات الأربعة ──────────────────────────────────────────
+  const reminders = [
+    {
+      key:   `${key}-1d`,
+      diff:  24 * 60 * 60 * 1000,
+      title: `📅 ${label} غداً`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_1d" : "meeting_1d",
+      color: "#3b82f6",
+    },
+    {
+      key:   `${key}-1h`,
+      diff:  60 * 60 * 1000,
+      title: `⏰ ${label} خلال ساعة`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_1h" : "meeting_1h",
+      color: "#f59e0b",
+    },
+    {
+      key:   `${key}-5m`,
+      diff:  5 * 60 * 1000,
+      title: `🔔 ${label} خلال 5 دقايق`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_5m" : "meeting_5m",
+      color: "#ef4444",
+    },
+    {
+      key:   `${key}-now`,
+      diff:  0,
+      title: `🚨 ${label} دلوقتي!`,
+      body:  `${name} — حان الوقت!`,
+      type:  lead.status === "callback" ? "callback_now" : "meeting_now",
+      color: "#CC1515",
+    },
+  ];
+
+  for (const reminder of reminders) {
+    const triggerTime = meetingTime.getTime() - reminder.diff;
+    if (triggerTime <= now) continue; // الوقت عدى
+
+    const delay = triggerTime - now;
+
+    if (sw) {
+      // ── عن طريق Service Worker (أفضل — بيشتغل في background) ──
+      sw.postMessage({
+        type:        "SCHEDULE_NOTIFICATION",
+        id:          reminder.key,
+        title:       reminder.title,
+        body:        reminder.body,
+        triggerTime: triggerTime,
+      });
+    } else {
+      // ── fallback: setTimeout (بيشتغل بس لو الـ tab مفتوح) ──
+      setTimeout(async () => {
+        new Notification(reminder.title, {
+          body: reminder.body,
+          icon: "/favicon.ico",
+          tag:  reminder.key,
+        });
+        await insertNotif(
+          `${reminder.title}: ${name} (${dateStr} ${timeStr})`,
+          reminder.color,
+          userId,
+          reminder.type
+        );
+      }, delay);
+    }
+
+    // ── حفظ في Supabase عند الوقت المحدد (عشان يظهر في الـ panel) ──
+    setTimeout(async () => {
+      await insertNotif(
+        `${reminder.title}: ${name} (${dateStr} ${timeStr})`,
+        reminder.color,
+        userId,
+        reminder.type
+      );
+    }, delay);
   }
 }
 
+// ── Provider ─────────────────────────────────────────────────────
 export function NotificationProvider({ children, currentUser }) {
-  const [notifs, setNotifs] = useState([]);
+  const [notifs, setNotifs]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const scheduledIds = useRef(new Set());
+  const scheduledIds          = useRef(new Set());
 
-  // ── Fetch from Supabase ──
+  // ── Fetch من Supabase ─────────────────────────────────────────
   const fetchNotifs = useCallback(async () => {
     if (!currentUser?.id) return;
     const { data, error } = await supabase
@@ -89,10 +171,10 @@ export function NotificationProvider({ children, currentUser }) {
     setLoading(false);
   }, [currentUser?.id]);
 
-  // ── Load on mount ──
+  // ── Load on mount ─────────────────────────────────────────────
   useEffect(() => { fetchNotifs(); }, [fetchNotifs]);
 
-  // ── Realtime: notifications table ──
+  // ── Realtime: notifications table ─────────────────────────────
   useEffect(() => {
     const channel = supabase
       .channel("notifications-global")
@@ -101,7 +183,7 @@ export function NotificationProvider({ children, currentUser }) {
     return () => supabase.removeChannel(channel);
   }, [fetchNotifs]);
 
-  // ── Realtime: watch leads for new assignments + schedule reminders ──
+  // ── Realtime: watch leads ─────────────────────────────────────
   useEffect(() => {
     if (!currentUser?.id) return;
 
@@ -110,15 +192,16 @@ export function NotificationProvider({ children, currentUser }) {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "leads" }, (payload) => {
         const lead = payload.new;
         if (lead.assigned_to === currentUser.id) {
-          const text = `New lead assigned: ${lead.name || "Unknown"}`;
-          sendPush("New Lead Assigned", `${lead.name || "Unknown"} has been assigned to you`);
-          insertNotif(text, "#10b981", currentUser.id, "new_lead");
+          sendPush("New Lead Assigned 🎯", `${lead.name || "Unknown"} has been assigned to you`, `new-lead-${lead.id}`);
+          insertNotif(`New lead assigned: ${lead.name || "Unknown"}`, "#10b981", currentUser.id, "new_lead");
         }
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "leads" }, (payload) => {
         const lead = payload.new;
-        if (lead.assigned_to === currentUser.id &&
-            (lead.status === "callback" || lead.status === "pendingMeeting")) {
+        if (
+          lead.assigned_to === currentUser.id &&
+          (lead.status === "callback" || lead.status === "pendingMeeting")
+        ) {
           scheduleLeadReminder(lead, scheduledIds, currentUser.id);
         }
       })
@@ -127,7 +210,7 @@ export function NotificationProvider({ children, currentUser }) {
     return () => supabase.removeChannel(channel);
   }, [currentUser?.id]);
 
-  // ── On login: fetch my leads and schedule existing reminders ──
+  // ── On login: جيب الـ leads وعمل schedule للـ reminders ───────
   useEffect(() => {
     if (!currentUser?.id) return;
     (async () => {
@@ -140,7 +223,7 @@ export function NotificationProvider({ children, currentUser }) {
     })();
   }, [currentUser?.id]);
 
-  // ── Mark all as read ──
+  // ── Mark all as read ──────────────────────────────────────────
   const markAllRead = useCallback(async () => {
     setNotifs(prev => prev.map(n => ({ ...n, unread: false })));
     const unreadIds = notifs.filter(n => n.unread).map(n => n.id);
@@ -148,7 +231,7 @@ export function NotificationProvider({ children, currentUser }) {
     await supabase.from("notifications").update({ is_read: true }).in("id", unreadIds);
   }, [notifs]);
 
-  // ── Mark single as read ──
+  // ── Mark single as read ───────────────────────────────────────
   const markRead = useCallback(async (id) => {
     setNotifs(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n));
     await supabase.from("notifications").update({ is_read: true }).eq("id", id);
@@ -163,14 +246,14 @@ export function NotificationProvider({ children, currentUser }) {
   );
 }
 
-// ── Hook ──
+// ── Hook ─────────────────────────────────────────────────────────
 export function useNotifications() {
   const ctx = useContext(NotificationContext);
   if (!ctx) throw new Error("useNotifications must be used inside <NotificationProvider>");
   return ctx;
 }
 
-// ── Helper ──
+// ── Helper ───────────────────────────────────────────────────────
 function formatTime(isoString) {
   if (!isoString) return "";
   const diff = Date.now() - new Date(isoString).getTime();
