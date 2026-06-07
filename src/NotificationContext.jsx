@@ -1,13 +1,28 @@
 // ── NotificationContext.jsx — ONYX CRM ───────────────────────────
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "./lib/supabase";
-import { subscribeToPush } from "./pushSubscription";
 
 const NotificationContext = createContext(null);
 
 // ── Insert notification into Supabase ────────────────────────────
 async function insertNotif(text, color = "#CC1515", userId = null, type = "general") {
   await supabase.from("notifications").insert({ text, color, is_read: false, user_id: userId, type });
+}
+
+// ── OneSignal: ربط الـ user بالـ OneSignal ───────────────────────
+function initOneSignal(userId) {
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  window.OneSignalDeferred.push(function(OneSignal) {
+    OneSignal.login(userId).catch(e => console.warn("OneSignal login:", e));
+  });
+}
+
+// ── OneSignal: بعت notification ──────────────────────────────────
+async function sendOneSignalNotif(userId, title, body) {
+  // بيتبعت من الـ Edge Function — مش من الـ client
+  await supabase.functions.invoke("send-push-onesignal", {
+    body: { userId, title, body },
+  });
 }
 
 // ── Schedule Reminders في جدول scheduled_notifications ───────────
@@ -29,32 +44,32 @@ async function scheduleLeadReminder(lead, scheduledIds, userId) {
 
   const reminders = [
     {
-      key:  `${key}-1d`,
-      diff: 24 * 60 * 60 * 1000,
+      key:   `${key}-1d`,
+      diff:  24 * 60 * 60 * 1000,
       title: `📅 ${label} غداً`,
       body:  `${name} — ${dateStr} الساعة ${timeStr}`,
       type:  lead.status === "callback" ? "callback_1d" : "meeting_1d",
       color: "#3b82f6",
     },
     {
-      key:  `${key}-1h`,
-      diff: 60 * 60 * 1000,
+      key:   `${key}-1h`,
+      diff:  60 * 60 * 1000,
       title: `⏰ ${label} خلال ساعة`,
       body:  `${name} — ${dateStr} الساعة ${timeStr}`,
       type:  lead.status === "callback" ? "callback_1h" : "meeting_1h",
       color: "#f59e0b",
     },
     {
-      key:  `${key}-5m`,
-      diff: 5 * 60 * 1000,
+      key:   `${key}-5m`,
+      diff:  5 * 60 * 1000,
       title: `🔔 ${label} خلال 5 دقايق`,
       body:  `${name} — ${dateStr} الساعة ${timeStr}`,
       type:  lead.status === "callback" ? "callback_5m" : "meeting_5m",
       color: "#ef4444",
     },
     {
-      key:  `${key}-now`,
-      diff: 0,
+      key:   `${key}-now`,
+      diff:  0,
       title: `🚨 ${label} دلوقتي!`,
       body:  `${name} — حان الوقت!`,
       type:  lead.status === "callback" ? "callback_now" : "meeting_now",
@@ -68,7 +83,6 @@ async function scheduleLeadReminder(lead, scheduledIds, userId) {
 
     const sendAt = new Date(triggerTime).toISOString();
 
-    // ✅ احفظ في scheduled_notifications — الـ cron هيبعته في وقته
     await supabase.from("scheduled_notifications").upsert({
       user_id: userId,
       title:   reminder.title,
@@ -78,7 +92,6 @@ async function scheduleLeadReminder(lead, scheduledIds, userId) {
       sent:    false,
     }, { onConflict: "tag" });
 
-    // ✅ احفظ في notifications panel بنفس الوقت
     const delay = triggerTime - now;
     setTimeout(async () => {
       await insertNotif(
@@ -119,10 +132,10 @@ export function NotificationProvider({ children, currentUser }) {
     setLoading(false);
   }, [currentUser?.id]);
 
-  // ── Load + Subscribe to Push ──────────────────────────────────
+  // ── Load + OneSignal login ────────────────────────────────────
   useEffect(() => {
     fetchNotifs();
-    if (currentUser?.id) subscribeToPush(currentUser.id);
+    if (currentUser?.id) initOneSignal(currentUser.id);
   }, [fetchNotifs, currentUser?.id]);
 
   // ── Realtime: notifications ───────────────────────────────────
