@@ -13,7 +13,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Icons             from "./Icons";
 import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList } from "lucide-react";
 import { LeadDetailModal } from "./LeadsPage";
-import { updateLead as dbUpdateLead } from "./sharedLeadsData";
+import { updateLead as dbUpdateLead, supabase } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -667,13 +667,37 @@ export default function HomePage({
     }
   };
 
-  // ── Lead Detail ──
   const updateLead = useCallback(async (updated) => {
     await dbUpdateLead(updated, salesName, null);
   }, [salesName]);
 
-  const openLead = useCallback((lead) => {
-    setLeadDetail(lead);
+  // ── Lead Detail — بيجيب البيانات الكاملة من Supabase عند الضغط بس ──
+  const openLead = useCallback(async (partialLead) => {
+    // بيجيب الليد كامل من DB بعدين يفتح الـ modal
+    const { data } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("id", partialLead.id)
+      .single();
+
+    if (data) {
+      setLeadDetail({
+        id:           data.id,
+        name:         data.name         || "",
+        phone:        data.phone        || "",
+        status:       data.status       || "new",
+        assignedTo:   data.assigned_to  || "",
+        callbackDate: data.callback_date|| "",
+        callbackTime: data.callback_time|| "",
+        meetingDate:  data.callback_date|| "",
+        meetingTime:  data.callback_time|| "",
+        clientInfo:   data.client_info  || {},
+        comments:     data.comments     || [],
+      });
+    } else {
+      // fallback لو فشل الـ fetch
+      setLeadDetail({ ...partialLead, phone: "", comments: [], clientInfo: {} });
+    }
     setLeadOpen(true);
   }, []);
 

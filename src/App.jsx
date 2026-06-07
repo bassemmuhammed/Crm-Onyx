@@ -240,21 +240,18 @@ export default function App() {
     if (!currentUser?.id) return;
     const fetchLeadsStats = () => supabase
       .from("leads")
-      .select("id, name, phone, status, assigned_to, callback_date, callback_time, client_info, comments")
+      .select("id, name, status, assigned_to, callback_date, callback_time")
       .eq("assigned_to", currentUser.id)
       .then(({ data }) => {
         if (data) setLeads(data.map(r => ({
           id:           r.id,
           name:         r.name,
-          phone:        r.phone         || "",
           status:       r.status,
           assignedTo:   r.assigned_to,
           callbackDate: r.callback_date || "",
           callbackTime: r.callback_time || "",
           meetingDate:  r.callback_date || "",
           meetingTime:  r.callback_time || "",
-          clientInfo:   r.client_info   || {},
-          comments:     r.comments      || [],
         })));
       });
     fetchLeadsStats();
