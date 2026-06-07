@@ -46,7 +46,7 @@ const STYLES = `
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
   @keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes slideUp   { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes slideUp   { from{opacity:0;transform:scale(.97)} to{opacity:1;transform:scale(1)} }
   @keyframes swipeDeleteReveal { from{opacity:0;transform:scaleX(0)} to{opacity:1;transform:scaleX(1)} }
   .fade-up  { animation: fadeInUp .3s ease both; }
   .tap-btn  { transition: all .15s ease; }
@@ -470,8 +470,8 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
           fontFamily:"Archivo,sans-serif",
-          animation:"slideUp .15s ease-out both",
-          willChange:"transform",
+          animation:"slideUp .12s ease-out both",
+          willChange:"transform, opacity",
         }}>
           {/* Handle */}
           <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
