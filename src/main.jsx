@@ -3,17 +3,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// ── Register Service Worker ──────────────────────────────────────
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-      console.log("✅ Service Worker registered:", reg.scope);
-    } catch (err) {
-      console.error("❌ Service Worker registration failed:", err);
-    }
+// ── OneSignal Init ──────────────────────────────────────────────
+window.OneSignalDeferred = window.OneSignalDeferred || [];
+window.OneSignalDeferred.push(async function(OneSignal) {
+  await OneSignal.init({
+    appId: "fb68e5d0-9f79-4da9-9d12-e7e49bfbb6df",
+    safari_web_id: "web.onesignal.auto.fb68e5d0-9f79-4da9-9d12-e7e49bfbb6df",
+    notifyButton: { enable: false },
+    allowLocalhostAsSecureOrigin: true,
   });
-}
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
