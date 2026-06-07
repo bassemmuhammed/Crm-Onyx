@@ -3,7 +3,7 @@
 
 import { supabase } from "./lib/supabase";
 
-const VAPID_PUBLIC_KEY = "BJ8g0liFATpHtHn-jxth-PrFGFwTnpgNbnkV_TzqmCujc4b-OMndJklVKvXtv1KJLujr7SiC-Ymp9g_LNvPmPPI";
+const VAPID_PUBLIC_KEY = "BAAYu4UcN6CRjDZI--dvwUUeLir9JZauXSlW9geQ2pLRz7XrrqtnagTySyKaBD6UWnV5J-1BD4RPvc0SerDw4Ew";
 
 // ── تحويل الـ VAPID key لـ Uint8Array ──
 function urlBase64ToUint8Array(base64String) {
