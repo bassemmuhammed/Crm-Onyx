@@ -46,7 +46,7 @@ const STYLES = `
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
   @keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes slideUp   { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  @keyframes slideUp   { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
   @keyframes swipeDeleteReveal { from{opacity:0;transform:scaleX(0)} to{opacity:1;transform:scaleX(1)} }
   .fade-up  { animation: fadeInUp .3s ease both; }
   .tap-btn  { transition: all .15s ease; }
@@ -470,7 +470,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
           fontFamily:"Archivo,sans-serif",
-          animation:"slideUp .22s cubic-bezier(.32,0,.67,0) both",
+          animation:"slideUp .15s ease-out both",
           willChange:"transform",
         }}>
           {/* Handle */}
@@ -484,7 +484,14 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
               background:C.cardAlt, border:`1px solid ${C.border}`,
               borderRadius:14, padding:"14px 16px",
               display:"flex", alignItems:"center", gap:14,
+              position:"relative", overflow:"hidden",
             }}>
+              {/* Gradient left border — نفس تأثير باقي الكروت */}
+              <div style={{
+                position:"absolute", left:0, top:0, bottom:0, width:3,
+                background:`linear-gradient(180deg, ${C.red} 0%, ${C.red}00 100%)`,
+                borderRadius:"14px 0 0 14px",
+              }} />
               {/* Icon box */}
               <div style={{
                 width:46, height:46, borderRadius:12, flexShrink:0,
