@@ -21,8 +21,8 @@ function sendPush(title, body) {
 }
 
 // ── Insert notification into Supabase ──
-async function insertNotif(text, color = "#CC1515", userId = null) {
-  await supabase.from("notifications").insert({ text, color, is_read: false, user_id: userId });
+async function insertNotif(text, color = "#CC1515", userId = null, type = "general") {
+  await supabase.from("notifications").insert({ text, color, is_read: false, user_id: userId, type });
 }
 
 // ── Schedule push for upcoming meeting/callback ──
@@ -46,15 +46,17 @@ function scheduleLeadReminder(lead, scheduledIds, userId) {
 
   if (notifyAt60 > now) {
     setTimeout(() => {
-      sendPush(`${label} in 1 hour ⏰`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      insertNotif(`⏰ ${label} in 1 hour: ${lead.name} (${dateStr} ${timeStr})`, "#f59e0b", userId);
+      sendPush(`${label} in 1 hour`, `${lead.name} — ${dateStr} at ${timeStr}`);
+      const type60 = lead.status === "callback" ? "callback_1h" : "meeting_1h";
+      insertNotif(`${label} in 1 hour: ${lead.name} (${dateStr} ${timeStr})`, "#f59e0b", userId, type60);
     }, notifyAt60 - now);
   }
 
   if (notifyAt15 > now) {
     setTimeout(() => {
-      sendPush(`${label} in 15 min 🔔`, `${lead.name} — ${dateStr} at ${timeStr}`);
-      insertNotif(`🔔 ${label} in 15 min: ${lead.name} (${dateStr} ${timeStr})`, "#CC1515", userId);
+      sendPush(`${label} in 15 min`, `${lead.name} — ${dateStr} at ${timeStr}`);
+      const type15 = lead.status === "callback" ? "callback_15m" : "meeting_15m";
+      insertNotif(`${label} in 15 min: ${lead.name} (${dateStr} ${timeStr})`, "#CC1515", userId, type15);
     }, notifyAt15 - now);
   }
 }
@@ -81,6 +83,7 @@ export function NotificationProvider({ children, currentUser }) {
         time:   formatTime(n.created_at),
         color:  n.color || "#CC1515",
         unread: !n.is_read,
+        type:   n.type || "general",
       })));
     }
     setLoading(false);
@@ -107,9 +110,9 @@ export function NotificationProvider({ children, currentUser }) {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "leads" }, (payload) => {
         const lead = payload.new;
         if (lead.assigned_to === currentUser.id) {
-          const text = `🆕 New lead assigned: ${lead.name || "Unknown"}`;
-          sendPush("New Lead! 🆕", `${lead.name || "Unknown"} has been assigned to you`);
-          insertNotif(text, "#10b981", currentUser.id);
+          const text = `New lead assigned: ${lead.name || "Unknown"}`;
+          sendPush("New Lead Assigned", `${lead.name || "Unknown"} has been assigned to you`);
+          insertNotif(text, "#10b981", currentUser.id, "new_lead");
         }
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "leads" }, (payload) => {

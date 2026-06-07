@@ -1,6 +1,17 @@
 // ── NotificationPanel.jsx — ONYX Design System ───────────────────
 // Props-based version — notifs and onMarkAll come from App.jsx
 
+import { UserCheck, PhoneIncoming, PhoneCall, CalendarCheck, Bell } from "lucide-react";
+
+const NOTIF_ICONS = {
+  new_lead:     (color) => <UserCheck   size={15} color={color} />,
+  callback_1h:  (color) => <PhoneIncoming size={15} color={color} />,
+  callback_15m: (color) => <PhoneCall   size={15} color={color} />,
+  meeting_1h:   (color) => <CalendarCheck size={15} color={color} />,
+  meeting_15m:  (color) => <CalendarCheck size={15} color={color} />,
+  general:      (color) => <Bell        size={15} color={color} />,
+};
+
 const C = {
   surface: "#0A0A0A", card: "#111111", border: "#1E1E1E",
   cardAlt: "#1A1A1A", gray: "#595A5F", silver: "#CECECE",
@@ -97,10 +108,14 @@ export default function NotificationPanel({ open, onClose, notifs = [], onMarkAl
               }}
             >
               <div style={{
-                width: 8, height: 8, borderRadius: "50%",
-                background: n.unread ? n.color : C.gray,
-                flexShrink: 0, marginTop: 4,
-              }} />
+                width: 28, height: 28, borderRadius: 8,
+                background: n.unread ? `${n.color}18` : "#1a1a1a",
+                border: `1px solid ${n.unread ? n.color + "44" : C.border}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                {(NOTIF_ICONS[n.type] || NOTIF_ICONS.general)(n.unread ? n.color : C.gray)}
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
                   fontSize: ".78rem", fontWeight: n.unread ? 700 : 500,
