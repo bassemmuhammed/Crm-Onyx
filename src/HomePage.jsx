@@ -46,7 +46,7 @@ const STYLES = `
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
   @keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes slideUp   { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
+  @keyframes slideUp   { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
   @keyframes swipeDeleteReveal { from{opacity:0;transform:scaleX(0)} to{opacity:1;transform:scaleX(1)} }
   .fade-up  { animation: fadeInUp .3s ease both; }
   .tap-btn  { transition: all .15s ease; }
@@ -251,6 +251,11 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
     ? (t.priority === "high" ? "#8b5cf6" : "#f59e0b")
     : null;
 
+  // Gradient border color (thick opaque top → transparent bottom)
+  const borderLeftStyle = leadBorderColor
+    ? `linear-gradient(180deg, ${leadBorderColor} 0%, ${leadBorderColor}00 100%)`
+    : null;
+
   // ── Touch handlers ──
   const onTouchStart = e => {
     startXRef.current = e.touches[0].clientX;
@@ -300,9 +305,8 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
           transition: swiping ? "none" : "transform .25s cubic-bezier(.4,0,.2,1)",
           background: C.cardGrad2,
           border: `1px solid ${C.border}`,
-          borderLeft: leadBorderColor ? `3px solid ${leadBorderColor}` : `1px solid ${C.border}`,
           borderRadius: 12,
-          padding: "12px 14px",
+          padding: "12px 14px 12px 17px",
           display: "flex", alignItems: "center", gap: 12,
           cursor: "pointer",
           opacity: t.done ? 0.55 : 1,
@@ -313,6 +317,14 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
         }}
         onClick={onToggle}
       >
+        {/* Gradient left border bar */}
+        {leadBorderColor && (
+          <div style={{
+            position:"absolute", left:0, top:0, bottom:0, width:3,
+            background: `linear-gradient(180deg, ${leadBorderColor} 0%, ${leadBorderColor}00 100%)`,
+            borderRadius:"12px 0 0 12px",
+          }} />
+        )}
         {/* Checkbox */}
         <div style={{
           width: 26, height: 26, borderRadius: 7, flexShrink: 0,
@@ -332,7 +344,7 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
         <div style={{ flex:1, minWidth:0 }}>
           {/* Title row with lucide icon */}
           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <span style={{ color: leadBorderColor || C.gray, display:"flex", alignItems:"center", flexShrink:0 }}>
+            <span style={{ color: C.white, display:"flex", alignItems:"center", flexShrink:0 }}>
               {TaskIcon}
             </span>
             <div style={{
@@ -458,7 +470,8 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
           fontFamily:"Archivo,sans-serif",
-          animation:"slideUp .3s cubic-bezier(.4,0,.2,1) both",
+          animation:"slideUp .18s cubic-bezier(.2,0,.2,1) both",
+          willChange:"transform",
         }}>
           {/* Handle */}
           <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
@@ -691,9 +704,13 @@ export default function HomePage({
     await dbUpdateLead(updated, salesName, null);
   }, [salesName]);
 
-  // ── Lead Detail — بيجيب البيانات الكاملة من Supabase عند الضغط بس ──
+  // ── Lead Detail — بيقفل المودل فورًا وبعدين يجيب البيانات ──
   const openLead = useCallback(async (partialLead) => {
-    // بيجيب الليد كامل من DB بعدين يفتح الـ modal
+    // افتح المودل فورًا ببيانات أولية (بدون تهنيجة)
+    setLeadDetail({ ...partialLead, phone: "", comments: [], clientInfo: {} });
+    setLeadOpen(true);
+
+    // جيب البيانات الكاملة في الخلفية وحدّث المودل
     const { data } = await supabase
       .from("leads")
       .select("*")
@@ -703,22 +720,18 @@ export default function HomePage({
     if (data) {
       setLeadDetail({
         id:           data.id,
-        name:         data.name         || "",
-        phone:        data.phone        || "",
-        status:       data.status       || "new",
-        assignedTo:   data.assigned_to  || "",
-        callbackDate: data.callback_date|| "",
-        callbackTime: data.callback_time|| "",
-        meetingDate:  data.callback_date|| "",
-        meetingTime:  data.callback_time|| "",
-        clientInfo:   data.client_info  || {},
-        comments:     data.comments     || [],
+        name:         data.name          || "",
+        phone:        data.phone         || "",
+        status:       data.status        || "new",
+        assignedTo:   data.assigned_to   || "",
+        callbackDate: data.callback_date || "",
+        callbackTime: data.callback_time || "",
+        meetingDate:  data.callback_date || "",
+        meetingTime:  data.callback_time || "",
+        clientInfo:   data.client_info   || {},
+        comments:     data.comments      || [],
       });
-    } else {
-      // fallback لو فشل الـ fetch
-      setLeadDetail({ ...partialLead, phone: "", comments: [], clientInfo: {} });
     }
-    setLeadOpen(true);
   }, []);
 
   const doneTasks  = tasks.filter(t => t.done).length;
