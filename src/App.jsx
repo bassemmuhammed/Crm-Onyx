@@ -238,22 +238,25 @@ export default function App() {
 
   useEffect(() => {
     if (!currentUser?.id) return;
-    // جيب الليدز المخصصة للسيلز عشان يظهر الـ stats في HomePage
-    supabase
+    const fetchLeadsStats = () => supabase
       .from("leads")
-      .select("id, status, assigned_to")
+      .select("id, name, status, assigned_to, callback_date, callback_time, meeting_date, meeting_time")
       .eq("assigned_to", currentUser.id)
-      .then(({ data }) => { if (data) setLeads(data.map(r => ({ id: r.id, status: r.status }))); });
-    // Realtime خفيف — بس يحدّث الـ counts
+      .then(({ data }) => {
+        if (data) setLeads(data.map(r => ({
+          id:           r.id,
+          name:         r.name,
+          status:       r.status,
+          callbackDate: r.callback_date || "",
+          callbackTime: r.callback_time || "",
+          meetingDate:  r.meeting_date  || "",
+          meetingTime:  r.meeting_time  || "",
+        })));
+      });
+    fetchLeadsStats();
     const ch = supabase
       .channel("app-leads-stats")
-      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => {
-        supabase
-          .from("leads")
-          .select("id, status, assigned_to")
-          .eq("assigned_to", currentUser.id)
-          .then(({ data }) => { if (data) setLeads(data.map(r => ({ id: r.id, status: r.status }))); });
-      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, fetchLeadsStats)
       .subscribe();
     return () => supabase.removeChannel(ch);
   }, [currentUser?.id]);

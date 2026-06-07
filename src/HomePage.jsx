@@ -308,6 +308,26 @@ function TaskCard({ t, onToggle }) {
 function AllTasksModal({ open, onClose, tasks, onToggle }) {
   const [filter, setFilter] = useState("all");
 
+  useEffect(() => {
+    if (open) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+    } else {
+      const scrollY = parseInt(document.body.style.top || "0") * -1;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      if (scrollY) window.scrollTo(0, scrollY);
+    }
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+    };
+  }, [open]);
+
   const filtered = filter === "all" ? tasks
     : filter === "done"    ? tasks.filter(t => t.done)
     : tasks.filter(t => !t.done);
@@ -315,27 +335,36 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
   const done  = tasks.filter(t => t.done).length;
   const total = tasks.length;
 
+  if (!open) return null;
+
   return (
-    <div style={{
-      position:"fixed", inset:0, zIndex:200,
-      display:"flex", alignItems:"flex-end", justifyContent:"center",
-      opacity: open ? 1 : 0, pointerEvents: open ? "all" : "none",
-      transition:"opacity .25s",
-    }}>
-      <div onClick={onClose} style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.72)", backdropFilter:"blur(6px)" }} />
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position:"fixed", inset:0, zIndex:300,
+          background:"rgba(0,0,0,.75)", backdropFilter:"blur(8px)",
+        }}
+      />
+
+      {/* Sheet */}
       <div style={{
-        position:"relative", zIndex:1, width:"100%", maxWidth:430,
+        position:"fixed", bottom:0, left:0, right:0, zIndex:301,
+        width:"100%", maxWidth:430, margin:"0 auto",
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderTop: `2px solid ${C.red}`,
-        borderRadius:"20px 20px 0 0",
-        boxShadow: `0 -8px 48px rgba(204,21,21,.18)`,
-        display:"flex", flexDirection:"column", maxHeight:"88vh",
+        borderTop: `3px solid ${C.red}`,
+        borderRadius:"22px 22px 0 0",
+        boxShadow: `0 -8px 48px rgba(204,21,21,.2)`,
+        display:"flex", flexDirection:"column",
+        maxHeight:"88dvh",
         fontFamily:"Archivo,sans-serif",
+        animation:"slideUp .3s cubic-bezier(.4,0,.2,1) both",
       }}>
         {/* Handle */}
         <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
-          <div style={{ width:36, height:3, borderRadius:99, background:C.border }} />
+          <div style={{ width:36, height:4, borderRadius:99, background:C.border }} />
         </div>
 
         {/* Header */}
@@ -350,7 +379,15 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
               {done}/{total}
             </div>
           </div>
-          <div onClick={onClose} style={{ fontSize:".72rem", color:C.gray, fontWeight:700, cursor:"pointer", padding:"4px 6px" }}>✕</div>
+          <div
+            onClick={onClose}
+            style={{
+              width:28, height:28, borderRadius:7,
+              background:C.cardAlt, border:`1px solid ${C.border}`,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              fontSize:".7rem", color:C.gray, cursor:"pointer",
+            }}
+          >✕</div>
         </div>
 
         {/* Progress */}
@@ -365,7 +402,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         {/* Filter chips */}
         <div style={{ display:"flex", gap:6, padding:"12px 18px 0" }}>
           {["all", "pending", "done"].map(f => (
-            <button key={f} className="chip-btn" onClick={() => setFilter(f)} style={{
+            <button key={f} onClick={() => setFilter(f)} style={{
               padding:"5px 12px", borderRadius:6,
               border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
               background: filter===f ? `${C.red}18` : C.cardAlt,
@@ -378,7 +415,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         </div>
 
         {/* Task list */}
-        <div style={{ overflowY:"auto", padding:"12px 14px 24px", display:"flex", flexDirection:"column", gap:8 }}>
+        <div style={{ overflowY:"auto", padding:"12px 14px 32px", display:"flex", flexDirection:"column", gap:8, WebkitOverflowScrolling:"touch" }}>
           {filtered.length === 0 && (
             <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600 }}>
               No tasks here 🎉
@@ -389,7 +426,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
