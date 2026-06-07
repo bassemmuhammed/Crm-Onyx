@@ -10,8 +10,9 @@
 //   tasks          {array}     — optional: live tasks data
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Icons             from "./Icons";
-import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList } from "lucide-react";
+import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList, X } from "lucide-react";
 import { LeadDetailModal } from "./LeadsPage";
 import { updateLead as dbUpdateLead, supabase } from "./sharedLeadsData";
 
@@ -431,139 +432,158 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <>
-      {/* Backdrop */}
-      <div
-        onClick={onClose}
-        style={{
-          position:"fixed", inset:0, zIndex:300,
-          background:"rgba(0,0,0,.80)", backdropFilter:"blur(10px)",
-        }}
-      />
+      {/* Backdrop — نفس LeadDetailModal */}
+      <div onClick={onClose} style={{
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:200,
+        background:"rgba(0,0,0,.8)", backdropFilter:"blur(10px)",
+      }} />
 
-      {/* Sheet */}
-      <div style={{
-        position:"fixed", bottom:0, left:0, right:0, zIndex:301,
-        width:"100%", maxWidth:430, margin:"0 auto",
-        background: C.surface,
-        border: `1px solid ${C.border}`,
-        borderTop: `2px solid ${C.border}`,
-        borderRadius:"22px 22px 0 0",
-        boxShadow: `0 -8px 48px rgba(0,0,0,.6)`,
-        display:"flex", flexDirection:"column",
-        maxHeight:"88dvh",
-        fontFamily:"Archivo,sans-serif",
-        animation:"slideUp .3s cubic-bezier(.4,0,.2,1) both",
+      {/* Sheet wrapper — نفس LeadDetailModal */}
+      <div onClick={onClose} style={{
+        position:"fixed", top:0, left:0, right:0, bottom:0, zIndex:201,
+        display:"flex", alignItems:"flex-end", justifyContent:"center",
       }}>
-        {/* Handle */}
-        <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
-          <div style={{ width:36, height:4, borderRadius:99, background:C.border }} />
-        </div>
+        <div onClick={e => e.stopPropagation()} style={{
+          width:"100%", maxWidth:430,
+          background: C.card,
+          borderRadius:"22px 22px 0 0",
+          borderTop:"2px solid transparent",
+          backgroundImage:`linear-gradient(${C.card}, ${C.card}), linear-gradient(90deg, ${C.red} 0%, ${C.red} 40%, transparent 100%)`,
+          backgroundOrigin:"border-box",
+          backgroundClip:"padding-box, border-box",
+          boxShadow:`0 -8px 48px rgba(204,21,21,.18)`,
+          display:"flex", flexDirection:"column",
+          maxHeight:"calc(100dvh - 60px)",
+          overflow:"hidden",
+          fontFamily:"Archivo,sans-serif",
+          animation:"slideUp .3s cubic-bezier(.4,0,.2,1) both",
+        }}>
+          {/* Handle */}
+          <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
+            <div style={{ width:36, height:4, borderRadius:99, background:C.border }} />
+          </div>
 
-        {/* Header */}
-        <div style={{ padding:"12px 18px 10px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <ClipboardList size={18} color={C.red} strokeWidth={2} />
-            <span style={{ fontSize:"1rem", fontWeight:900, color:C.white }}>My Tasks</span>
+          {/* Header */}
+          <div style={{ padding:"14px 18px 10px", flexShrink:0 }}>
             <div style={{
-              background:`${C.border}`, border:`1px solid ${C.border}`,
-              color:C.silver, fontSize:".62rem", fontWeight:800, padding:"2px 8px", borderRadius:4,
+              background:C.cardAlt, border:`1px solid ${C.border}`,
+              borderLeft:`3px solid ${C.red}`,
+              borderRadius:14, padding:"14px 16px",
+              display:"flex", alignItems:"center", gap:14,
             }}>
-              {done}/{total}
+              {/* Icon box */}
+              <div style={{
+                width:46, height:46, borderRadius:12, flexShrink:0,
+                background:C.black, border:`1px solid ${C.border}`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <ClipboardList size={22} color={C.red} strokeWidth={2} />
+              </div>
+
+              {/* Title + counter */}
+              <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", alignItems:"center" }}>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>My Tasks</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>
+                  {done} of {total} completed
+                </div>
+              </div>
+
+              {/* Close btn */}
+              <div
+                onClick={onClose}
+                style={{
+                  width:32, height:32, borderRadius:8, flexShrink:0,
+                  background:C.card, border:`1px solid ${C.border}`,
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  cursor:"pointer",
+                }}
+              >
+                <X size={14} color={C.gray} />
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{ marginTop:12 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+                <span style={{ fontSize:".6rem", color:C.gray, fontWeight:600, fontFamily:"Archivo,sans-serif" }}>Progress</span>
+                <span style={{ fontSize:".6rem", fontWeight:700, fontFamily:"Archivo,sans-serif", color: pct===100 ? "#10b981" : C.silver }}>{pct}%</span>
+              </div>
+              <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
+                <div style={{
+                  height:"100%", borderRadius:99,
+                  background: pct===100 ? "#10b981" : C.red,
+                  width:`${pct}%`, transition:"width .5s cubic-bezier(.4,0,.2,1)",
+                }} />
+              </div>
+            </div>
+
+            {/* Filter + Sort */}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:12, gap:8 }}>
+              <div style={{ display:"flex", gap:5 }}>
+                {["all","pending","done"].map(f => (
+                  <button key={f} onClick={() => setFilter(f)} style={{
+                    padding:"5px 11px", borderRadius:6,
+                    border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
+                    background: filter===f ? `${C.red}18` : C.cardAlt,
+                    color: filter===f ? C.white : C.gray,
+                    fontFamily:"Archivo,sans-serif", fontSize:".6rem", fontWeight:700, cursor:"pointer",
+                  }}>
+                    {f==="all" ? `All (${total})` : f==="done" ? `Done (${done})` : `Pending (${total-done})`}
+                  </button>
+                ))}
+              </div>
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  background:C.cardAlt, border:`1px solid ${C.border}`,
+                  color:C.silver, borderRadius:6,
+                  fontSize:".6rem", fontWeight:700, padding:"5px 8px",
+                  fontFamily:"Archivo,sans-serif", cursor:"pointer", outline:"none",
+                }}
+              >
+                <option value="default">Default</option>
+                <option value="priority">Priority</option>
+                <option value="date">Date</option>
+              </select>
             </div>
           </div>
-          <div
-            onClick={onClose}
-            style={{
-              width:32, height:32, borderRadius:8,
-              background:C.cardAlt, border:`1px solid ${C.border}`,
-              display:"flex", alignItems:"center", justifyContent:"center",
-              cursor:"pointer",
-            }}
-          >
-            <ChevronRight size={16} color={C.gray} style={{ transform:"rotate(90deg)" }} />
-          </div>
-        </div>
 
-        {/* Progress bar + pct label */}
-        <div style={{ padding:"0 18px 10px" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
-            <span style={{ fontSize:".6rem", color:C.gray, fontWeight:600 }}>Progress</span>
-            <span style={{ fontSize:".6rem", color: pct === 100 ? "#10b981" : C.silver, fontWeight:700 }}>{pct}%</span>
-          </div>
-          <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
-            <div style={{
-              height:"100%", background: pct === 100 ? "#10b981" : C.red,
-              width: `${pct}%`,
-              borderRadius:99,
-              transition:"width .5s cubic-bezier(.4,0,.2,1)",
-            }} />
-          </div>
-        </div>
+          {/* Divider */}
+          <div style={{ height:1, background:C.border, margin:"0 18px 0" }} />
 
-        {/* Filter + Sort row */}
-        <div style={{ padding:"0 18px 10px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
-          {/* Filter chips */}
-          <div style={{ display:"flex", gap:5 }}>
-            {["all","pending","done"].map(f => (
-              <button key={f} onClick={() => setFilter(f)} style={{
-                padding:"4px 11px", borderRadius:6,
-                border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
-                background: filter===f ? `${C.red}22` : C.cardAlt,
-                color: filter===f ? C.white : C.gray,
-                fontFamily:"Archivo,sans-serif", fontSize:".6rem", fontWeight:700, cursor:"pointer",
-              }}>
-                {f === "all" ? `All (${total})` : f === "done" ? `Done (${done})` : `Pending (${total-done})`}
-              </button>
+          {/* Task list — scrollable */}
+          <div style={{
+            overflowY:"auto", padding:"10px 14px 32px",
+            display:"flex", flexDirection:"column", gap:8,
+            WebkitOverflowScrolling:"touch", overscrollBehavior:"contain",
+          }}>
+            {filtered.length === 0 && (
+              <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600, fontFamily:"Archivo,sans-serif" }}>
+                No tasks here 🎉
+              </div>
+            )}
+            {filtered.map(t => (
+              <SwipeableTaskCard
+                key={t.id}
+                t={t}
+                onToggle={() => onToggle(t.id)}
+                onDelete={onDelete}
+                onOpenLead={() => {
+                  if (t.isLead && leads) {
+                    const lead = leads.find(l => l.id === t.leadId);
+                    if (lead) { onClose(); onOpenLead(lead); }
+                  }
+                }}
+              />
             ))}
           </div>
-
-          {/* Sort dropdown */}
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value)}
-            style={{
-              background:C.cardAlt, border:`1px solid ${C.border}`,
-              color:C.silver, borderRadius:6,
-              fontSize:".6rem", fontWeight:700, padding:"4px 8px",
-              fontFamily:"Archivo,sans-serif", cursor:"pointer",
-              outline:"none",
-            }}
-          >
-            <option value="default">Default</option>
-            <option value="priority">Priority</option>
-            <option value="date">Date</option>
-          </select>
-        </div>
-
-        {/* Divider */}
-        <div style={{ height:1, background:C.border, margin:"0 18px 8px" }} />
-
-        {/* Task list */}
-        <div style={{ overflowY:"auto", padding:"4px 14px 32px", display:"flex", flexDirection:"column", gap:8, WebkitOverflowScrolling:"touch" }}>
-          {filtered.length === 0 && (
-            <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600 }}>
-              No tasks here
-            </div>
-          )}
-          {filtered.map(t => (
-            <SwipeableTaskCard
-              key={t.id}
-              t={t}
-              onToggle={() => onToggle(t.id)}
-              onDelete={onDelete}
-              onOpenLead={() => {
-                if (t.isLead && leads) {
-                  const lead = leads.find(l => l.id === t.leadId);
-                  if (lead) { onClose(); onOpenLead(lead); }
-                }
-              }}
-            />
-          ))}
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
