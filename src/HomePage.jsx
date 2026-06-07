@@ -46,7 +46,7 @@ const STYLES = `
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
   @keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.4} }
-  @keyframes slideUp   { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes slideUp   { from{transform:translateY(100%)} to{transform:translateY(0)} }
   @keyframes swipeDeleteReveal { from{opacity:0;transform:scaleX(0)} to{opacity:1;transform:scaleX(1)} }
   .fade-up  { animation: fadeInUp .3s ease both; }
   .tap-btn  { transition: all .15s ease; }
@@ -470,7 +470,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
           fontFamily:"Archivo,sans-serif",
-          animation:"slideUp .18s cubic-bezier(.2,0,.2,1) both",
+          animation:"slideUp .22s cubic-bezier(.32,0,.67,0) both",
           willChange:"transform",
         }}>
           {/* Handle */}
@@ -482,7 +482,6 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           <div style={{ padding:"14px 18px 10px", flexShrink:0 }}>
             <div style={{
               background:C.cardAlt, border:`1px solid ${C.border}`,
-              borderLeft:`3px solid ${C.red}`,
               borderRadius:14, padding:"14px 16px",
               display:"flex", alignItems:"center", gap:14,
             }}>
@@ -492,7 +491,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
                 background:C.black, border:`1px solid ${C.border}`,
                 display:"flex", alignItems:"center", justifyContent:"center",
               }}>
-                <ClipboardList size={22} color={C.red} strokeWidth={2} />
+                <ClipboardList size={22} color={C.white} strokeWidth={2} />
               </div>
 
               {/* Title + counter */}
@@ -704,34 +703,30 @@ export default function HomePage({
     await dbUpdateLead(updated, salesName, null);
   }, [salesName]);
 
-  // ── Lead Detail — بيقفل المودل فورًا وبعدين يجيب البيانات ──
+  // ── Lead Detail ──
   const openLead = useCallback(async (partialLead) => {
-    // افتح المودل فورًا ببيانات أولية (بدون تهنيجة)
-    setLeadDetail({ ...partialLead, phone: "", comments: [], clientInfo: {} });
-    setLeadOpen(true);
-
-    // جيب البيانات الكاملة في الخلفية وحدّث المودل
     const { data } = await supabase
       .from("leads")
       .select("*")
       .eq("id", partialLead.id)
       .single();
 
-    if (data) {
-      setLeadDetail({
-        id:           data.id,
-        name:         data.name          || "",
-        phone:        data.phone         || "",
-        status:       data.status        || "new",
-        assignedTo:   data.assigned_to   || "",
-        callbackDate: data.callback_date || "",
-        callbackTime: data.callback_time || "",
-        meetingDate:  data.callback_date || "",
-        meetingTime:  data.callback_time || "",
-        clientInfo:   data.client_info   || {},
-        comments:     data.comments      || [],
-      });
-    }
+    const lead = data ? {
+      id:           data.id,
+      name:         data.name          || "",
+      phone:        data.phone         || "",
+      status:       data.status        || "new",
+      assignedTo:   data.assigned_to   || "",
+      callbackDate: data.callback_date || "",
+      callbackTime: data.callback_time || "",
+      meetingDate:  data.callback_date || "",
+      meetingTime:  data.callback_time || "",
+      clientInfo:   data.client_info   || {},
+      comments:     data.comments      || [],
+    } : { ...partialLead, phone: "", comments: [], clientInfo: {} };
+
+    setLeadDetail(lead);
+    setLeadOpen(true);
   }, []);
 
   const doneTasks  = tasks.filter(t => t.done).length;
