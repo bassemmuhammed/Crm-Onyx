@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Icons             from "./Icons";
+import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList } from "lucide-react";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -26,7 +27,6 @@ const C = {
   red:       "#CC1515",
   redLight:  "#FF2020",
   blue:      "#253FF6",
-  // Card gradient variants for daylight separation
   cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
   cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
@@ -43,12 +43,29 @@ const STYLES = `
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
   @keyframes pulse2    { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes slideUp   { from{opacity:0;transform:translateY(100%)} to{opacity:1;transform:translateY(0)} }
+  @keyframes swipeDeleteReveal { from{opacity:0;transform:scaleX(0)} to{opacity:1;transform:scaleX(1)} }
   .fade-up  { animation: fadeInUp .3s ease both; }
   .tap-btn  { transition: all .15s ease; }
   .tap-btn:active  { transform: scale(.94); }
   .stat-card { transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
   .stat-card:active { transform: scale(.96); }
   .task-row { transition: opacity .2s, border-color .2s; }
+  .task-swipe-wrapper { position:relative; overflow:hidden; border-radius:12px; }
+  .task-swipe-inner {
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+    touch-action: pan-y;
+    will-change: transform;
+  }
+  .task-delete-bg {
+    position:absolute; right:0; top:0; bottom:0;
+    display:flex; align-items:center; justify-content:flex-end;
+    padding-right:18px;
+    background: linear-gradient(90deg, transparent 0%, #CC151588 30%, #CC1515 100%);
+    border-radius:12px;
+    min-width:80px;
+    pointer-events:none;
+  }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
   ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
@@ -99,7 +116,7 @@ function scheduleTaskNotifications(tasks) {
       const delay = notifyAt.getTime() - Date.now();
       if (delay <= 0) return;
       setTimeout(() => {
-        new Notification("Task Reminder ⏰", {
+        new Notification("Task Reminder", {
           body: `"${task.title}" is due in 1 hour (${task.due})`,
           icon: "/favicon.ico",
         });
@@ -114,7 +131,6 @@ function scheduleTaskNotifications(tasks) {
 }
 
 // ─── Stats Definition ─────────────────────────────────────────────────
-// filterKey must match LeadsPage STATUS_META keys exactly
 const STATS_TEMPLATE = [
   { label: "All Leads",       filterKey: "all",              icon: "sparkle",       color: "#4f46e5" },
   { label: "New Leads",       filterKey: "new",              icon: "sparkle",       color: "#10b981" },
@@ -131,10 +147,6 @@ const STATS_TEMPLATE = [
   { label: "Closed",          filterKey: "closed",           icon: "checkSquare",   color: "#64748b" },
 ];
 
-const PRIORITY_COLOR = { high: C.red, medium: "#f59e0b", low: "#0ea5e9" };
-const PRIORITY_LABEL = { high: "HIGH", medium: "MED", low: "LOW" };
-
-const NOTIFICATIONS_DEFAULT = [];
 const TASKS_DEFAULT = [];
 
 // ─── Divider ──────────────────────────────────────────────────────────
@@ -174,7 +186,6 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
     if (animate) setTimeout(() => setBarW(pct + "%"), 500);
   }, [animate, pct]);
 
-  // Alternate card backgrounds for visual separation in daylight
   const cardBg = index % 2 === 0 ? C.cardGrad1 : C.cardGrad2;
 
   return (
@@ -194,9 +205,7 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
         boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
       }}
     >
-      {/* Top row: big icon + number */}
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
-        {/* Big Icon Box */}
         <div style={{
           width: 38, height: 38, borderRadius: 10, flexShrink: 0,
           background: C.black,
@@ -207,19 +216,13 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
         }}>
           {Icons[s.icon]}
         </div>
-
-        {/* Number */}
         <div style={{ fontSize:"1.6rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1 }}>
           {val}
         </div>
       </div>
-
-      {/* Label below */}
       <div style={{ fontSize:".62rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.7 }}>
         {s.label}
       </div>
-
-      {/* Progress bar */}
       <div style={{ marginTop:10, height:2, borderRadius:99, background:C.border, overflow:"hidden" }}>
         <div style={{
           height:"100%", borderRadius:99, background:s.color,
@@ -230,83 +233,147 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
   );
 }
 
-// ─── Task Card ────────────────────────────────────────────────────────
-function TaskCard({ t, onToggle }) {
+// ─── Swipeable Task Card ───────────────────────────────────────────────
+// ✅ تعديل 1: Swipe to delete
+// ✅ تعديل 3: إخفاء badge الـ MED/HIGH
+// ✅ تعديل 4: أيقونات Lucide بدل الإيموجي
+function SwipeableTaskCard({ t, onToggle, onDelete }) {
+  const [offsetX, setOffsetX]   = useState(0);
+  const [swiping, setSwiping]   = useState(false);
+  const [deleted, setDeleted]   = useState(false);
+  const startXRef               = useRef(null);
+  const DELETE_THRESHOLD        = 80;
+
   const leadBorderColor = t.isLead
     ? (t.priority === "high" ? "#8b5cf6" : "#f59e0b")
     : null;
+
+  // ── Touch handlers ──
+  const onTouchStart = e => {
+    startXRef.current = e.touches[0].clientX;
+    setSwiping(true);
+  };
+
+  const onTouchMove = e => {
+    if (startXRef.current === null) return;
+    const dx = e.touches[0].clientX - startXRef.current;
+    if (dx < 0) setOffsetX(Math.max(dx, -120));
+  };
+
+  const onTouchEnd = () => {
+    setSwiping(false);
+    if (offsetX <= -DELETE_THRESHOLD) {
+      // Animate out then call delete
+      setDeleted(true);
+      setTimeout(() => onDelete && onDelete(t.id), 280);
+    } else {
+      setOffsetX(0);
+    }
+    startXRef.current = null;
+  };
+
+  // Icon based on task type (lucide-react)
+  const TaskIcon = t.isLead
+    ? (t.priority === "high" ? <CalendarDays size={14} /> : <Phone size={14} />)
+    : <ClipboardList size={14} />;
+
+  if (deleted) return null;
+
   return (
-    <div
-      className="task-row"
-      onClick={onToggle}
-      style={{
-        background: C.cardGrad2,
-        border: `1px solid ${C.border}`,
-        borderLeft: leadBorderColor ? `3px solid ${leadBorderColor}` : `1px solid ${C.border}`,
-        borderRadius: 12,
-        padding: "12px 14px",
-        display: "flex", alignItems: "center", gap: 12,
-        cursor: "pointer",
-        opacity: t.done ? 0.55 : 1,
-        fontFamily: "Archivo,sans-serif",
-        boxShadow: "0 1px 6px rgba(0,0,0,0.35)",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Checkbox */}
-      <div style={{
-        width: 26, height: 26, borderRadius: 7, flexShrink: 0,
-        background: t.done ? C.red : C.cardAlt,
-        border: `1.5px solid ${t.done ? C.red : C.border}`,
-        color: t.done ? C.white : C.gray,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        transition: "all .2s",
-        fontSize: ".7rem",
-      }}>
-        {t.done ? Icons.checkSquare : Icons.circle}
+    <div className="task-swipe-wrapper" style={{ opacity: deleted ? 0 : 1, transition:"opacity .28s" }}>
+      {/* Delete BG revealed on swipe */}
+      <div className="task-delete-bg" style={{ opacity: offsetX < -10 ? 1 : 0, transition:"opacity .2s" }}>
+        <Trash2 size={18} color={C.white} />
       </div>
 
-      {/* Content */}
-      <div style={{ flex:1, minWidth:0 }}>
+      {/* Card inner */}
+      <div
+        className="task-swipe-inner task-row"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{
+          transform: `translateX(${offsetX}px)`,
+          transition: swiping ? "none" : "transform .25s cubic-bezier(.4,0,.2,1)",
+          background: C.cardGrad2,
+          border: `1px solid ${C.border}`,
+          borderLeft: leadBorderColor ? `3px solid ${leadBorderColor}` : `1px solid ${C.border}`,
+          borderRadius: 12,
+          padding: "12px 14px",
+          display: "flex", alignItems: "center", gap: 12,
+          cursor: "pointer",
+          opacity: t.done ? 0.55 : 1,
+          fontFamily: "Archivo,sans-serif",
+          boxShadow: "0 1px 6px rgba(0,0,0,0.35)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+        onClick={onToggle}
+      >
+        {/* Checkbox */}
         <div style={{
-          fontWeight: 700, fontSize: ".85rem", color: t.done ? C.gray : C.white,
-          textDecoration: t.done ? "line-through" : "none",
-          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+          width: 26, height: 26, borderRadius: 7, flexShrink: 0,
+          background: t.done ? C.red : C.cardAlt,
+          border: `1.5px solid ${t.done ? C.red : C.border}`,
+          color: t.done ? C.white : C.gray,
+          display: "flex", alignItems: "center", justifyContent: "center",
           transition: "all .2s",
-        }}>{t.title}</div>
-        <div style={{ display:"flex", gap:7, marginTop:4, alignItems:"center" }}>
-          <div style={{ fontSize:".6rem", color:C.gray, display:"flex", alignItems:"center", gap:3 }}>
-            {Icons.calendar} {t.due}
+        }}>
+          {t.done
+            ? <CheckSquare size={13} strokeWidth={2.5} />
+            : <Circle size={13} strokeWidth={2} />
+          }
+        </div>
+
+        {/* Content */}
+        <div style={{ flex:1, minWidth:0 }}>
+          {/* Title row with lucide icon */}
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <span style={{ color: leadBorderColor || C.gray, display:"flex", alignItems:"center", flexShrink:0 }}>
+              {TaskIcon}
+            </span>
+            <div style={{
+              fontWeight: 700, fontSize: ".85rem", color: t.done ? C.gray : C.white,
+              textDecoration: t.done ? "line-through" : "none",
+              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+              transition: "all .2s",
+            }}>
+              {/* إزالة الإيموجي من العنوان وعرض النص فقط */}
+              {t.title.replace(/^[📞📅]\s*/, "")}
+            </div>
           </div>
-          <div style={{
-            fontSize:".55rem", padding:"2px 7px", borderRadius:4, fontWeight:800,
-            background:`${PRIORITY_COLOR[t.priority] || C.red}18`,
-            color: PRIORITY_COLOR[t.priority] || C.red,
-            letterSpacing:.4,
-          }}>
-            {PRIORITY_LABEL[t.priority] || "—"}
+
+          {/* Due date فقط — بدون badge الـ MED/HIGH (تعديل 3) */}
+          <div style={{ display:"flex", gap:5, marginTop:5, alignItems:"center" }}>
+            <CalendarDays size={11} color={C.gray} />
+            <span style={{ fontSize:".6rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>
+              {t.due}
+            </span>
           </div>
         </div>
-      </div>
 
-      {/* Arrow */}
-      <div style={{
-        width:28, height:28, borderRadius:7,
-        background: t.done ? `${C.red}18` : C.cardAlt,
-        display:"flex", alignItems:"center", justifyContent:"center",
-        color: t.done ? C.red : C.gray, flexShrink:0,
-        transition:"all .2s",
-      }}>
-        {t.done ? Icons.checkSquare : Icons.caretRight}
+        {/* Arrow */}
+        <div style={{
+          width:28, height:28, borderRadius:7,
+          background: t.done ? `${C.red}18` : C.cardAlt,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          color: t.done ? C.red : C.gray, flexShrink:0,
+          transition:"all .2s",
+        }}>
+          {t.done
+            ? <CheckCheck size={14} />
+            : <ChevronRight size={14} />
+          }
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── All Tasks Modal ──────────────────────────────────────────────────
-function AllTasksModal({ open, onClose, tasks, onToggle }) {
+// ─── All Tasks Modal (تعديل 2) ────────────────────────────────────────
+function AllTasksModal({ open, onClose, tasks, onToggle, onDelete }) {
   const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("default"); // "default" | "priority" | "date"
 
   useEffect(() => {
     if (open) {
@@ -328,12 +395,28 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
     };
   }, [open]);
 
-  const filtered = filter === "all" ? tasks
-    : filter === "done"    ? tasks.filter(t => t.done)
-    : tasks.filter(t => !t.done);
+  const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+
+  const filtered = useMemo(() => {
+    let list = filter === "all" ? tasks
+      : filter === "done"    ? tasks.filter(t => t.done)
+      : tasks.filter(t => !t.done);
+
+    if (sortBy === "priority") {
+      list = [...list].sort((a,b) => (PRIORITY_ORDER[a.priority] ?? 9) - (PRIORITY_ORDER[b.priority] ?? 9));
+    } else if (sortBy === "date") {
+      list = [...list].sort((a,b) => {
+        if (a.due === "No date set") return 1;
+        if (b.due === "No date set") return -1;
+        return new Date(a.due) - new Date(b.due);
+      });
+    }
+    return list;
+  }, [filter, sortBy, tasks]);
 
   const done  = tasks.filter(t => t.done).length;
   const total = tasks.length;
+  const pct   = total > 0 ? Math.round((done/total)*100) : 0;
 
   if (!open) return null;
 
@@ -344,7 +427,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         onClick={onClose}
         style={{
           position:"fixed", inset:0, zIndex:300,
-          background:"rgba(0,0,0,.75)", backdropFilter:"blur(8px)",
+          background:"rgba(0,0,0,.80)", backdropFilter:"blur(10px)",
         }}
       />
 
@@ -354,9 +437,9 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         width:"100%", maxWidth:430, margin:"0 auto",
         background: C.surface,
         border: `1px solid ${C.border}`,
-        borderTop: `3px solid ${C.red}`,
+        borderTop: `2px solid ${C.border}`,
         borderRadius:"22px 22px 0 0",
-        boxShadow: `0 -8px 48px rgba(204,21,21,.2)`,
+        boxShadow: `0 -8px 48px rgba(0,0,0,.6)`,
         display:"flex", flexDirection:"column",
         maxHeight:"88dvh",
         fontFamily:"Archivo,sans-serif",
@@ -370,11 +453,11 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
         {/* Header */}
         <div style={{ padding:"12px 18px 10px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ width:4, height:16, borderRadius:99, background:C.red }} />
-            <span style={{ fontSize:"1rem", fontWeight:900, color:C.white }}>All Tasks</span>
+            <ClipboardList size={18} color={C.red} strokeWidth={2} />
+            <span style={{ fontSize:"1rem", fontWeight:900, color:C.white }}>My Tasks</span>
             <div style={{
-              background:`${C.red}18`, border:`1px solid ${C.red}44`,
-              color:C.red, fontSize:".62rem", fontWeight:800, padding:"2px 8px", borderRadius:4,
+              background:`${C.border}`, border:`1px solid ${C.border}`,
+              color:C.silver, fontSize:".62rem", fontWeight:800, padding:"2px 8px", borderRadius:4,
             }}>
               {done}/{total}
             </div>
@@ -382,47 +465,84 @@ function AllTasksModal({ open, onClose, tasks, onToggle }) {
           <div
             onClick={onClose}
             style={{
-              width:28, height:28, borderRadius:7,
+              width:32, height:32, borderRadius:8,
               background:C.cardAlt, border:`1px solid ${C.border}`,
               display:"flex", alignItems:"center", justifyContent:"center",
-              fontSize:".7rem", color:C.gray, cursor:"pointer",
+              cursor:"pointer",
             }}
-          >✕</div>
+          >
+            <ChevronRight size={16} color={C.gray} style={{ transform:"rotate(90deg)" }} />
+          </div>
         </div>
 
-        {/* Progress */}
-        <div style={{ height:3, background:C.border, overflow:"hidden", margin:"0 18px" }}>
-          <div style={{
-            height:"100%", background:C.red,
-            width: total > 0 ? `${(done/total)*100}%` : "0%",
-            transition:"width .5s",
-          }} />
+        {/* Progress bar + pct label */}
+        <div style={{ padding:"0 18px 10px" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+            <span style={{ fontSize:".6rem", color:C.gray, fontWeight:600 }}>Progress</span>
+            <span style={{ fontSize:".6rem", color: pct === 100 ? "#10b981" : C.silver, fontWeight:700 }}>{pct}%</span>
+          </div>
+          <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
+            <div style={{
+              height:"100%", background: pct === 100 ? "#10b981" : C.red,
+              width: `${pct}%`,
+              borderRadius:99,
+              transition:"width .5s cubic-bezier(.4,0,.2,1)",
+            }} />
+          </div>
         </div>
 
-        {/* Filter chips */}
-        <div style={{ display:"flex", gap:6, padding:"12px 18px 0" }}>
-          {["all", "pending", "done"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} style={{
-              padding:"5px 12px", borderRadius:6,
-              border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
-              background: filter===f ? `${C.red}18` : C.cardAlt,
-              color: filter===f ? C.white : C.gray,
-              fontFamily:"Archivo,sans-serif", fontSize:".65rem", fontWeight:700, cursor:"pointer",
-            }}>
-              {f === "all" ? `All (${total})` : f === "done" ? `Done (${done})` : `Pending (${total-done})`}
-            </button>
-          ))}
+        {/* Filter + Sort row */}
+        <div style={{ padding:"0 18px 10px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:8 }}>
+          {/* Filter chips */}
+          <div style={{ display:"flex", gap:5 }}>
+            {["all","pending","done"].map(f => (
+              <button key={f} onClick={() => setFilter(f)} style={{
+                padding:"4px 11px", borderRadius:6,
+                border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
+                background: filter===f ? `${C.red}22` : C.cardAlt,
+                color: filter===f ? C.white : C.gray,
+                fontFamily:"Archivo,sans-serif", fontSize:".6rem", fontWeight:700, cursor:"pointer",
+              }}>
+                {f === "all" ? `All (${total})` : f === "done" ? `Done (${done})` : `Pending (${total-done})`}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort dropdown */}
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+            style={{
+              background:C.cardAlt, border:`1px solid ${C.border}`,
+              color:C.silver, borderRadius:6,
+              fontSize:".6rem", fontWeight:700, padding:"4px 8px",
+              fontFamily:"Archivo,sans-serif", cursor:"pointer",
+              outline:"none",
+            }}
+          >
+            <option value="default">Default</option>
+            <option value="priority">Priority</option>
+            <option value="date">Date</option>
+          </select>
         </div>
+
+        {/* Divider */}
+        <div style={{ height:1, background:C.border, margin:"0 18px 8px" }} />
 
         {/* Task list */}
-        <div style={{ overflowY:"auto", padding:"12px 14px 32px", display:"flex", flexDirection:"column", gap:8, WebkitOverflowScrolling:"touch" }}>
+        <div style={{ overflowY:"auto", padding:"4px 14px 32px", display:"flex", flexDirection:"column", gap:8, WebkitOverflowScrolling:"touch" }}>
           {filtered.length === 0 && (
             <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600 }}>
-              No tasks here 🎉
+              No tasks here
             </div>
           )}
           {filtered.map(t => (
-            <TaskCard key={t.id} t={t} onToggle={() => onToggle(t.id)} />
+            <SwipeableTaskCard
+              key={t.id}
+              t={t}
+              onToggle={() => onToggle(t.id)}
+              onDelete={onDelete}
+            />
           ))}
         </div>
       </div>
@@ -436,7 +556,6 @@ function formatLeadDue(lead) {
   const timeStr = lead.callbackTime || lead.meetingTime;
   if (!dateStr) return "No date set";
   if (!timeStr) return dateStr;
-  // Format: "15 Jun, 3:00 PM"
   const dt = new Date(`${dateStr}T${timeStr}`);
   if (isNaN(dt.getTime())) return `${dateStr} ${timeStr}`;
   return dt.toLocaleString("en-GB", { day:"numeric", month:"short", hour:"2-digit", minute:"2-digit", hour12:true });
@@ -455,19 +574,17 @@ export default function HomePage({
   const [viewAllOpen,  setViewAllOpen]  = useState(false);
   const [manualTasks,  setManualTasks]  = useState(tasksFromProps || TASKS_DEFAULT);
   const [doneLeadIds,  setDoneLeadIds]  = useState(new Set());
+  const [deletedIds,   setDeletedIds]   = useState(new Set());
 
-  // Freeze scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = viewAllOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [viewAllOpen]);
 
-  // Trigger animate on mount
   useEffect(() => {
     setTimeout(() => setAnimate(true), 150);
   }, []);
 
-  // Inject styles once
   useEffect(() => {
     const id = "onyx-home-styles";
     if (!document.getElementById(id)) {
@@ -480,27 +597,24 @@ export default function HomePage({
 
   const leads = leadsFromProps || [];
 
-  // ── Auto-generate tasks from callback + pendingMeeting leads ──
   const leadTasks = useMemo(() => {
     return leads
-      .filter(l => l.status === "callback" || l.status === "pendingMeeting")
+      .filter(l => (l.status === "callback" || l.status === "pendingMeeting") && !deletedIds.has(`lead-${l.id}`))
       .map(l => ({
         id:       `lead-${l.id}`,
         title:    l.status === "callback"
-                    ? `📞 Call Back: ${l.name}`
-                    : `📅 Meeting: ${l.name}`,
+                    ? `Call Back: ${l.name}`
+                    : `Meeting: ${l.name}`,
         due:      formatLeadDue(l),
         priority: l.status === "pendingMeeting" ? "high" : "medium",
         done:     doneLeadIds.has(l.id),
         isLead:   true,
         leadId:   l.id,
       }));
-  }, [leads, doneLeadIds]);
+  }, [leads, doneLeadIds, deletedIds]);
 
-  // Merge lead tasks + manual tasks (lead tasks first)
   const tasks = useMemo(() => [...leadTasks, ...manualTasks], [leadTasks, manualTasks]);
 
-  // Compute live counts per status
   const statCounts = useMemo(() => {
     const total = leads.length;
     const byStatus = {};
@@ -520,8 +634,18 @@ export default function HomePage({
       setManualTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
     }
   };
-  const doneTasks = tasks.filter(t => t.done).length;
-  const totalTasks  = tasks.length;
+
+  // ── Delete handler (swipe to delete) ──
+  const deleteTask = id => {
+    if (id.startsWith("lead-")) {
+      setDeletedIds(prev => new Set([...prev, id]));
+    } else {
+      setManualTasks(prev => prev.filter(t => t.id !== id));
+    }
+  };
+
+  const doneTasks  = tasks.filter(t => t.done).length;
+  const totalTasks = tasks.length;
 
   const handleLeadsFilter = filterKey => {
     if (onLeadsFilter) onLeadsFilter(filterKey === "all" ? null : filterKey);
@@ -544,6 +668,7 @@ export default function HomePage({
         onClose={() => setViewAllOpen(false)}
         tasks={tasks}
         onToggle={toggleTask}
+        onDelete={deleteTask}
       />
 
       {/* ── Scroll Content ── */}
@@ -569,6 +694,7 @@ export default function HomePage({
         </div>
 
         {/* ── Tasks Section ── */}
+        {/* تعديل 4: شيلنا الأحمر من الحواف */}
         <div
           className="fade-up"
           style={{
@@ -581,11 +707,6 @@ export default function HomePage({
             position: "relative",
           }}
         >
-          {/* Corner accents top-left and top-right */}
-          <div style={{ position:"absolute", top:0, left:0, width:22, height:3, background:C.red, borderRadius:"0 0 3px 0" }} />
-          <div style={{ position:"absolute", top:0, left:0, width:3, height:22, background:C.red, borderRadius:"0 0 3px 0" }} />
-          <div style={{ position:"absolute", top:0, right:0, width:22, height:3, background:C.red, borderRadius:"0 0 0 3px" }} />
-          <div style={{ position:"absolute", top:0, right:0, width:3, height:22, background:C.red, borderRadius:"0 0 0 3px" }} />
           {/* Section Title Bar */}
           <div style={{
             padding:"10px 14px 9px",
@@ -593,13 +714,13 @@ export default function HomePage({
             display:"flex", alignItems:"center", justifyContent:"space-between",
           }}>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-              <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />
+              <ClipboardList size={14} color={C.red} strokeWidth={2.5} />
               <span style={{ fontSize:".72rem", fontWeight:800, color:C.silver, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>
                 My Tasks
               </span>
               <div style={{
-                background:`${C.red}18`, border:`1px solid ${C.red}44`,
-                color:C.red, fontSize:".58rem", fontWeight:800,
+                background:`${C.border}`, border:`1px solid ${C.border}`,
+                color:C.silver, fontSize:".58rem", fontWeight:800,
                 padding:"2px 7px", borderRadius:4,
                 fontFamily:"Archivo,sans-serif",
               }}>
@@ -609,9 +730,9 @@ export default function HomePage({
             <div
               className="tap-btn"
               onClick={() => setViewAllOpen(true)}
-              style={{ fontSize:".68rem", color:C.red, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", gap:3 }}
+              style={{ fontSize:".68rem", color:C.silver, fontWeight:700, cursor:"pointer", display:"flex", alignItems:"center", gap:3 }}
             >
-              View all {Icons.caretRight}
+              View all <ChevronRight size={13} />
             </div>
           </div>
 
@@ -627,7 +748,12 @@ export default function HomePage({
           {/* Task List */}
           <div style={{ padding:"10px 12px 12px", display:"flex", flexDirection:"column", gap:8 }}>
             {tasks.slice(0,4).map(t => (
-              <TaskCard key={t.id} t={t} onToggle={() => toggleTask(t.id)} />
+              <SwipeableTaskCard
+                key={t.id}
+                t={t}
+                onToggle={() => toggleTask(t.id)}
+                onDelete={deleteTask}
+              />
             ))}
             {tasks.length === 0 && (
               <div style={{
@@ -636,7 +762,7 @@ export default function HomePage({
                 display:"flex", flexDirection:"column", alignItems:"center", gap:8,
                 fontFamily:"Archivo,sans-serif",
               }}>
-                <div style={{ color:C.gray, fontSize:"1.2rem", display:"flex", alignItems:"center", justifyContent:"center" }}>{Icons.checkSquare}</div>
+                <CheckSquare size={22} color={C.gray} />
                 No tasks yet — you're all caught up!
               </div>
             )}
