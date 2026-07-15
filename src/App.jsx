@@ -11,24 +11,18 @@ import AdminLeadsPage       from "./AdminLeadsPage";
 import AdminSettings        from "./AdminSettings";
 import AddProjectPage       from "./AddProjectPage";
 import ResetPassword        from "./ResetPassword";
-<<<<<<< HEAD
 import SetPassword          from "./SetPassword";   // ✅ P0-4: Set Password flow (مطابق Flutter)
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 import AppHeader            from "./AppHeader";
 import BottomNav            from "./BottomNav";
 import NotificationPanel    from "./NotificationPanel";
 import ProfileModal         from "./ProfileModal";
 import { NotificationProvider, useNotifications } from "./NotificationContext";
-<<<<<<< HEAD
 import { isSetPasswordUrl, isResetPasswordUrl } from "./DeepLinkService";  // ✅ P0-4
 import { notifyAdminsOnSalesPresence } from "./AdminPushHelpers";  // ✅ P0-5
 import AdminCommissionsPage     from "./AdminCommissionsPage";   // ✅ P0-6
 import SalesCommissionsPage     from "./SalesCommissionsPage";   // ✅ P0-6
 import DeveloperUnitsPage       from "./DeveloperUnitsPage";     // ✅ P0-7
 import DeveloperAdminPage       from "./DeveloperAdminPage";     // ✅ P0-7
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 // ─── ONYX Design ─────────────────────────────────────────────────
 const OnyxGlobalStyles = () => (
@@ -118,18 +112,11 @@ const INIT_NOTIFS = [
 
 // ─── App ──────────────────────────────────────────────────────────
 export default function App() {
-<<<<<<< HEAD
   // ✅ P0-4: Use DeepLinkService for set-password (invite) vs reset-password (recovery)
   //   - invite type → SetPassword screen (full set-password flow مطابق Flutter)
   //   - recovery type → ResetPassword screen (legacy simple reset)
   const isSetPassword = isSetPasswordUrl();
   const isResetPage   = !isSetPassword && isResetPasswordUrl();
-=======
-  const isResetPage =
-    window.location.pathname === "/reset-password" ||
-    window.location.hash.includes("access_token") ||
-    window.location.hash.includes("type=recovery");
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
   const [authLoading, setAuthLoading] = useState(true);
   const [topLoading,  setTopLoading]  = useState(true);
@@ -159,13 +146,10 @@ export default function App() {
   });
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-<<<<<<< HEAD
   // ✅ P0-6: Commissions modal state
   const [showCommissions, setShowCommissions] = useState(false);
   // ✅ P0-7: Developer module modal state
   const [showDeveloper, setShowDeveloper] = useState(null); // null | "units" | "admin"
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
   const [activeSalesTab, setActiveSalesTab] = useState(() => {
     const saved = parseInt(sessionStorage.getItem("salesTab") ?? "-1");
@@ -216,17 +200,12 @@ export default function App() {
   const resolveRole = async (userId) => {
     const { data } = await supabase
       .from("users")
-<<<<<<< HEAD
       .select("id, full_name, email, role, active, account_type")  // ✅ full_name + active + account_type
-=======
-      .select("id, full_name, email, role")  // ✅ full_name بدل name
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       .eq("id", userId)
       .single();
 
     const role = data?.role || localStorage.getItem("userRole") || "sales";
     setUserRole(role);
-<<<<<<< HEAD
     const salesName = data?.full_name || data?.email || "Sales";
     setCurrentUser({
       id:    userId,
@@ -234,13 +213,6 @@ export default function App() {
       email: data?.email || "",
       role,
       accountType: data?.account_type || "broker",  // ✅ P0-7 preparation
-=======
-    setCurrentUser({
-      id:    userId,
-      name:  data?.full_name || data?.email || "Sales",  // ✅ full_name بدل name
-      email: data?.email || "",
-      role,
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     });
     setLoggedIn(true);
     setTopLoading(false);
@@ -249,7 +221,6 @@ export default function App() {
     localStorage.setItem("userRole", role);
     const { data: av } = await supabase.from("users").select("avatar_url").eq("id", userId).single();
     if (av?.avatar_url) setHeaderAvatarUrl(av.avatar_url);
-<<<<<<< HEAD
 
     // ✅ P1-4: تحديث last_seen عند كل login (مطابقة Flutter)
     try {
@@ -267,13 +238,10 @@ export default function App() {
         console.warn("notifyAdminsOnSalesPresence failed:", e);
       }
     }
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   };
 
   const [leads, setLeads] = useState([]);
 
-<<<<<<< HEAD
   // ✅ P0-5: App lifecycle observer — notify admins on sales resume (مطابق Flutter)
   useEffect(() => {
     if (!currentUser?.id) return;
@@ -292,8 +260,6 @@ export default function App() {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [currentUser?.id, userRole]);
 
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   useEffect(() => {
     if (!currentUser?.id) return;
     const fetchLeadsStats = () => supabase
@@ -480,7 +446,6 @@ export default function App() {
     handleAdminTabChange(TAB_HOME);
   };
 
-<<<<<<< HEAD
   // ✅ P0-4: Set Password screen (invite flow) — مطابق SetPasswordScreen في Flutter
   if (isSetPassword) {
     return (
@@ -504,8 +469,6 @@ export default function App() {
     );
   }
 
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   if (isResetPage) return <ResetPassword />;
 
   const TopLoadingBar = () => topLoading ? (
@@ -624,7 +587,6 @@ export default function App() {
           onTabChange={handleAdminTabChange}
           items={ADMIN_NAV}
         />
-<<<<<<< HEAD
 
         {/* ✅ P0-6: Commissions Modal (admin) */}
         {showCommissions && (
@@ -680,8 +642,6 @@ export default function App() {
             🏢
           </div>
         )}
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       </div>
       </NotificationProvider>
     );
@@ -792,7 +752,6 @@ export default function App() {
           setActiveSalesTab(tab);
         }}
       />
-<<<<<<< HEAD
 
       {/* ✅ P0-6: Commissions Modal (sales) */}
       {showCommissions && (
@@ -849,13 +808,10 @@ export default function App() {
           🏢
         </div>
       )}
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     </div>
     </NotificationProvider>
   );
 }
-<<<<<<< HEAD
 
 // ─── CommissionsModal (مكون مساعد لعرض شاشة العمولات في overlay) ───
 function CommissionsModal({ role, currentUser, onClose }) {
@@ -940,5 +896,3 @@ function DeveloperModal({ mode, currentUser, onClose }) {
     </div>
   );
 }
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016

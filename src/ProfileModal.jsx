@@ -73,7 +73,6 @@ function resizeImage(file, maxSize = 256, quality = 0.7) {
   });
 }
 
-<<<<<<< HEAD
 // ✅ P1-2: مثل resizeImage لكن يرجع Blob بدلاً من base64 (للرفع للـ Storage)
 function resizeImageToBlob(file, maxSize = 256, quality = 0.7) {
   return new Promise((resolve, reject) => {
@@ -122,8 +121,6 @@ function resizeImageToBlob(file, maxSize = 256, quality = 0.7) {
   });
 }
 
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 export default function ProfileModal({ open, onClose, onSignOut }) {
   const [userData,  setUserData]  = useState(null);
   const [userId,    setUserId]    = useState(null);
@@ -163,14 +160,10 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
     setTimeout(() => setToast(null), 3000);
   };
 
-<<<<<<< HEAD
   // ── Upload: resize → upload to Supabase Storage 'avatars' bucket ──
   // ✅ P1-2: مطابقة Flutter — استبدال base64 في DB بـ Storage bucket
   //   - الـ bucket 'avatars' يجب أن يكون موجوداً (migration 01_avatar_storage.sql)
   //   - RLS policy: path pattern "{user_id}.jpg" يطابق auth.uid()
-=======
-  // ── Upload: resize → base64 → save in users.avatar_url ───────
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !userId) return;
@@ -184,7 +177,6 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
 
     setUploading(true);
     try {
-<<<<<<< HEAD
       // 1) Resize client-side (مطابق Flutter — تقليل الحجم قبل الرفع)
       const resizedBlob = await resizeImageToBlob(file, 256, 0.7);
 
@@ -228,27 +220,13 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
       const { error: dbError, data } = await supabase
         .from("users")
         .update({ avatar_url: publicUrl })
-=======
-      const base64 = await resizeImage(file, 256, 0.7);
-
-      // Save to DB
-      const { error, data } = await supabase
-        .from("users")
-        .update({ avatar_url: base64 })
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         .eq("id", userId)
         .select("avatar_url")
         .single();
 
-<<<<<<< HEAD
       if (dbError) { showToast(`خطأ: ${dbError.message}`, false); return; }
 
       // 6) Verify
-=======
-      if (error) { showToast(`خطأ: ${error.message}`, false); return; }
-
-      // Verify it actually saved by checking returned data
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       if (!data?.avatar_url) {
         showToast("لم يتم الحفظ — حاول تاني", false); return;
       }

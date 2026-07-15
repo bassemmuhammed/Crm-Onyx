@@ -361,16 +361,12 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   }, []);
 
   // ── Toggle member active ──
-<<<<<<< HEAD
   // ✅ P1-4: مطابقة Flutter — استدعاء revoke-user-session عند الـ deactivation
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const toggleMember = async (id) => {
     const member = team.find(m => m.id === id);
     const newActive = !member.active;
     setTeam(t => t.map(m => m.id === id ? { ...m, active: newActive } : m));
     await supabase.from("users").update({ active: newActive }).eq("id", id);
-<<<<<<< HEAD
 
     // ✅ P1-4: لو الـ member تم إلغاء تفعيله، استدعي revoke-user-session
     //   لإجباره على تسجيل الخروج من جميع الأجهزة (مطابقة Flutter)
@@ -419,29 +415,12 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
         await supabase.from("users").delete().eq("id", id);
         setTeam(t => t.filter(m => m.id !== id));
         flash("✓ Member permanently removed");
-=======
-    flash("✓ Member status updated");
-  };
-
-  // ── Delete member ──
-  const deleteMember = (id) => {
-    setConfirm({
-      message: "This will permanently delete this team member.",
-      onConfirm: async () => {
-        setConfirm(null);
-        await supabase.from("users").delete().eq("id", id);
-        setTeam(t => t.filter(m => m.id !== id));
-        flash("✓ Member removed");
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       },
     });
   };
 
   // ── Add member via invite ──
-<<<<<<< HEAD
   // ✅ P1-4: مطابقة Flutter — تتبع added_by + استخدام full_name
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const addMember = async (form) => {
     setAddingMember(true);
     try {
@@ -458,7 +437,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       const colors = [C.red, C.green, "#f97316", "#ec4899", C.blue, "#0ea5e9"];
       const color = colors[team.length % colors.length];
 
-<<<<<<< HEAD
       // ✅ P1-4: تتبع added_by (أي أدمن أضاف العضو) + استخدام full_name
       //   نحتاج الحصول على currentUserId من auth
       const { data: { user } } = await supabase.auth.getUser();
@@ -474,12 +452,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
         active: true,
         added_by: addedBy,     // ✅ P1-4: تتبع من أضاف العضو
         last_seen: null,       // ✅ P1-4: سيتم تحديثها عند أول login
-=======
-      const { error: dbError } = await supabase.from("users").insert({
-        name: form.name, email: form.email,
-        phone: form.phone, role: form.role,
-        color, active: true,
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       });
 
       if (dbError) {
@@ -487,14 +459,10 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       } else {
         setShowAddMember(false);
         flash("✓ Invite sent to " + form.email);
-<<<<<<< HEAD
         // إعادة تحميل الفريق مع last_seen و added_by
         const { data } = await supabase.from("users")
           .select("*")
           .neq("role", "owner");
-=======
-        const { data } = await supabase.from("users").select("*").neq("role", "owner");
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         if (data) setTeam(data.map(u => ({ ...u, active: u.active ?? true, color: u.color || C.red })));
       }
     } catch {
@@ -503,7 +471,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
     setAddingMember(false);
   };
 
-<<<<<<< HEAD
   // ── Resend invite ──
   // ✅ P1-4: مطابقة Flutter — استدعاء resend-invite Edge Function
   const resendInvite = async (email) => {
@@ -521,8 +488,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
     }
   };
 
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   // ── Reset System ──
   const handleResetSystem = () => {
     setConfirm({
@@ -765,7 +730,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
                 {m.active ? "Active" : "Off"}
               </div>
               <Toggle value={m.active} onChange={() => toggleMember(m.id)} />
-<<<<<<< HEAD
               {/* ✅ P1-4: Resend Invite button */}
               <div
                 onClick={() => resendInvite(m.email)}
@@ -773,8 +737,6 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
                 className="tap-btn"
                 style={{ cursor: "pointer", color: C.silver, fontSize: ".8rem", fontWeight: 700, padding: "4px 6px" }}
               >✉</div>
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
               <div
                 onClick={() => deleteMember(m.id)}
                 className="tap-btn"

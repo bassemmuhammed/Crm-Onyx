@@ -62,13 +62,10 @@ export default function Login({ onLogin }) {
   }, []);
 
   // ── LOGIN بـ Supabase ──
-<<<<<<< HEAD
   // 🔒 Phase 1.5 (Flutter migration): استبدال الاستعلام المباشر على users table
   // بـ RPC آمن `login_with_phone` يمنع user enumeration + equalized response time
   // (pg_sleep(0.1) على الفشل) + bcrypt check + active check.
   // الـ RPC موجود في migrations/02_login_rpc.sql
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const handleLogin = async () => {
     if (!phone || !password) {
       setError("Please fill in all fields");
@@ -78,7 +75,6 @@ export default function Login({ onLogin }) {
     setError(""); setLoading(true);
 
     try {
-<<<<<<< HEAD
       // 1) استدعاء RPC الآمن — يرجع user JSON أو null (موحد للـ timing)
       const { data: rpcUser, error: rpcError } = await supabase.rpc("login_with_phone", {
         p_phone: phone,
@@ -87,49 +83,28 @@ export default function Login({ onLogin }) {
 
       // لو الـ RPC رجع null أو error → رسالة موحدة (نفسها في كل الحالات)
       if (rpcError || !rpcUser) {
-=======
-      // جيب الـ user من جدول users عن طريق الموبايل
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("*")
-        .eq("phone", phone)
-        .single();
-
-      if (userError || !userData) {
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         setError("Incorrect phone number or password");
         setShakeKey(k => k + 1);
         setLoading(false);
         return;
       }
 
-<<<<<<< HEAD
       // 2) تأسيس session عبر Supabase Auth (الإيميل من الـ RPC)
       // 🔒 SECURITY FIX SC-001 (مطابق Flutter): لو signIn فشل بعد نجاح الـ RPC
       //    امنع تسجيل الدخول (الباسورد مش متزامن بين users و auth.users)
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: rpcUser.email,
-=======
-      // لوج إن بـ Supabase Auth باستخدام الإيميل المخزن
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: userData.email,
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         password: password,
       });
 
       if (authError) {
-<<<<<<< HEAD
         // مش نرجع "wrong password" عشان نمنع information leakage
         setError("Unable to sign in. Please contact admin to sync your password.");
-=======
-        setError("Incorrect phone number or password");
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         setShakeKey(k => k + 1);
         setLoading(false);
         return;
       }
 
-<<<<<<< HEAD
       // 3) حفظ الـ session — نستخدم بيانات الـ RPC (موثوقة)
       const userData = {
         id: rpcUser.id,
@@ -142,9 +117,6 @@ export default function Login({ onLogin }) {
         active: rpcUser.active,
       };
 
-=======
-      // حفظ الـ session
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       Session.save({ user: userData, role: userData.role, remember: rememberMe });
       if (rememberMe) localStorage.setItem("crm_phone", phone);
       onLogin(userData.role, userData, authData.session.access_token);
@@ -158,10 +130,7 @@ export default function Login({ onLogin }) {
   };
 
   // ── تغيير الباسورد بـ Supabase ──
-<<<<<<< HEAD
   // 🔒 نفس مبدأ RPC login_with_phone: نتجنب الاستعلام المباشر على users table
-=======
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const handleChangePassword = async () => {
     if (!cpPhone || !cpCurrentPw || !cpNewPw || !cpConfirmPw) {
       setError("Please fill in all fields"); setShakeKey(k => k + 1); return;
@@ -175,7 +144,6 @@ export default function Login({ onLogin }) {
     setError(""); setLoading(true);
 
     try {
-<<<<<<< HEAD
       // 1) استخدم RPC login_with_phone للتحقق من phone + current password
       //    (نفس الأمان المطبق في الـ login)
       const { data: rpcUser, error: rpcError } = await supabase.rpc("login_with_phone", {
@@ -185,31 +153,14 @@ export default function Login({ onLogin }) {
 
       if (rpcError || !rpcUser) {
         setError("Phone number or current password is incorrect");
-=======
-      // جيب الإيميل من رقم الموبايل
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("email")
-        .eq("phone", cpPhone)
-        .single();
-
-      if (userError || !userData) {
-        setError("Phone number not found");
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         setShakeKey(k => k + 1);
         setLoading(false);
         return;
       }
 
-<<<<<<< HEAD
       // 2) حدّث الباسورد عبر Supabase Auth (بنفس الإيميل من الـ RPC)
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: rpcUser.email,
-=======
-      // تحقق من الباسورد الحالي
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: userData.email,
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         password: cpCurrentPw,
       });
 
@@ -220,11 +171,7 @@ export default function Login({ onLogin }) {
         return;
       }
 
-<<<<<<< HEAD
       // 3) حدّث الباسورد
-=======
-      // حدّث الباسورد
->>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       const { error: updateError } = await supabase.auth.updateUser({
         password: cpNewPw,
       });
