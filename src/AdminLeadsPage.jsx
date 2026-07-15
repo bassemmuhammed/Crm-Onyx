@@ -1,6 +1,7 @@
 // ── AdminLeadsPage.jsx — ONYX Design System ──────────────────────
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+<<<<<<< HEAD
 import {
   PROJECTS, fetchTeam, fetchLeads,
   addLead as dbAddLead, updateLead as dbUpdateLead, deleteLead as dbDeleteLead,
@@ -12,6 +13,9 @@ import {
   exportLeadsToCsv,
 } from "./sharedLeadsData";
 import { BulkActionBar, SelectionCheckbox } from "./BulkOperations";
+=======
+import { PROJECTS, fetchTeam, fetchLeads, addLead as dbAddLead, updateLead as dbUpdateLead, deleteLead as dbDeleteLead, addComment as dbAddComment, subscribeToLeads } from "./sharedLeadsData";
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
@@ -988,11 +992,14 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   const touchStartY = useRef(0);
   const bodyRef = useRef(null);
 
+<<<<<<< HEAD
   // ✅ P0-3: Bulk Operations State (مطابق AdminLeadsController في Flutter)
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [longPressTimer, setLongPressTimer] = useState(null);
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const loadData = useCallback(async () => {
     setLoading(true);
     const [leadsData, teamData] = await Promise.all([fetchLeads(), fetchTeam()]);
@@ -1078,7 +1085,10 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     if (lead) setDeleteTarget(lead);
   }, [leads]);
 
+<<<<<<< HEAD
   // ✅ Move filtered/counts here (before bulk handlers that depend on `filtered`)
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return leads.filter(l => {
@@ -1095,6 +1105,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
       return acc;
     }, {}), [leads]);
 
+<<<<<<< HEAD
   // ════════════════════════════════════════════════════════════════
   // ✅ P0-3: BULK OPERATIONS (مطابق AdminLeadsController في Flutter)
   // ════════════════════════════════════════════════════════════════
@@ -1201,6 +1212,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     if (ids.length > 0) exitSelectionMode();
   }, [selectedIds, leads, filtered, team, exitSelectionMode]);
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const page = (
     <div style={{
       fontFamily:"Archivo, sans-serif",
@@ -1351,12 +1364,17 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         )}
 
         {/* Lead list */}
+<<<<<<< HEAD
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom: selectionMode ? 180 : 100 }}>
+=======
+        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:100 }}>
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
           {loading
             ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
               ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif" }}>No leads found 🔍</div>
               : filtered.map((lead,i) => (
+<<<<<<< HEAD
                   <div
                     key={lead.id}
                     className="lead-item"
@@ -1395,6 +1413,12 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                     <AdminLeadCard
                       lead={lead}
                       onClick={() => handleCardClick(lead)}
+=======
+                  <div key={lead.id} className="lead-item" style={{ animationDelay:`${i*22}ms` }}>
+                    <AdminLeadCard
+                      lead={lead}
+                      onClick={() => { setSelected(lead); setDetail(true); }}
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
                       onDelete={requestDelete}
                       team={team}
                     />
@@ -1404,6 +1428,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* ✅ P0-3: BulkActionBar — يظهر فقط في وضع التحديد */}
       {selectionMode && selectedIds.size > 0 && (
         <BulkActionBar
@@ -1419,6 +1444,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         />
       )}
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     </div>
   );
 
@@ -1426,8 +1453,12 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     <>
       {page}
       {/* FAB — fixed so it always floats above BottomNav regardless of scroll container */}
+<<<<<<< HEAD
       {/* ✅ P0-3: إخفاء الـ FAB في وضع التحديد */}
       {!anyModalOpen && !selectionMode && (
+=======
+      {!anyModalOpen && (
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
         <div
           onClick={() => setModal("fab")}
           className="tap-btn"

@@ -1,7 +1,11 @@
 import Icons             from "./Icons";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+<<<<<<< HEAD
 import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, subscribeToLeads, shareLead as dbShareLead, fetchTeam, supabase } from "./sharedLeadsData";
+=======
+import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, subscribeToLeads, supabase } from "./sharedLeadsData";
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
@@ -88,16 +92,23 @@ const Div = ({ label }) => (
 );
 
 // ─── LeadDetailModal ─────────────────────────────────────────────
+<<<<<<< HEAD
 export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales", currentUserId }) {
+=======
+export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sales" }) {
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const [local, setLocal]     = useState(null);
   const [comment, setComment] = useState("");
   const [saving, setSaving]   = useState(false);
   const prevId                = useRef(null);
   const inputRef              = useRef(null);
+<<<<<<< HEAD
   // ✅ P1-1: Lead Sharing state
   const [shareOpen, setShareOpen] = useState(false);
   const [shareTeam, setShareTeam] = useState([]);
   const [sharing, setSharing]     = useState(false);
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
   useEffect(() => {
     if (open && lead && lead.id !== prevId.current) {
@@ -150,6 +161,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
     onClose();
   }, [local, onUpdate, onClose]);
 
+<<<<<<< HEAD
   // ✅ P1-1: Lead Sharing handler (مطابق LeadSharingRepository في Flutter)
   const handleOpenShare = useCallback(async () => {
     setShareOpen(true);
@@ -173,6 +185,8 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
     }
   }, [local, onClose]);
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   if (!open || !local) return null;
 
   const meta       = STATUS_META[local.status] || STATUS_META.new;
@@ -249,6 +263,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
                 <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>WhatsApp</span>
               </a>
+<<<<<<< HEAD
               <button
                 className="tap-btn"
                 onClick={handleOpenShare}
@@ -259,6 +274,14 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                   cursor:"pointer",
                 }}
               >
+=======
+              <button className="tap-btn" style={{
+                flex:1, height:40, borderRadius:10, flexShrink:0,
+                background:C.cardAlt, border:`1px solid ${C.border}`,
+                display:"flex", alignItems:"center", justifyContent:"center", gap:7,
+                cursor:"pointer",
+              }}>
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88.21,88.21,0,0,0-85.23,65.31,8,8,0,0,1-15.5-4A104.06,104.06,0,0,1,165,96h39.71L170.34,62.34a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM88,208H72a40,40,0,0,1,0-80H88a8,8,0,0,0,0-16H72a56,56,0,0,0,0,112H88a8,8,0,0,0,0-16Z"/></svg>
                 <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>Share</span>
               </button>
@@ -411,6 +434,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 
       {/* ✅ P1-1: Share Lead Modal */}
       {shareOpen && (
@@ -491,6 +515,8 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
           </div>
         </div>
       )}
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     </>,
     document.body
   );
@@ -827,7 +853,10 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         onClose={closeDetail}
         onUpdate={updateLead}
         salesName={salesName}
+<<<<<<< HEAD
         currentUserId={currentUser?.id}  // ✅ P1-1: for lead sharing (exclude self)
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       />
 
     </div>

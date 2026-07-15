@@ -637,6 +637,7 @@ export default function HomePage({
 
   const salesName = currentUser?.name || currentUser?.email || "Sales";
 
+<<<<<<< HEAD
   // ✅ P1-5: تهيئة doneLeadIds و deletedIds من DB عند الـ mount
   //   (مطابقة Flutter — task_done و task_dismissed يتم persistingها)
   useEffect(() => {
@@ -651,6 +652,8 @@ export default function HomePage({
     setDeletedIds(dismissedIds);
   }, [leads]);
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   useEffect(() => {
     document.body.style.overflow = viewAllOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -700,13 +703,17 @@ export default function HomePage({
   const toggleTask = id => {
     if (id.startsWith("lead-")) {
       const leadId = id.replace("lead-", "");
+<<<<<<< HEAD
       const wasDone = doneLeadIds.has(leadId);
       // ✅ P1-5: optimistic UI update
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
       setDoneLeadIds(prev => {
         const next = new Set(prev);
         next.has(leadId) ? next.delete(leadId) : next.add(leadId);
         return next;
       });
+<<<<<<< HEAD
       // ✅ P1-5: حفظ task_done في DB (مطابقة Flutter — LeadsRepository)
       supabase
         .from("leads")
@@ -723,12 +730,15 @@ export default function HomePage({
             });
           }
         });
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     } else {
       setManualTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
     }
   };
 
   // ── Delete handler (swipe to delete) ──
+<<<<<<< HEAD
   // ✅ P1-5: حفظ task_dismissed في DB (مطابقة Flutter)
   const deleteTask = id => {
     if (id.startsWith("lead-")) {
@@ -751,6 +761,11 @@ export default function HomePage({
             });
           }
         });
+=======
+  const deleteTask = id => {
+    if (id.startsWith("lead-")) {
+      setDeletedIds(prev => new Set([...prev, id]));
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     } else {
       setManualTasks(prev => prev.filter(t => t.id !== id));
     }

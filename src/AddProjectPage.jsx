@@ -7,6 +7,7 @@
 //   onSignOut       {function}
 //   editProject     {object|null}
 
+<<<<<<< HEAD
 import { useState, useEffect, useRef } from "react";
 // ✅ P1-3: Project Media Storage — رفع ملفات لـ project-media bucket
 import {
@@ -17,6 +18,9 @@ import {
   validateImageFile,
   validateVideoFile,
 } from "./projectMediaService";
+=======
+import { useState, useEffect } from "react";
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
@@ -233,6 +237,7 @@ export default function AddProjectPage({
   // ── Media ──
   const [coverVideo,  setCoverVideo]  = useState(init.coverVideo  || "");
   const [profilePic,  setProfilePic]  = useState(init.profilePic  || "");
+<<<<<<< HEAD
   // ✅ P1-3: uploading state for media files
   const [uploadingCover, setUploadingCover]       = useState(null); // null | 'image' | 'video'
   const [uploadingProfile, setUploadingProfile]   = useState(false);
@@ -242,6 +247,8 @@ export default function AddProjectPage({
   const coverVidRef    = useRef(null);
   const profileImgRef  = useRef(null);
   const storyImgRefs   = useRef([]);
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
   // ── Stories ──
   const [stories,     setStories]     = useState(init.stories     || [""]);
@@ -321,6 +328,7 @@ export default function AddProjectPage({
   const changeStory = (i,v) => setStories(s=>s.map((x,idx)=>idx===i?v:x));
   const removeStory = (i) => setStories(s=>s.filter((_,idx)=>idx!==i));
 
+<<<<<<< HEAD
   // ════════════════════════════════════════════════════════════════
   // ✅ P1-3: Project Media Upload Handlers (مطابقة Flutter — project-media bucket)
   // ════════════════════════════════════════════════════════════════
@@ -388,6 +396,8 @@ export default function AddProjectPage({
     e.target.value = "";
   };
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const addPayment    = () => setPaymentPlans(p=>[...p,{downPayment:"",installment:"",duration:"",onDelivery:"",notes:""}]);
   const changePayment = (i,v) => setPaymentPlans(p=>p.map((x,idx)=>idx===i?v:x));
   const removePayment = (i) => setPaymentPlans(p=>p.filter((_,idx)=>idx!==i));
@@ -801,6 +811,7 @@ export default function AddProjectPage({
         </Section>
 
         {/* ── 6. Media & Branding ── */}
+<<<<<<< HEAD
         {/* ✅ P1-3: Added upload buttons alongside URL inputs */}
         <Section title="Media & Branding" delay={200}>
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -896,6 +907,19 @@ export default function AddProjectPage({
                 </div>
               )}
               {profilePic && !uploadingProfile && uploadingCover !== "image" && (
+=======
+        <Section title="Media & Branding" delay={200}>
+          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            <div>
+              <span style={labelStyle}>Cover Video URL</span>
+              <input value={coverVideo} onChange={e=>setCoverVideo(e.target.value)} placeholder="https://... (mp4 link)" style={inputBase}/>
+              <div style={{fontSize:".6rem",color:C.gray,marginTop:4,fontWeight:600,fontFamily:"Archivo,sans-serif"}}>Direct mp4 link (e.g. Google Drive, CDN)</div>
+            </div>
+            <div>
+              <span style={labelStyle}>Profile Picture URL</span>
+              <input value={profilePic} onChange={e=>setProfilePic(e.target.value)} placeholder="https://... (image link)" style={inputBase}/>
+              {profilePic && (
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
                 <div style={{marginTop:8,display:"flex",alignItems:"center",gap:10}}>
                   <img src={profilePic} alt="preview" style={{width:44,height:44,borderRadius:10,objectFit:"cover",border:`1px solid ${C.border}`}} onError={e=>{e.target.style.display="none";}}/>
                   <div style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif"}}>✓ Preview loaded</div>
@@ -906,6 +930,7 @@ export default function AddProjectPage({
         </Section>
 
         {/* ── 7. Story Images ── */}
+<<<<<<< HEAD
         {/* ✅ P1-3: Added upload buttons for story images */}
         <Section title="Story Images" delay={220}>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -953,6 +978,12 @@ export default function AddProjectPage({
                   ✕
                 </button>
               </div>
+=======
+        <Section title="Story Images" delay={220}>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {stories.map((url,i) => (
+              <StoryRow key={i} url={url} index={i} onChange={changeStory} onRemove={removeStory}/>
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
             ))}
             <button onClick={addStory} className="tap-btn" style={{
               marginTop:2, padding:"9px", borderRadius:10, border:`1px dashed ${C.border}`,

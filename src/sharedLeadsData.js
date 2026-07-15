@@ -1,8 +1,11 @@
 // ── sharedLeadsData.js
 // متربط بـ Supabase — مفيش fake data
 // ✅ changelog: بيتسجل كل تعديل بيحصل على الليد (من مين، امتى، من إيه لإيه، + كومنت)
+<<<<<<< HEAD
 // 🔒 Phase 2.7 (Flutter migration): استخدام RPC آمن `update_lead_with_changelog`
 //    (atomic + row lock) بدلاً من client-side read-compute-write.
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 import { supabase } from "./lib/supabase";
 export { supabase };
@@ -10,7 +13,10 @@ export { supabase };
 export const PROJECTS = ["Nile Heights", "Capital Hub", "Zed East", "Sky Plaza"];
 
 // ── الحقول اللي بيتتبع تغييرها في الـ changelog ──────────────
+<<<<<<< HEAD
 // (مطابق لـ _kTrackedFields في Flutter LeadsRepository + RPC migration)
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 const TRACKED_FIELDS = [
   "status",
   "assigned_to",
@@ -39,6 +45,7 @@ const FIELD_LABELS = {
 };
 
 // ── Fetch Team ──────────────────────────────────────────
+<<<<<<< HEAD
 // 🔒 استخدام full_name (مطابق Flutter) مع fallback لـ name (legacy)
 export async function fetchTeam() {
   const { data, error } = await supabase
@@ -51,6 +58,19 @@ export async function fetchTeam() {
   return (data || []).map(u => ({
     id:    u.id,
     name:  u.full_name || u.name || u.email || "Unknown",
+=======
+export async function fetchTeam() {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, name, email, phone, role, color, active")
+    .neq("role", "admin")
+    .neq("role", "owner")
+    .order("name");
+  if (error) console.error("fetchTeam:", error);
+  return (data || []).map(u => ({
+    id:    u.id,
+    name:  u.name  || u.email || "Unknown",
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     email: u.email || "",
     phone: u.phone || "",
     role:  u.role  || "sales",
@@ -85,17 +105,21 @@ export async function addLead(lead) {
 }
 
 // ── Update Lead ─────────────────────────────────────────
+<<<<<<< HEAD
 // 🔒 Phase 2.7 (Flutter migration): استخدام RPC آمن `update_lead_with_changelog`
 //    بدلاً من client-side read-compute-write (الذي يعرضة لـ race conditions).
 //    الـ RPC يستخدم SELECT ... FOR UPDATE لـ row lock + يحسب الـ changelog
 //    server-side في transaction واحدة (atomic).
 //    الـ RPC موجود في migrations/03_update_lead_rpc.sql
 //
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 // changedBy: اسم اللي عمل التعديل (Admin / Sales Name)
 // comment  : لو فيه ملاحظة مع التعديل
 export async function updateLead(lead, changedBy = "Admin", comment = null) {
   const { id, comments, ...rest } = lead;
 
+<<<<<<< HEAD
   // 1) حضّر الـ new_data JSON للـ RPC (snake_case)
   const newRow = toRow(rest);
 
@@ -140,6 +164,9 @@ export async function updateLead(lead, changedBy = "Admin", comment = null) {
   // 5) FALLBACK: نفس المنطق القديم (client-side read → compute → write)
   //    ملاحظة: هذا أقل أمانًا من الـ RPC لكنه يعمل بدون الـ migration.
   //    مطابق لمنطق الـ RPC: لا تسجل entry لو مفيش تغييرات ومفيش comment.
+=======
+  // ① جيب الليد القديم من DB
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const { data: oldRow, error: fetchErr } = await supabase
     .from("leads")
     .select("*")
@@ -148,7 +175,12 @@ export async function updateLead(lead, changedBy = "Admin", comment = null) {
 
   if (fetchErr) { console.error("updateLead fetch:", fetchErr); return null; }
 
+<<<<<<< HEAD
   // احسب الـ diff على الحقول المتتبعة
+=======
+  // ② احسب الـ diff على الحقول المتتبعة
+  const newRow = toRow(rest);
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const changes = TRACKED_FIELDS
     .filter(f => newRow[f] !== undefined && String(newRow[f] ?? "") !== String(oldRow[f] ?? ""))
     .map(f => ({
@@ -157,6 +189,7 @@ export async function updateLead(lead, changedBy = "Admin", comment = null) {
       to:    newRow[f] ?? "—",
     }));
 
+<<<<<<< HEAD
   // لا تسجل entry لو مفيش تغييرات ومفيش comment (مطابق لمنطق الـ RPC)
   if (changes.length === 0 && !comment) {
     return mapLead({ ...oldRow, comments: comments || [] });
@@ -172,6 +205,21 @@ export async function updateLead(lead, changedBy = "Admin", comment = null) {
   const existingChangelog = Array.isArray(oldRow.changelog) ? oldRow.changelog : [];
   const newChangelog = [entry, ...existingChangelog];
 
+=======
+  // ③ ابني الـ changelog entry (حتى لو مفيش diff — يسجل الـ save)
+  const entry = {
+    at:      new Date().toISOString(),
+    by:      changedBy,
+    changes, // [] لو مفيش تغيير في الحقول
+    comment: comment || null,
+  };
+
+  // ④ ضيف الـ entry في أول الـ array (الأحدث أول)
+  const existingChangelog = Array.isArray(oldRow.changelog) ? oldRow.changelog : [];
+  const newChangelog = [entry, ...existingChangelog];
+
+  // ⑤ ابعت الـ update مع الـ changelog الجديد
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   const { data, error } = await supabase
     .from("leads")
     .update({ ...newRow, changelog: newChangelog })
@@ -183,6 +231,7 @@ export async function updateLead(lead, changedBy = "Admin", comment = null) {
   return mapLead({ ...data, comments: comments || [] });
 }
 
+<<<<<<< HEAD
 // ── Bulk Operations (P0-3) ─────────────────────────────────────────
 // مطابق لـ AdminLeadsController في Flutter (PERF CS-012 batching):
 // كل عملية جماعية بتعمل update واحد بدلاً من N updates منفصلة.
@@ -263,6 +312,8 @@ export function exportLeadsToCsv(leads, teamMap = {}) {
   URL.revokeObjectURL(url);
 }
 
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 // ── Delete Lead ─────────────────────────────────────────
 export async function deleteLead(id) {
   const { error } = await supabase.from("leads").delete().eq("id", id);
@@ -288,6 +339,7 @@ export async function deleteComment(commentId) {
   return !error;
 }
 
+<<<<<<< HEAD
 // ── Lead Sharing (P1 — مطابق LeadSharingRepository في Flutter) ──────
 export async function shareLead(leadId, toUserId) {
   const { data, error } = await supabase
@@ -302,6 +354,21 @@ export async function shareLead(leadId, toUserId) {
 
 // ── Subscribe to Realtime ────────────────────────────────────────────────
 // استخدمها في صفحة السيلز والأدمن عشان التحديثات تظهر فورًا
+=======
+// ── Subscribe to Realtime ────────────────────────────────────────────────
+// استخدمها في صفحة السيلز والأدمن عشان التحديثات تظهر فورًا
+//
+// مثال:
+//   useEffect(() => {
+//     const unsub = subscribeToLeads(({ type, lead, id }) => {
+//       if (type === "INSERT") setLeads(prev => [lead, ...prev]);
+//       if (type === "UPDATE") setLeads(prev => prev.map(l => l.id === lead.id ? lead : l));
+//       if (type === "DELETE") setLeads(prev => prev.filter(l => l.id !== id));
+//     });
+//     return unsub;
+//   }, []);
+//
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 export function subscribeToLeads(onChange) {
   const channel = supabase
     .channel("leads-realtime")
@@ -310,10 +377,18 @@ export function subscribeToLeads(onChange) {
       { event: "*", schema: "public", table: "leads" },
       async (payload) => {
         if (payload.eventType === "INSERT") {
+<<<<<<< HEAD
+=======
+          // جيب الـ comments (فاضية للحاجة الجديدة)
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
           const lead = mapLead({ ...payload.new, comments: [] });
           onChange({ type: "INSERT", lead });
         }
         if (payload.eventType === "UPDATE") {
+<<<<<<< HEAD
+=======
+          // جيب الـ comments من DB عشان تكون complete
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
           const { data: comments } = await supabase
             .from("lead_comments")
             .select("id, text, by, time, created_at")
@@ -329,6 +404,10 @@ export function subscribeToLeads(onChange) {
     )
     .subscribe();
 
+<<<<<<< HEAD
+=======
+  // بترجع دالة إلغاء الـ subscription عشان تستخدمها في cleanup
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   return () => supabase.removeChannel(channel);
 }
 
@@ -347,12 +426,15 @@ function mapLead(row) {
     assignedTo:   row.assigned_to || null,
     callbackDate: row.callback_date || "",
     callbackTime: row.callback_time || "",
+<<<<<<< HEAD
     meetingDate:  row.meeting_date || "",   // ✅ حقل جديد (مطابق Flutter)
     meetingTime:  row.meeting_time || "",   // ✅ حقل جديد (مطابق Flutter)
     notes:        row.notes || "",          // ✅ حقل جديد (مطابق Flutter)
     taskDone:     row.task_done ?? false,   // ✅ حقل جديد (مطابق Flutter)
     taskDismissed: row.task_dismissed ?? false, // ✅ حقل جديد (مطابق Flutter)
     isDuplicate:  row.is_duplicate ?? false,    // ✅ حقل جديد (مطابق Flutter)
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     clientInfo: {
       type:   row.client_type || "",
       budget: row.budget || "",
@@ -363,6 +445,10 @@ function mapLead(row) {
       by:   c.by,
       time: c.time,
     })),
+<<<<<<< HEAD
+=======
+    // ✅ changelog: array من التعديلات مرتبة من الأحدث للأقدم
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
     changelog: Array.isArray(row.changelog) ? row.changelog : [],
     createdAt: row.created_at?.slice(0, 10) || "",
   };
@@ -371,6 +457,7 @@ function mapLead(row) {
 // Component shape → DB row
 function toRow(lead) {
   return {
+<<<<<<< HEAD
     name:           lead.name,
     phone:          lead.phone || null,
     project:        lead.project || null,
@@ -388,5 +475,18 @@ function toRow(lead) {
     is_duplicate:   lead.isDuplicate ?? false,   // ✅ حقل جديد
     client_type:    lead.clientInfo?.type || null,
     budget:         lead.clientInfo?.budget || null,
+=======
+    name:          lead.name,
+    phone:         lead.phone || null,
+    project:       lead.project || null,
+    source:        lead.source || "manual",
+    status:        lead.status || "new",
+    priority:      lead.priority || "medium",
+    assigned_to:   lead.assignedTo || null,
+    callback_date: lead.callbackDate || null,
+    callback_time: lead.callbackTime || null,
+    client_type:   lead.clientInfo?.type || null,
+    budget:        lead.clientInfo?.budget || null,
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   };
 }

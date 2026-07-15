@@ -1,11 +1,14 @@
 // ── NotificationContext.jsx — ONYX CRM ───────────────────────────
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "./lib/supabase";
+<<<<<<< HEAD
 import {
   scheduleLeadReminder as pushScheduleLeadReminder,
   cancelLeadReminder,
   scheduleExistingLeadReminders,
 } from "./PushNotificationService";
+=======
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 
 const NotificationContext = createContext(null);
 
@@ -15,6 +18,7 @@ async function insertNotif(text, color = "#CC1515", userId = null, type = "gener
 }
 
 // ── Schedule Reminders في جدول scheduled_notifications ───────────
+<<<<<<< HEAD
 // ✅ P0-5: استخدم PushNotificationService الجديد (3 تذكيرات مطابق Flutter، schema مطابق)
 // الـ scheduledNotifications ref يُستخدم فقط لـ deduplication محلي (للـ real-time updates)
 async function scheduleLeadReminder(lead, scheduledIds, userId) {
@@ -43,6 +47,84 @@ async function scheduleLeadReminder(lead, scheduledIds, userId) {
     dueAt,
     typePrefix: lead.status === "callback" ? "callback" : "meeting",
   });
+=======
+async function scheduleLeadReminder(lead, scheduledIds, userId) {
+  const dateStr = lead.callbackDate || lead.meetingDate || lead.callback_date || lead.meeting_date;
+  const timeStr = lead.callbackTime || lead.meetingTime || lead.callback_time || lead.meeting_time;
+  if (!dateStr || !timeStr) return;
+
+  const meetingTime = new Date(`${dateStr}T${timeStr}`);
+  if (isNaN(meetingTime.getTime())) return;
+
+  const key = `${lead.id}-${dateStr}-${timeStr}`;
+  if (scheduledIds.current.has(key)) return;
+  scheduledIds.current.add(key);
+
+  const now   = Date.now();
+  const label = lead.status === "callback" ? "Call Back" : "Pending Meeting";
+  const name  = lead.name || "Lead";
+
+  const reminders = [
+    {
+      key:   `${key}-1d`,
+      diff:  24 * 60 * 60 * 1000,
+      title: `📅 ${label} غداً`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_1d" : "meeting_1d",
+      color: "#3b82f6",
+    },
+    {
+      key:   `${key}-1h`,
+      diff:  60 * 60 * 1000,
+      title: `⏰ ${label} خلال ساعة`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_1h" : "meeting_1h",
+      color: "#f59e0b",
+    },
+    {
+      key:   `${key}-5m`,
+      diff:  5 * 60 * 1000,
+      title: `🔔 ${label} خلال 5 دقايق`,
+      body:  `${name} — ${dateStr} الساعة ${timeStr}`,
+      type:  lead.status === "callback" ? "callback_5m" : "meeting_5m",
+      color: "#ef4444",
+    },
+    {
+      key:   `${key}-now`,
+      diff:  0,
+      title: `🚨 ${label} دلوقتي!`,
+      body:  `${name} — حان الوقت!`,
+      type:  lead.status === "callback" ? "callback_now" : "meeting_now",
+      color: "#CC1515",
+    },
+  ];
+
+  for (const reminder of reminders) {
+    const triggerTime = meetingTime.getTime() - reminder.diff;
+    if (triggerTime <= now) continue;
+
+    const sendAt = new Date(triggerTime).toISOString();
+
+    await supabase.from("scheduled_notifications").upsert({
+      user_id: userId,
+      title:   reminder.title,
+      body:    reminder.body,
+      tag:     reminder.key,
+      send_at: sendAt,
+      sent:    false,
+    }, { onConflict: "tag" });
+
+    const delay = triggerTime - now;
+    setTimeout(async () => {
+      await insertNotif(
+        `${reminder.title}: ${name} (${dateStr} ${timeStr})`,
+        reminder.color,
+        userId,
+        reminder.type
+      );
+    }, delay);
+  }
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
 }
 
 // ── Provider ─────────────────────────────────────────────────────
@@ -110,10 +192,23 @@ export function NotificationProvider({ children, currentUser }) {
   }, [currentUser?.id]);
 
   // ── On login: schedule existing leads ─────────────────────────
+<<<<<<< HEAD
   // ✅ P0-5: استخدم scheduleExistingLeadReminders الجديد (يطبق 3 تذكيرات مطابق Flutter)
   useEffect(() => {
     if (!currentUser?.id) return;
     scheduleExistingLeadReminders(currentUser.id);
+=======
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    (async () => {
+      const { data } = await supabase
+        .from("leads")
+        .select("*")
+        .eq("assigned_to", currentUser.id)
+        .in("status", ["callback", "pendingMeeting"]);
+      if (data) data.forEach(l => scheduleLeadReminder(l, scheduledIds, currentUser.id));
+    })();
+>>>>>>> 245bd7ba88f9296961214b0e9cf43bf3bd743016
   }, [currentUser?.id]);
 
   const markAllRead = useCallback(async () => {
