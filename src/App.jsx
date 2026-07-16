@@ -23,6 +23,8 @@ import AdminCommissionsPage     from "./AdminCommissionsPage";   // ✅ P0-6
 import SalesCommissionsPage     from "./SalesCommissionsPage";   // ✅ P0-6
 import DeveloperUnitsPage       from "./DeveloperUnitsPage";     // ✅ P0-7
 import DeveloperAdminPage       from "./DeveloperAdminPage";     // ✅ P0-7
+import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar";  // ✅ Sidebar navigation
+import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // ✅ Sidebar icons
 
 // ─── ONYX Design ─────────────────────────────────────────────────
 const OnyxGlobalStyles = () => (
@@ -65,6 +67,12 @@ function NotifConnectedHeader({ onBellClick, onProfileClick, logo, avatarUrl }) 
       avatarUrl={avatarUrl}
     />
   );
+}
+
+// ✅ Sidebar wrapper يأخذ unreadCount من NotificationContext
+function SidebarConnected(props) {
+  const { unreadCount } = useNotifications();
+  return <Sidebar {...props} unreadCount={unreadCount} />;
 }
 
 // ─── Inner shell — uses NotificationContext ───────────────────────
@@ -547,7 +555,7 @@ export default function App() {
         fontFamily: "'Archivo', sans-serif",
         color: "#ffffff",
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "row", // ✅ Sidebar على اليسار، content على اليمين
         backgroundImage: `
           radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
           radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
@@ -555,25 +563,58 @@ export default function App() {
       }}>
         <OnyxGlobalStyles />
         <TopLoadingBar />
-        <div style={{ flexShrink: 0, position: "relative", zIndex: 50 }}>
-          <div style={{
-            height: 2,
-            background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)",
-          }} />
-          <NotifConnectedHeader
-            onBellClick={()    => setNotifOpen(true)}
-            onProfileClick={() => setProfileOpen(true)}
-            logo={<OnyxLogo size={28} />}
-            avatarUrl={headerAvatarUrl}
-          />
+
+        {/* ✅ Sidebar navigation (يحل محل الـ header العائم + BottomNav + الأزرار العائمة) */}
+        <SidebarConnected
+          items={[
+            { key: "home",         label: "Home",         icon: <Home size={18} />,     onClick: () => handleAdminTabChange(TAB_HOME) },
+            { key: "leads",        label: "Leads",        icon: <Users size={18} />,    onClick: () => handleAdminTabChange(TAB_LEADS) },
+            { key: "add-project",  label: "Add Project",  icon: <FileText size={18} />, onClick: () => handleAdminTabChange(TAB_ADDPROJECT) },
+            { key: "settings",     label: "Settings",     icon: <Settings size={18} />, onClick: () => handleAdminTabChange(TAB_SETTINGS) },
+            // ✅ Role-based: Commissions متاح للجميع (لكل role شاشته)
+            { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />, onClick: () => setShowCommissions(true) },
+            // ✅ Role-based: Inventory (Developer Admin) فقط لـ accountType=developer
+            ...(currentUser?.accountType === "developer" ? [{
+              key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => setShowDeveloper("admin"),
+            }] : []),
+          ]}
+          activeKey={
+            showCommissions ? "commissions"
+            : showDeveloper === "admin" ? "inventory"
+            : activeAdminTab === TAB_HOME ? "home"
+            : activeAdminTab === TAB_LEADS ? "leads"
+            : activeAdminTab === TAB_ADDPROJECT ? "add-project"
+            : activeAdminTab === TAB_SETTINGS ? "settings"
+            : "home"
+          }
+          onItemClick={(item) => item.onClick && item.onClick()}
+          currentUser={currentUser}
+          onBellClick={() => setNotifOpen(true)}
+          onProfileClick={() => setProfileOpen(true)}
+          avatarUrl={headerAvatarUrl}
+          logo={<OnyxLogo size={28} />}
+        />
+
+        {/* Main content area */}
+        <div style={{
+          flex: 1,
+          marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,
+          display: "flex",
+          flexDirection: "column",
+          // مساحة علوية في الموبايل للـ top bar
+          marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
+          minHeight: "100dvh",
+          transition: "margin-left 0.2s ease",
+        }}>
+          <div
+            key={activeAdminTab}
+            className="onyx-animate"
+            style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+          >
+            {renderAdminPage()}
+          </div>
         </div>
-        <div
-          key={activeAdminTab}
-          className="onyx-animate"
-          style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
-        >
-          {renderAdminPage()}
-        </div>
+
         <NotifConnectedPanels
           open={notifOpen}
           onClose={() => setNotifOpen(false)}
@@ -581,11 +622,6 @@ export default function App() {
           onProfileClose={() => setProfileOpen(false)}
           onSignOut={handleSignOut}
           refreshAvatar={refreshAvatar}
-        />
-        <BottomNav
-          activeTab={activeAdminTab}
-          onTabChange={handleAdminTabChange}
-          items={ADMIN_NAV}
         />
 
         {/* ✅ P0-6: Commissions Modal (admin) */}
@@ -603,44 +639,6 @@ export default function App() {
             mode="admin"
             onClose={() => setShowDeveloper(null)}
           />
-        )}
-
-        {/* ✅ P0-6: Floating Commissions button */}
-        {!notifOpen && !profileOpen && !showCommissions && !showDeveloper && (
-          <div
-            onClick={() => setShowCommissions(true)}
-            style={{
-              position: "fixed",
-              top: 14,
-              right: 100, // بعد زر الـ bell في الـ header
-              width: 38, height: 38, borderRadius: "50%",
-              background: "#10b981", boxShadow: "0 4px 16px rgba(16,185,129,.4)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", zIndex: 60, fontSize: 16,
-            }}
-            title="Commissions"
-          >
-            💰
-          </div>
-        )}
-
-        {/* ✅ P0-7: Floating Developer button (admin with developer account type) */}
-        {!notifOpen && !profileOpen && !showCommissions && !showDeveloper && currentUser?.accountType === "developer" && (
-          <div
-            onClick={() => setShowDeveloper("admin")}
-            style={{
-              position: "fixed",
-              top: 14,
-              right: 148,
-              width: 38, height: 38, borderRadius: "50%",
-              background: "#a855f7", boxShadow: "0 4px 16px rgba(168,85,247,.4)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", zIndex: 60, fontSize: 16,
-            }}
-            title="Developer Admin"
-          >
-            🏢
-          </div>
         )}
       </div>
       </NotificationProvider>
@@ -713,7 +711,7 @@ export default function App() {
       fontFamily: "'Archivo', sans-serif",
       color: "#ffffff",
       display: "flex",
-      flexDirection: "column",
+      flexDirection: "row", // ✅ Sidebar على اليسار، content على اليمين
       backgroundImage: `
         radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
         radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
@@ -721,22 +719,58 @@ export default function App() {
     }}>
       <OnyxGlobalStyles />
       <TopLoadingBar />
-      <div style={{ flexShrink: 0, position: "relative", zIndex: 50 }}>
-        <div style={{ height: 2, background: "linear-gradient(90deg, #cc1515 0%, #ff2020 40%, transparent 100%)" }} />
-        <NotifConnectedHeader
-          onBellClick={()    => setNotifOpen(true)}
-          onProfileClick={() => setProfileOpen(true)}
-          logo={<OnyxLogo size={28} />}
-          avatarUrl={headerAvatarUrl}
-        />
+
+      {/* ✅ Sidebar navigation للمندوب (يحل محل الـ header + BottomNav + الأزرار العائمة) */}
+      <SidebarConnected
+        items={[
+          { key: "home",         label: "Home",         icon: <Home size={18} />,     onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_HOME); } },
+          { key: "leads",        label: "Leads",        icon: <Users size={18} />,    onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_LEADS); } },
+          { key: "schedule",     label: "Schedule",     icon: <FileText size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_SCHEDULE); } },
+          { key: "projects",     label: "Projects",     icon: <Building2 size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_PROJECTS); } },
+          // ✅ Role-based: Commissions متاح للجميع
+          { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />, onClick: () => setShowCommissions(true) },
+          // ✅ Role-based: Inventory (Developer Units) فقط لـ accountType=developer
+          ...(currentUser?.accountType === "developer" ? [{
+            key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => setShowDeveloper("units"),
+          }] : []),
+        ]}
+        activeKey={
+          showCommissions ? "commissions"
+          : showDeveloper === "units" ? "inventory"
+          : showAddProject ? "projects"
+          : activeSalesTab === TAB_HOME ? "home"
+          : activeSalesTab === TAB_LEADS ? "leads"
+          : activeSalesTab === TAB_SCHEDULE ? "schedule"
+          : activeSalesTab === TAB_PROJECTS ? "projects"
+          : "home"
+        }
+        onItemClick={(item) => item.onClick && item.onClick()}
+        currentUser={currentUser}
+        onBellClick={() => setNotifOpen(true)}
+        onProfileClick={() => setProfileOpen(true)}
+        avatarUrl={headerAvatarUrl}
+        logo={<OnyxLogo size={28} />}
+      />
+
+      {/* Main content area */}
+      <div style={{
+        flex: 1,
+        marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,
+        display: "flex",
+        flexDirection: "column",
+        marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
+        minHeight: "100dvh",
+        transition: "margin-left 0.2s ease",
+      }}>
+        <div
+          key={activeSalesTab}
+          className="onyx-animate"
+          style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+        >
+          {renderSalesPage()}
+        </div>
       </div>
-      <div
-        key={activeSalesTab}
-        className="onyx-animate"
-        style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", paddingBottom: 62 }}
-      >
-        {renderSalesPage()}
-      </div>
+
       <NotifConnectedPanels
         open={notifOpen}
         onClose={() => setNotifOpen(false)}
@@ -744,13 +778,6 @@ export default function App() {
         onProfileClose={() => setProfileOpen(false)}
         onSignOut={handleSignOut}
         refreshAvatar={refreshAvatar}
-      />
-      <BottomNav
-        activeTab={activeSalesTab}
-        onTabChange={(tab) => {
-          setShowAddProject(false);
-          setActiveSalesTab(tab);
-        }}
       />
 
       {/* ✅ P0-6: Commissions Modal (sales) */}
@@ -769,44 +796,6 @@ export default function App() {
           currentUser={currentUser}
           onClose={() => setShowDeveloper(null)}
         />
-      )}
-
-      {/* ✅ P0-6: Floating Commissions button (sales) */}
-      {!notifOpen && !profileOpen && !showCommissions && !showDeveloper && (
-        <div
-          onClick={() => setShowCommissions(true)}
-          style={{
-            position: "fixed",
-            top: 14,
-            right: 100,
-            width: 38, height: 38, borderRadius: "50%",
-            background: "#10b981", boxShadow: "0 4px 16px rgba(16,185,129,.4)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", zIndex: 60, fontSize: 16,
-          }}
-          title="My Commissions"
-        >
-          💰
-        </div>
-      )}
-
-      {/* ✅ P0-7: Floating Developer Units button (sales with developer account type) */}
-      {!notifOpen && !profileOpen && !showCommissions && !showDeveloper && currentUser?.accountType === "developer" && (
-        <div
-          onClick={() => setShowDeveloper("units")}
-          style={{
-            position: "fixed",
-            top: 14,
-            right: 148,
-            width: 38, height: 38, borderRadius: "50%",
-            background: "#a855f7", boxShadow: "0 4px 16px rgba(168,85,247,.4)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", zIndex: 60, fontSize: 16,
-          }}
-          title="Developer Units"
-        >
-          🏢
-        </div>
       )}
     </div>
     </NotificationProvider>
