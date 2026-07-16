@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { C } from "./theme";
 import { supabase } from "./lib/supabase";
 import {  fetchAllCommissions,
   insertCommission,

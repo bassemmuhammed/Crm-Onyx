@@ -8,6 +8,7 @@
 //   editProject     {object|null}
 
 import { useState, useEffect, useRef } from "react";
+import { C } from "./theme";
 // ✅ P1-3: Project Media Storage — رفع ملفات لـ project-media bucket
 import {  uploadCoverImage,
   uploadProfileImage,
