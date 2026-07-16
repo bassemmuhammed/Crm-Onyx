@@ -5,16 +5,16 @@ import { fetchLeads, updateLead as dbUpdateLead, addComment as dbAddComment, sub
 
 // ─── ONYX Design Tokens ──────────────────────────────────────────
 const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  blue:     "#253FF6",
+  black:    "#F5F6FA",
+  surface:  "#F5F6FA",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  cardAlt:  "#F9FAFB",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  blue:     "#2563EB",
   cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
   cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
@@ -23,9 +23,9 @@ const C = {
 const STATUS_META = {
   new:             { label: "New",             color: "#10b981", bg: "#10b98120" },
   callback:        { label: "Call Back",       color: "#f59e0b", bg: "#f59e0b20" },
-  pendingMeeting:  { label: "Pending Meeting", color: "#253FF6", bg: "#253FF620" },
+  pendingMeeting:  { label: "Pending Meeting", color: "#2563EB", bg: "#2563EB20" },
   meetingDone:     { label: "Meeting Done",    color: "#a855f7", bg: "#a855f720" },
-  deal:            { label: "Deal",            color: "#CC1515", bg: "#CC151520" },
+  deal:            { label: "Deal",            color: "#DC2626", bg: "#DC262620" },
   onGoing:         { label: "On Going",        color: "#06b6d4", bg: "#06b6d420" },
   lowBudget:       { label: "Low Budget",      color: "#f97316", bg: "#f9731620" },
   noAnswer:        { label: "No Answer",       color: "#8b949e", bg: "#8b949e20" },
@@ -43,8 +43,8 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: dark only; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: light only; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
   @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
   @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
   @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -58,11 +58,11 @@ const STYLES = `
   .tap-btn:active { transform: scale(.94) }
   .lead-item  { animation: fadeInUp .2s ease both }
   input[type=date]::-webkit-calendar-picker-indicator,
-  input[type=time]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer; filter:invert(1) }
+  input[type=time]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer;  }
   ::-webkit-scrollbar { width:0px }
-  input, select { color-scheme: dark }
-  ::placeholder { color:#595A5F !important; opacity:1 }
-  select option { background:#252525; color:#fff }
+  input, select { color-scheme: light }
+  ::placeholder { color:#6B7280 !important; opacity:1 }
+  select option { background:#F9FAFB; color:#fff }
 
   /* Body lock without layout shift */
   body.modal-open {
@@ -739,7 +739,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
     <div style={{
       fontFamily:"Archivo,sans-serif",
       color:C.white,
-      colorScheme:"dark", userSelect:"none", WebkitUserSelect:"none",
+      colorScheme:"light", userSelect:"none", WebkitUserSelect:"none",
     }}>
       <style>{STYLES}</style>
 

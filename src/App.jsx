@@ -26,32 +26,50 @@ import DeveloperAdminPage       from "./DeveloperAdminPage";     // ✅ P0-7
 import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar";  // ✅ Sidebar navigation
 import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // ✅ Sidebar icons
 
-// ─── ONYX Design ─────────────────────────────────────────────────
+// ─── ONYX Design (Light Theme) ────────────────────────────────────
 const OnyxGlobalStyles = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&display=swap');
     * { -webkit-user-select: none !important; user-select: none !important; box-sizing: border-box; }
     :root {
-      --onyx-black: #000000; --onyx-red: #cc1515; --onyx-white: #ffffff;
-      --onyx-silver: #cecece; --onyx-gray: #595a5f; --onyx-blue: #253ff6;
-      --onyx-surface: #0a0a0a; --onyx-card: #111111; --onyx-border: #1e1e1e;
+      /* ✅ Light Theme — مطابقة theme.js */
+      --onyx-page: #F5F6FA;
+      --onyx-card: #FFFFFF;
+      --onyx-sidebar: #FFFFFF;
+      --onyx-border: #E5E7EB;
+      --onyx-divider: #EDEEF2;
+      --onyx-text-primary: #1A1A2E;
+      --onyx-text-secondary: #6B7280;
+      --onyx-text-muted: #9CA3AF;
+      --onyx-red: #DC2626;
+      --onyx-red-hover: #B91C1C;
+      --onyx-red-light: #FEE2E2;
+      --onyx-hover: #F9FAFB;
     }
-    body, html { background: var(--onyx-surface) !important; color: var(--onyx-white) !important; font-family: 'Archivo', sans-serif !important; }
-    ::-webkit-scrollbar { width: 0px; height: 0px; }
+    body, html {
+      background: var(--onyx-page) !important;
+      color: var(--onyx-text-primary) !important;
+      font-family: 'Archivo', sans-serif !important;
+      color-scheme: light !important;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
     @keyframes onyx-fade-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .onyx-animate { animation: onyx-fade-up 0.35s ease both; }
+    /* ✅ السماح بتحديد النص في حقول الإدخال */
+    input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
   `}</style>
 );
 
 const OnyxLogo = ({ size = 32 }) => (
   <svg width={size * 3.2} height={size} viewBox="0 0 128 40" fill="none">
-    <text x="0" y="30" fontFamily="'Archivo','Arial Black',sans-serif" fontWeight="700" fontSize="28" fill="#ffffff" letterSpacing="-0.5">ONY</text>
+    <text x="0" y="30" fontFamily="'Archivo','Arial Black',sans-serif" fontWeight="700" fontSize="28" fill="#1A1A2E" letterSpacing="-0.5">ONY</text>
     <g transform="translate(88, 4)">
-      <line x1="0"  y1="0"  x2="18" y2="32" stroke="#cc1515" strokeWidth="5.5" strokeLinecap="round"/>
-      <line x1="18" y1="0"  x2="0"  y2="32" stroke="#cc1515" strokeWidth="5.5" strokeLinecap="round"/>
-      <line x1="4"  y1="16" x2="14" y2="16" stroke="#cc1515" strokeWidth="3"   strokeLinecap="round"/>
+      <line x1="0"  y1="0"  x2="18" y2="32" stroke="#DC2626" strokeWidth="5.5" strokeLinecap="round"/>
+      <line x1="18" y1="0"  x2="0"  y2="32" stroke="#DC2626" strokeWidth="5.5" strokeLinecap="round"/>
+      <line x1="4"  y1="16" x2="14" y2="16" stroke="#DC2626" strokeWidth="3"   strokeLinecap="round"/>
     </g>
   </svg>
 );
@@ -482,10 +500,10 @@ export default function App() {
   const TopLoadingBar = () => topLoading ? (
     <div style={{
       position: "fixed", top: 0, left: 0, right: 0, height: 3,
-      zIndex: 9999, background: "#1e1e1e", overflow: "hidden",
+      zIndex: 9999, background: "#E5E7EB", overflow: "hidden",
     }}>
       <div style={{
-        height: "100%", background: "#cc1515",
+        height: "100%", background: "#DC2626",
         animation: "topbar-slide 1.2s ease-in-out infinite",
       }} />
       <style>{`
@@ -502,7 +520,7 @@ export default function App() {
     <>
       <OnyxGlobalStyles />
       <TopLoadingBar />
-      <div style={{ minHeight: "100vh", background: "#0a0a0a" }} />
+      <div style={{ minHeight: "100vh", background: "#F5F6FA" }} />
     </>
   );
 
@@ -551,14 +569,14 @@ export default function App() {
       <NotificationProvider currentUser={currentUser}>
       <div style={{
         height: "100dvh",
-        background: "#0a0a0a",
+        background: "#F5F6FA",  // ✅ Light theme page background
         fontFamily: "'Archivo', sans-serif",
-        color: "#ffffff",
+        color: "#1A1A2E",  // ✅ Light theme text primary
         display: "flex",
-        flexDirection: "row", // ✅ Sidebar على اليسار، content على اليمين
+        flexDirection: "row",
         backgroundImage: `
-          radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
-          radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
+          radial-gradient(ellipse 80% 40% at 50% -10%, rgba(220, 38, 38, 0.04) 0%, transparent 60%),
+          radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37, 99, 235, 0.03) 0%, transparent 50%)
         `,
       }}>
         <OnyxGlobalStyles />
@@ -595,21 +613,29 @@ export default function App() {
           logo={<OnyxLogo size={28} />}
         />
 
-        {/* Main content area */}
+        {/* Main content area — ✅ Light theme: padding 24px + max-width 1200px + centered */}
         <div style={{
           flex: 1,
           marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,
           display: "flex",
           flexDirection: "column",
-          // مساحة علوية في الموبايل للـ top bar
           marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
           minHeight: "100dvh",
           transition: "margin-left 0.2s ease",
+          // ✅ Container padding
+          padding: "24px",
+          // ✅ max-width + centered على الشاشات العريضة
+          overflowY: "auto",
         }}>
           <div
             key={activeAdminTab}
             className="onyx-animate"
-            style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+            style={{
+              width: "100%",
+              maxWidth: 1200,
+              margin: "0 auto",
+              minHeight: "100%",
+            }}
           >
             {renderAdminPage()}
           </div>
@@ -707,14 +733,14 @@ export default function App() {
     <NotificationProvider currentUser={currentUser}>
     <div style={{
       height: "100dvh",
-      background: "#0a0a0a",
+      background: "#F5F6FA",  // ✅ Light theme page background
       fontFamily: "'Archivo', sans-serif",
-      color: "#ffffff",
+      color: "#1A1A2E",  // ✅ Light theme text primary
       display: "flex",
-      flexDirection: "row", // ✅ Sidebar على اليسار، content على اليمين
+      flexDirection: "row",
       backgroundImage: `
-        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(204,21,21,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37,63,246,0.05) 0%, transparent 50%)
+        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(220, 38, 38, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 30% at 100% 80%, rgba(37, 99, 235, 0.03) 0%, transparent 50%)
       `,
     }}>
       <OnyxGlobalStyles />
@@ -752,7 +778,7 @@ export default function App() {
         logo={<OnyxLogo size={28} />}
       />
 
-      {/* Main content area */}
+      {/* Main content area — ✅ Light theme: padding 24px + max-width 1200px + centered */}
       <div style={{
         flex: 1,
         marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,
@@ -761,11 +787,18 @@ export default function App() {
         marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
         minHeight: "100dvh",
         transition: "margin-left 0.2s ease",
+        padding: "24px",
+        overflowY: "auto",
       }}>
         <div
           key={activeSalesTab}
           className="onyx-animate"
-          style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}
+          style={{
+            width: "100%",
+            maxWidth: 1200,
+            margin: "0 auto",
+            minHeight: "100%",
+          }}
         >
           {renderSalesPage()}
         </div>
@@ -808,33 +841,33 @@ function CommissionsModal({ role, currentUser, onClose }) {
     <div
       style={{
         position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-        background: "rgba(0,0,0,.85)", backdropFilter: "blur(8px)",
+        background: "rgba(0,0,0,.5)", backdropFilter: "blur(8px)",
         zIndex: 500, display: "flex", flexDirection: "column",
       }}
     >
       {/* Header */}
       <div style={{
         padding: "12px 16px", display: "flex", justifyContent: "space-between",
-        alignItems: "center", borderBottom: "1px solid #2a2a2e",
-        background: "#0a0a0a",
+        alignItems: "center", borderBottom: "1px solid #E5E7EB",
+        background: "#FFFFFF",
       }}>
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A2E" }}>
           {role === "admin" ? "💰 Commissions Management" : "💰 My Commissions"}
         </div>
         <div
           onClick={onClose}
           style={{
             width: 32, height: 32, borderRadius: 8,
-            background: "#1a1a1a", border: "1px solid #2a2a2e",
+            background: "#F9FAFB", border: "1px solid #E5E7EB",
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#cecece", fontSize: 14,
+            cursor: "pointer", color: "#6B7280", fontSize: 14,
           }}
         >
           ✕
         </div>
       </div>
       {/* Body */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div style={{ flex: 1, overflowY: "auto", background: "#F5F6FA" }}>
         {role === "admin"
           ? <AdminCommissionsPage />
           : <SalesCommissionsPage currentUser={currentUser} />
@@ -850,33 +883,33 @@ function DeveloperModal({ mode, currentUser, onClose }) {
     <div
       style={{
         position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-        background: "rgba(0,0,0,.85)", backdropFilter: "blur(8px)",
+        background: "rgba(0,0,0,.5)", backdropFilter: "blur(8px)",
         zIndex: 500, display: "flex", flexDirection: "column",
       }}
     >
       {/* Header */}
       <div style={{
         padding: "12px 16px", display: "flex", justifyContent: "space-between",
-        alignItems: "center", borderBottom: "1px solid #2a2a2e",
-        background: "#0a0a0a",
+        alignItems: "center", borderBottom: "1px solid #E5E7EB",
+        background: "#FFFFFF",
       }}>
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A2E" }}>
           {mode === "admin" ? "🏢 Developer Admin" : "🏢 Available Units"}
         </div>
         <div
           onClick={onClose}
           style={{
             width: 32, height: 32, borderRadius: 8,
-            background: "#1a1a1a", border: "1px solid #2a2a2e",
+            background: "#F9FAFB", border: "1px solid #E5E7EB",
             display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#cecece", fontSize: 14,
+            cursor: "pointer", color: "#6B7280", fontSize: 14,
           }}
         >
           ✕
         </div>
       </div>
       {/* Body */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div style={{ flex: 1, overflowY: "auto", background: "#F5F6FA" }}>
         {mode === "admin"
           ? <DeveloperAdminPage />
           : <DeveloperUnitsPage currentUser={currentUser} />

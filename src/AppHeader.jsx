@@ -13,8 +13,8 @@
 import Icons from "./Icons";
 
 // ── ONYX Brand Tokens ─────────────────────────────────────
-// Black: #000000 | Fiery Red: #cc1515 | White: #ffffff
-// Vibrant Silver: #cecece | Anchor Gray: #595a5f | Bright Blue: #253ff6
+// Black: #F5F6FA | Fiery Red: #DC2626 | White: #1A1A2E
+// Vibrant Silver: #1A1A2E | Anchor Gray: #6B7280 | Bright Blue: #2563EB
 // Typeface: Archivo (900 weight for logo)
 
 const styles = `
@@ -24,7 +24,7 @@ const styles = `
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #111111;
+    background: #1A1A2E;
     padding: 0 18px;
     display: flex;
     align-items: center;
@@ -42,7 +42,7 @@ const styles = `
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, #cc1515 0%, #ff2a2a 40%, transparent 100%);
+    background: linear-gradient(90deg, #DC2626 0%, #ff2a2a 40%, transparent 100%);
   }
 
   /* Subtle diagonal background texture */
@@ -53,7 +53,7 @@ const styles = `
     right: -20px;
     width: 100px;
     height: 100px;
-    background: #cc1515;
+    background: #DC2626;
     opacity: 0.04;
     transform: rotate(30deg) skewX(-15deg);
     pointer-events: none;
@@ -79,12 +79,12 @@ const styles = `
   }
 
   .onyx-wordmark-ony {
-    color: #ffffff;
+    color: #1A1A2E;
   }
 
   /* The "X" replaced with the brand's red slash symbol */
   .onyx-wordmark-x {
-    color: #cc1515;
+    color: #DC2626;
     display: inline-flex;
     align-items: center;
     line-height: 1;
@@ -98,7 +98,7 @@ const styles = `
   }
 
   .onyx-crm-label {
-    color: #595a5f;
+    color: #6B7280;
     font-size: 0.62rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -110,8 +110,8 @@ const styles = `
   /* Broker badge — sharp-cornered, red-accented */
   .onyx-badge {
     background: transparent;
-    border: 1px solid #cc1515;
-    color: #cc1515;
+    border: 1px solid #DC2626;
+    color: #DC2626;
     font-family: 'Archivo', sans-serif;
     font-size: 0.5rem;
     font-weight: 800;
@@ -128,7 +128,7 @@ const styles = `
     content: '';
     position: absolute;
     inset: 0;
-    background: #cc1515;
+    background: #DC2626;
     opacity: 0.08;
   }
 
@@ -143,20 +143,20 @@ const styles = `
     width: 38px;
     height: 38px;
     border-radius: 50%;              /* ← دائري كامل */
-    background: #1a1a1a;
+    background: #F9FAFB;
     border: 1px solid #2a2a2a;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    color: #cecece;
+    color: #1A1A2E;
     transition: border-color 0.15s, background 0.15s, transform 0.15s;
   }
 
   .onyx-btn:active {
     background: #222222;
-    border-color: #cc1515;
+    border-color: #DC2626;
     transform: scale(0.9);
   }
 
@@ -165,8 +165,8 @@ const styles = `
     position: absolute;
     top: -5px;
     right: -5px;
-    background: #cc1515;
-    color: #ffffff;
+    background: #DC2626;
+    color: #1A1A2E;
     font-family: 'Archivo', sans-serif;
     font-size: 0.48rem;
     font-weight: 900;
@@ -176,7 +176,7 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid #111111;
+    border: 1.5px solid #1A1A2E;
     letter-spacing: 0;
   }
 
@@ -191,8 +191,8 @@ const styles = `
 // The ONYX brand "X" — abstract slash mark in SVG
 const OnyxMark = () => (
   <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="3" y1="15" x2="15" y2="3" stroke="#cc1515" strokeWidth="2.8" strokeLinecap="round"/>
-    <line x1="3" y1="3" x2="10" y2="10" stroke="#cc1515" strokeWidth="2.8" strokeLinecap="round"/>
+    <line x1="3" y1="15" x2="15" y2="3" stroke="#DC2626" strokeWidth="2.8" strokeLinecap="round"/>
+    <line x1="3" y1="3" x2="10" y2="10" stroke="#DC2626" strokeWidth="2.8" strokeLinecap="round"/>
   </svg>
 );
 

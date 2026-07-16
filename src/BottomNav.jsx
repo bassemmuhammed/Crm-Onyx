@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import Icons from "./Icons";
 
 // ── ONYX Brand Tokens ─────────────────────────────────────
-// Black: #000000 | Fiery Red: #cc1515 | White: #ffffff
-// Vibrant Silver: #cecece | Anchor Gray: #595a5f | Bright Blue: #253ff6
+// Black: #F5F6FA | Fiery Red: #DC2626 | White: #1A1A2E
+// Vibrant Silver: #1A1A2E | Anchor Gray: #6B7280 | Bright Blue: #2563EB
 // Typeface: Archivo
 
 const DEFAULT_ITEMS = [
@@ -76,14 +76,14 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
       }}>
         {/* Bar */}
         <div style={{
-          background: "#111111",
+          background: "#1A1A2E",
           borderRadius: 0,
           height: 62,
           display: "flex",
-          borderTop: "1px solid #1e1e1e",
+          borderTop: "1px solid #E5E7EB",
           position: "relative",
           overflow: "visible",
-          boxShadow: "0 -1px 0 0 #cc1515 inset, 0 -8px 32px rgba(0,0,0,.6)",
+          boxShadow: "0 -1px 0 0 #DC2626 inset, 0 -8px 32px rgba(0,0,0,.6)",
           maxWidth: 430,
           margin: "0 auto",
         }}>
@@ -95,7 +95,7 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
             left: `${(activeTab / items.length) * 100}%`,
             width: `${100 / items.length}%`,
             height: 2,
-            background: "#cc1515",
+            background: "#DC2626",
             borderRadius: "2px 2px 0 0",
             transition: "left 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
             zIndex: 5,
@@ -133,11 +133,11 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
                       width: 46,
                       height: 46,
                       borderRadius: "50%",           // ← دائري كامل
-                      background: "#cc1515",
+                      background: "#DC2626",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#ffffff",
+                      color: "#1A1A2E",
                       boxShadow: "0 4px 22px rgba(204,21,21,.55), 0 1px 0 rgba(255,255,255,.1) inset",
                       zIndex: 10,
                       pointerEvents: "none",
@@ -154,7 +154,7 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
                   <div
                     className="onyx-nav-icon-inactive"
                     style={{
-                      color: "#595a5f",
+                      color: "#6B7280",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -174,7 +174,7 @@ export default function BottomNav({ activeTab = 0, onTabChange, items = DEFAULT_
                     fontWeight: 800,
                     letterSpacing: 1.2,
                     textTransform: "uppercase",
-                    color: active ? "#cc1515" : "#595a5f",
+                    color: active ? "#DC2626" : "#6B7280",
                     transition: "color .2s",
                     marginTop: active ? 32 : 3,
                   }}>

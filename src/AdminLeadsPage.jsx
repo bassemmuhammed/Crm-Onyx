@@ -1,4 +1,4 @@
-// ── AdminLeadsPage.jsx — ONYX Design System ──────────────────────
+// ── AdminLeadsPage.jsx — ONYX Design System (Light Theme) ──────────
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -12,38 +12,22 @@ import {
   exportLeadsToCsv,
 } from "./sharedLeadsData";
 import { BulkActionBar, SelectionCheckbox } from "./BulkOperations";
+import { C, shadows, layout, LEAD_STATUS_META } from "./theme";
 
-// ─── ONYX Design Tokens ──────────────────────────────────────────
-const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
-  cardHover:"#2E2E2E",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  redLight: "#FF2020",
-  blue:     "#253FF6",
-  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
-  cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
-};
-
+// ─── STATUS_META (مأخوذ من theme.js — Light Theme backgrounds) ────
 const STATUS_META = {
-  new:             { label: "New",               color: "#10b981", bg: "#10b98120", icon: "✦"  },
-  callback:        { label: "Call Back",         color: "#f59e0b", bg: "#f59e0b20", icon: "🔄" },
-  pendingMeeting:  { label: "Pending Meeting",   color: "#253FF6", bg: "#253FF620", icon: "📅" },
-  meetingDone:     { label: "Meeting Done",      color: "#a855f7", bg: "#a855f720", icon: "🤝" },
-  deal:            { label: "Deal",              color: "#CC1515", bg: "#CC151520", icon: "💰" },
-  onGoing:         { label: "On Going",          color: "#06b6d4", bg: "#06b6d420", icon: "🔁" },
-  lowBudget:       { label: "Low Budget",        color: "#f97316", bg: "#f9731620", icon: "💸" },
-  noAnswer:        { label: "No Answer",         color: "#8b949e", bg: "#8b949e20", icon: "📵" },
-  notInterested:   { label: "Not Interested",    color: "#6b7280", bg: "#6b728020", icon: "⊘"  },
-  chooseCompetitor:{ label: "Competitor",        color: "#ec4899", bg: "#ec489920", icon: "⚔️" },
-  longTerm:        { label: "Long Term",         color: "#8b5cf6", bg: "#8b5cf620", icon: "⏳" },
-  closed:          { label: "Closed",            color: "#374151", bg: "#37415130", icon: "🔒" },
+  new:             { label: "New",              color: LEAD_STATUS_META.new.color,             bg: LEAD_STATUS_META.new.bg,             icon: "✦"  },
+  callback:        { label: "Call Back",        color: LEAD_STATUS_META.callback.color,        bg: LEAD_STATUS_META.callback.bg,        icon: "🔄" },
+  pendingMeeting:  { label: "Pending Meeting",  color: LEAD_STATUS_META.pendingMeeting.color,  bg: LEAD_STATUS_META.pendingMeeting.bg,  icon: "📅" },
+  meetingDone:     { label: "Meeting Done",     color: LEAD_STATUS_META.meetingDone.color,     bg: LEAD_STATUS_META.meetingDone.bg,     icon: "🤝" },
+  deal:            { label: "Deal",             color: LEAD_STATUS_META.deal.color,            bg: LEAD_STATUS_META.deal.bg,            icon: "💰" },
+  onGoing:         { label: "On Going",         color: LEAD_STATUS_META.onGoing.color,         bg: LEAD_STATUS_META.onGoing.bg,         icon: "🔁" },
+  lowBudget:       { label: "Low Budget",       color: LEAD_STATUS_META.lowBudget.color,       bg: LEAD_STATUS_META.lowBudget.bg,       icon: "💸" },
+  noAnswer:        { label: "No Answer",        color: LEAD_STATUS_META.noAnswer.color,        bg: LEAD_STATUS_META.noAnswer.bg,        icon: "📵" },
+  notInterested:   { label: "Not Interested",   color: LEAD_STATUS_META.notInterested.color,   bg: LEAD_STATUS_META.notInterested.bg,   icon: "⊘"  },
+  chooseCompetitor:{ label: "Competitor",       color: LEAD_STATUS_META.chooseCompetitor.color,bg: LEAD_STATUS_META.chooseCompetitor.bg,icon: "⚔️" },
+  longTerm:        { label: "Long Term",        color: LEAD_STATUS_META.longTerm.color,        bg: LEAD_STATUS_META.longTerm.bg,        icon: "⏳" },
+  closed:          { label: "Closed",           color: LEAD_STATUS_META.closed.color,          bg: LEAD_STATUS_META.closed.bg,          icon: "🔒" },
 };
 
 const STATUS_ORDER = ["new","callback","pendingMeeting","meetingDone","deal","onGoing","lowBudget","noAnswer","notInterested","chooseCompetitor","longTerm","closed"];
@@ -53,13 +37,14 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: dark only; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: light only; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
   @keyframes slideUp  { from { transform:translateY(100%) } to { transform:translateY(0) } }
   @keyframes fadeIn   { from { opacity:0 } to { opacity:1 } }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .lead-card  { transition: transform .15s ease }
+  .lead-card  { transition: all .2s ease }
+  .lead-card:hover { transform: translateY(-2px); box-shadow: ${shadows.md} !important; }
   .lead-card:active { transform: scale(.985) }
   .chip-btn   { transition: all .15s ease }
   .chip-btn:active { transform: scale(.93) }
@@ -67,17 +52,17 @@ const STYLES = `
   .tap-btn:active { transform: scale(.94) }
   .lead-item  { animation: fadeInUp .2s ease both }
   input[type=date]::-webkit-calendar-picker-indicator,
-  input[type=time]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer; filter:invert(1) }
-  ::-webkit-scrollbar { width:0px }
-  ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:transparent }
-  input,select { color-scheme:dark }
-  ::placeholder { color:${C.gray} !important; opacity:1 }
-  select option { background:${C.cardAlt}; color:${C.white} }
+  input[type=time]::-webkit-calendar-picker-indicator { opacity:.6; cursor:pointer }
+  ::-webkit-scrollbar { width: 8px; height: 8px }
+  ::-webkit-scrollbar-track { background: transparent }
+  ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px }
+  ::-webkit-scrollbar-thumb:hover { background: #9CA3AF }
+  input,select { color-scheme: light }
+  ::placeholder { color: ${C.muted} !important; opacity: 1 }
+  select option { background: ${C.card}; color: ${C.silver} }
 
   @keyframes spin { to { transform:rotate(360deg) } }
 
-  /* Body lock without layout shift */
   body.modal-open {
     overflow: hidden;
     position: fixed;
@@ -616,21 +601,24 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
 
   return (
     <div className="lead-card" onClick={onClick} style={{
-      background: C.cardGrad1,
+      background: C.card,
       border: `1px solid ${C.border}`,
-      borderRadius: 14,
+      borderRadius: layout.cardRadius,
       cursor: "pointer",
       overflow: "hidden",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.45)",
+      boxShadow: shadows.sm,
       position: "relative",
+      padding: `${layout.cardPadding}px`,
+      marginBottom: `${layout.cardGap}px`,
+      transition: "all 0.2s ease",
     }}>
-      {/* Left gradient border — thick at top, fades down */}
+      {/* Left accent border — thick at top, fades down */}
       <div style={{
         position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
         background: `linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
-        borderRadius: "14px 0 0 14px",
+        borderRadius: `${layout.cardRadius}px 0 0 ${layout.cardRadius}px`,
       }} />
-      <div style={{ padding:"13px 14px 13px 17px", display:"flex", flexDirection:"column", gap:10 }}>
+      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
 
         {/* Row 1: Avatar + Name/Phone + Call + WA */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
@@ -638,87 +626,93 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           {/* Avatar */}
           <div style={{
             width:40, height:40, borderRadius:10, flexShrink:0,
-            background:"#1a1a1a", border:`1px solid ${C.border}`,
+            background: C.cardAlt, border:`1px solid ${C.border}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
+            fontSize:".95rem", fontWeight:900, color:C.red, fontFamily:"Archivo,sans-serif",
           }}>{initial}</div>
 
           {/* Name + phone */}
           <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.silver, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
             <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
-          {/* Call button */}
+          {/* Call button — ✅ Light theme: gray bg, darker on hover */}
           <a href={`tel:${lead.phone}`} onClick={e=>e.stopPropagation()} style={{
             width:34, height:34, borderRadius:9, flexShrink:0,
-            background:C.cardAlt, border:`1px solid ${C.border}`,
+            background: C.cardAlt, border:`1px solid ${C.border}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            textDecoration:"none",
-          }}>
-            <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
+            textDecoration:"none", transition: "background 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = C.border; }}
+          onMouseLeave={e => { e.currentTarget.style.background = C.cardAlt; }}
+          >
+            <svg width="15" height="15" viewBox="0 0 256 256" fill={C.gray}><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
           </a>
 
           {/* WhatsApp button */}
           <a href={`https://wa.me/${(lead.phone||"").replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{
             width:34, height:34, borderRadius:9, flexShrink:0,
-            background:C.cardAlt, border:`1px solid ${C.border}`,
+            background: C.cardAlt, border:`1px solid ${C.border}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            textDecoration:"none",
-          }}>
-            <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
+            textDecoration:"none", transition: "background 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = C.border; }}
+          onMouseLeave={e => { e.currentTarget.style.background = C.cardAlt; }}
+          >
+            <svg width="15" height="15" viewBox="0 0 256 256" fill={C.gray}><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
           </a>
         </div>
 
         {/* Divider */}
-        <div style={{ height:1, background:C.border }} />
+        <div style={{ height:1, background: C.divider }} />
 
-        {/* Row 2: Status + Callback + Agent */}
+        {/* Row 2: Status + Callback + Agent — ✅ Pill badges */}
         <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
 
-          {/* Status */}
+          {/* Status badge — pill shape */}
           <div style={{
-            fontSize:".68rem", fontWeight:700, color:C.white,
-            background:C.cardAlt, padding:"6px 12px", borderRadius:7,
-            border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+            fontSize:".68rem", fontWeight:700, color: meta.color,
+            background: meta.bg, padding:"4px 12px", borderRadius: layout.pillRadius,
+            fontFamily:"Archivo,sans-serif",
             display:"flex", alignItems:"center", gap:6,
           }}>
             <div style={{ width:7, height:7, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
             {meta.label}
           </div>
 
-          {/* Callback date */}
+          {/* Callback date — pill */}
           {hasCallback && (
             <div style={{
-              fontSize:".6rem", fontWeight:600, color:C.silver,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              fontSize:".6rem", fontWeight:600, color:C.gray,
+              background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
+              fontFamily:"Archivo,sans-serif",
             }}>
               {new Date(`${lead.callbackDate}T${lead.callbackTime}`).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"})}
             </div>
           )}
 
-          {/* Agent */}
+          {/* Agent — pill */}
           {agent ? (
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.silver,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
+              fontFamily:"Archivo,sans-serif",
             }}>{agent.name.split(" ")[0]}</div>
           ) : (
             <div style={{
-              fontSize:".6rem", color:C.gray,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
+              fontSize:".6rem", color:C.muted,
+              background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
               border:`1px dashed ${C.border}`, fontFamily:"Archivo,sans-serif",
             }}>غير موزع</div>
           )}
 
-          {/* Budget badge */}
+          {/* Budget badge — pill */}
           {lead.clientInfo?.budget && (
             <div style={{
-              fontSize:".6rem", fontWeight:600, color:C.silver,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              fontSize:".6rem", fontWeight:600, color:C.gray,
+              background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
+              fontFamily:"Archivo,sans-serif",
               display:"flex", alignItems:"center", gap:5,
             }}>
               <svg width="9" height="9" viewBox="0 0 256 256" fill={C.gray}><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
@@ -1205,8 +1199,8 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     <div style={{
       fontFamily:"Archivo, sans-serif",
       background:"transparent",
-      color:C.white,
-      colorScheme:"dark",
+      color:C.silver,  // ✅ Light theme: text primary
+      colorScheme:"light",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column",
       minHeight:"100%",

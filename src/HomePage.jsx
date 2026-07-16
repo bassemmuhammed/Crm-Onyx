@@ -18,18 +18,18 @@ import { updateLead as dbUpdateLead, supabase } from "./sharedLeadsData";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
-  black:     "#000000",
-  surface:   "#0D0D0D",
-  card:      "#161618",
-  border:    "#2A2A2E",
-  cardAlt:   "#1E1E22",
+  black:     "#F5F6FA",
+  surface:   "#F5F6FA",
+  card:      "#1A1A2E",
+  border:    "#E5E7EB",
+  cardAlt:   "#F9FAFB",
   cardHover: "#2E2E34",
-  gray:      "#6B6C73",
-  silver:    "#CECECE",
-  white:     "#FFFFFF",
-  red:       "#CC1515",
-  redLight:  "#FF2020",
-  blue:      "#253FF6",
+  gray:      "#6B7280",
+  silver:    "#1A1A2E",
+  white:     "#1A1A2E",
+  red:       "#DC2626",
+  redLight:  "#B91C1C",
+  blue:      "#2563EB",
   cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
   cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
@@ -39,9 +39,9 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: dark only; }
-  html, body { margin:0; padding:0; background:#0D0D0D; overflow-x:hidden; }
-  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:dark; -webkit-user-select:none; user-select:none; }
+  :root { color-scheme: light only; }
+  html, body { margin:0; padding:0; background:#F5F6FA; overflow-x:hidden; }
+  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:light; -webkit-user-select:none; user-select:none; }
   @keyframes fadeInUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
   @keyframes barGrow   { from{width:0%} to{width:var(--bar-w)} }
@@ -64,14 +64,14 @@ const STYLES = `
     position:absolute; right:0; top:0; bottom:0;
     display:flex; align-items:center; justify-content:flex-end;
     padding-right:18px;
-    background: linear-gradient(90deg, transparent 0%, #CC151588 30%, #CC1515 100%);
+    background: linear-gradient(90deg, transparent 0%, #DC262688 30%, #DC2626 100%);
     border-radius:12px;
     min-width:80px;
     pointer-events:none;
   }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
 `;
 
 // ─── Helpers ──────────────────────────────────────────────────────────

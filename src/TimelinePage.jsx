@@ -4,17 +4,17 @@ import Icons             from "./Icons";
 
 // ─── ONYX Tokens — matched to AdminHomePage reference ────────
 const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  redLight: "#FF2020",
-  blue:     "#253FF6",
+  black:    "#F5F6FA",
+  surface:  "#F5F6FA",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  cardAlt:  "#F9FAFB",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  redLight: "#B91C1C",
+  blue:     "#2563EB",
   green:    "#10b981",
   orange:   "#f97316",
   amber:    "#f59e0b",
@@ -26,8 +26,8 @@ const C = {
 const NoSelect = () => <style>{`
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
   * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Archivo', sans-serif !important; }
-  html, body { margin:0; padding:0; background:#0D0D0D; }
-  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:dark; }
+  html, body { margin:0; padding:0; background:#F5F6FA; }
+  *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:light; }
   @keyframes fadeInUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   @keyframes slideInLeft{ from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
   @keyframes slideUp    { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -36,7 +36,7 @@ const NoSelect = () => <style>{`
   .tap-scale:active { transform:scale(.96); transition:transform .1s ease; }
   ::-webkit-scrollbar { width:3px; height:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
 `}</style>;
 
 // ─── Mock Data ────────────────────────────────────────────────

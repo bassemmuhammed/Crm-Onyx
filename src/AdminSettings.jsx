@@ -5,18 +5,18 @@ import { supabase } from "./lib/supabase";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────
 const C = {
-  black:     "#000000",
-  surface:   "#0A0A0A",
-  card:      "#111111",
-  border:    "#1E1E1E",
-  cardAlt:   "#252525",
-  cardHover: "#2E2E2E",
-  gray:      "#595A5F",
-  silver:    "#CECECE",
-  white:     "#FFFFFF",
-  red:       "#CC1515",
-  redLight:  "#FF2020",
-  blue:      "#253FF6",
+  black:     "#F5F6FA",
+  surface:   "#F5F6FA",
+  card:      "#1A1A2E",
+  border:    "#E5E7EB",
+  cardAlt:   "#F9FAFB",
+  cardHover: "#E5E7EB",
+  gray:      "#6B7280",
+  silver:    "#1A1A2E",
+  white:     "#1A1A2E",
+  red:       "#DC2626",
+  redLight:  "#B91C1C",
+  blue:      "#2563EB",
   green:     "#10b981",
 };
 
@@ -24,9 +24,9 @@ const C = {
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: dark only; }
-  html, body { margin:0; padding:0; background:#0A0A0A; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: light only; }
+  html, body { margin:0; padding:0; background:#F5F6FA; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   .section-card { animation: fadeInUp .3s ease both; }
   .tap-btn { transition: all .15s ease; }
@@ -34,7 +34,7 @@ const STYLES = `
   input, select, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-appearance: none; appearance: none; }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
 `;
 
 // ─── Input Style ──────────────────────────────────────────────────

@@ -20,18 +20,18 @@ import {
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
 const C = {
-  black:     "#000000",
-  surface:   "#0A0A0A",
-  card:      "#111111",
-  border:    "#1E1E1E",
-  cardAlt:   "#252525",
-  cardHover: "#2E2E2E",
-  gray:      "#595A5F",
-  silver:    "#CECECE",
-  white:     "#FFFFFF",
-  red:       "#CC1515",
-  redLight:  "#FF2020",
-  blue:      "#253FF6",
+  black:     "#F5F6FA",
+  surface:   "#F5F6FA",
+  card:      "#1A1A2E",
+  border:    "#E5E7EB",
+  cardAlt:   "#F9FAFB",
+  cardHover: "#E5E7EB",
+  gray:      "#6B7280",
+  silver:    "#1A1A2E",
+  white:     "#1A1A2E",
+  red:       "#DC2626",
+  redLight:  "#B91C1C",
+  blue:      "#2563EB",
   launch:    "#f59e0b",   // amber — Launch status color
 };
 
@@ -39,8 +39,8 @@ const C = {
 const STATUS_OPTIONS = [
   { value: "Under Construction", label: "Under Construction", color: "#f97316" },
   { value: "Ready to Move",      label: "Ready to Move",      color: "#10b981" },
-  { value: "Off Plan",           label: "Off Plan",           color: "#253FF6" },
-  { value: "On Hold",            label: "On Hold",            color: "#595A5F" },
+  { value: "Off Plan",           label: "Off Plan",           color: "#2563EB" },
+  { value: "On Hold",            label: "On Hold",            color: "#6B7280" },
   { value: "Launch",             label: "Launch",             color: "#f59e0b" },
 ];
 
@@ -58,9 +58,9 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: dark only; }
-  html, body { margin:0; padding:0; border:none; outline:none; background:#0A0A0A; overflow-x:hidden; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: light only; }
+  html, body { margin:0; padding:0; border:none; outline:none; background:#F5F6FA; overflow-x:hidden; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
   @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
@@ -75,11 +75,11 @@ const STYLES = `
   input, select, textarea { -webkit-appearance: none; appearance: none; -webkit-user-select: text !important; user-select: text !important; }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
-  input[type=date]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer; filter:invert(1) }
-  input, select { color-scheme: dark; }
-  ::placeholder { color:#595A5F !important; opacity:1 }
-  select option  { background:#252525; color:#FFFFFF }
+  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  input[type=date]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer;  }
+  input, select { color-scheme: light; }
+  ::placeholder { color:#6B7280 !important; opacity:1 }
+  select option  { background:#F9FAFB; color:#1A1A2E }
 `;
 
 const inputBase = {

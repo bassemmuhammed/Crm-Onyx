@@ -13,9 +13,9 @@ const NOTIF_ICONS = {
 };
 
 const C = {
-  surface: "#0A0A0A", card: "#111111", border: "#1E1E1E",
-  cardAlt: "#1A1A1A", gray: "#595A5F", silver: "#CECECE",
-  white: "#FFFFFF", red: "#CC1515",
+  surface: "#F5F6FA", card: "#1A1A2E", border: "#E5E7EB",
+  cardAlt: "#F9FAFB", gray: "#6B7280", silver: "#1A1A2E",
+  white: "#1A1A2E", red: "#DC2626",
 };
 
 const STYLES = `
@@ -25,7 +25,7 @@ const STYLES = `
   }
   .notif-panel { animation: notif-drop .2s cubic-bezier(.4,0,.2,1) both; font-family: 'Archivo', sans-serif; }
   .notif-item { transition: background .15s; cursor: pointer; }
-  .notif-item:active { background: #1e1e1e !important; }
+  .notif-item:active { background: #E5E7EB !important; }
 `;
 
 export default function NotificationPanel({ open, onClose, notifs = [], onMarkAll, onMarkRead }) {
@@ -109,7 +109,7 @@ export default function NotificationPanel({ open, onClose, notifs = [], onMarkAl
             >
               <div style={{
                 width: 28, height: 28, borderRadius: 8,
-                background: n.unread ? `${n.color}18` : "#1a1a1a",
+                background: n.unread ? `${n.color}18` : "#F9FAFB",
                 border: `1px solid ${n.unread ? n.color + "44" : C.border}`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 flexShrink: 0,

@@ -37,16 +37,16 @@ function useAnimatedNumber(target, duration = 800, delay = 0) {
 
 // ─── ONYX Design Tokens (same as AdminLeadsPage) ──────────────
 const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  blue:     "#253FF6",
+  black:    "#F5F6FA",
+  surface:  "#F5F6FA",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  cardAlt:  "#F9FAFB",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  blue:     "#2563EB",
   cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
   cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
 };
@@ -55,9 +55,9 @@ const C = {
 const STATUS_META = {
   new:             { label: "New",             color: "#10b981", bg: "#10b98120" },
   callback:        { label: "Call Back",       color: "#f59e0b", bg: "#f59e0b20" },
-  pendingMeeting:  { label: "Pending Meeting", color: "#253FF6", bg: "#253FF620" },
+  pendingMeeting:  { label: "Pending Meeting", color: "#2563EB", bg: "#2563EB20" },
   meetingDone:     { label: "Meeting Done",    color: "#a855f7", bg: "#a855f720" },
-  deal:            { label: "Deal",            color: "#CC1515", bg: "#CC151520" },
+  deal:            { label: "Deal",            color: "#DC2626", bg: "#DC262620" },
   onGoing:         { label: "On Going",        color: "#06b6d4", bg: "#06b6d420" },
   lowBudget:       { label: "Low Budget",      color: "#f97316", bg: "#f9731620" },
   noAnswer:        { label: "No Answer",       color: "#8b949e", bg: "#8b949e20" },
@@ -72,9 +72,9 @@ const LEAD_OVERVIEW_CARDS = [
   { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#10b981", accentLine: "#10b981" },
   { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#10b981", accentLine: "#10b981", accent: true },
   { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#f59e0b", accentLine: "#f59e0b" },
-  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#253FF6", accentLine: "#253FF6" },
+  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#2563EB", accentLine: "#2563EB" },
   { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#a855f7", accentLine: "#a855f7" },
-  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#CC1515", accentLine: "#CC1515" },
+  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#DC2626", accentLine: "#DC2626" },
   { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#06b6d4", accentLine: "#06b6d4" },
   { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#f97316", accentLine: "#f97316" },
   { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8b949e", accentLine: "#8b949e" },
@@ -140,7 +140,7 @@ function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
       {/* Icon with black background */}
       <div style={{
         width: 44, height: 44, borderRadius: 10,
-        background: "#000000",
+        background: "#F5F6FA",
         border: `1px solid #222226`,
         display: "flex", alignItems: "center", justifyContent: "center",
         flexShrink: 0,
@@ -222,7 +222,7 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
           <div
             key={agent.id}
             style={{
-              background: i === 0 ? "linear-gradient(135deg,#1C1A0E 0%,#161614 100%)" : "#161618",
+              background: i === 0 ? "linear-gradient(135deg,#1C1A0E 0%,#161614 100%)" : "#1A1A2E",
               borderRadius: 16,
               border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
               boxShadow: rankStyle ? `0 0 20px ${rankStyle.glow}` : "0 2px 8px rgba(0,0,0,.4)",

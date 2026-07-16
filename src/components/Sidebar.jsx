@@ -1,43 +1,26 @@
 // ── components/Sidebar.jsx ──────────────────────────────────────────
-// Sidebar احترافي بـ lucide-react icons (مطابقة dark theme: أحمر/أسود)
+// Sidebar احترافي — Light Theme (مطابقة نظام ألوان ONYX CRM الجديد)
 //
 // الميزات:
 //   - ثابت (fixed) في الشاشات الكبيرة (Desktop ≥ 1024px)
 //   - hamburger menu في الشاشات الصغيرة (Mobile/Tablet < 1024px)
-//   - active state بصري واضح
-//   - role-based: إخفاء روابط Inventory/Commission للمستخدمين بدون صلاحية
-//   - يحتوي على: Home, Leads, Add Project, Settings, Inventory, Commission
-//
-// الـ props:
-//   items: [{ key, label, icon: <LucideIcon/>, onClick, badge? }]
-//   activeKey: المفتاح النشط حالياً
-//   onItemClick: callback عند الضغط على أي عنصر
-//   currentUser: لعرض الـ avatar والاسم في أسفل الـ sidebar
-//   onBellClick, onProfileClick: للإشعارات والبروفايل
-//   unreadCount: عدد الإشعارات غير المقروءة
-//   avatarUrl: رابط صورة البروفايل
-//   logo: عنصر الـ logo
+//   - active state بصري واضح (border-left أحمر 3px + خلفية حمراء فاتحة)
+//   - role-based: إخفاء روابط Inventory للمستخدمين بدون صلاحية
+//   - Light theme: خلفية بيضاء، نص رمادي، hover خفيف
 
 import { useState, useEffect } from "react";
 import { Menu, X, Bell } from "lucide-react";
+import {
+  backgrounds,
+  borders,
+  text,
+  primary,
+  shadows,
+  layout,
+} from "../theme";
 
-const C = {
-  black:    "#000",
-  surface:  "#0a0a0a",
-  card:     "#111",
-  cardAlt:  "#1a1a1a",
-  border:   "#2a2a2e",
-  gray:     "#6b6c73",
-  silver:   "#cecece",
-  white:    "#fff",
-  red:      "#cc1515",
-  redLight: "#ff2020",
-  blue:     "#253ff6",
-  green:    "#10b981",
-};
-
-const SIDEBAR_WIDTH = 240; // px
-const MOBILE_BREAKPOINT = 1024; // px
+const SIDEBAR_WIDTH = layout.sidebarWidth;
+const MOBILE_BREAKPOINT = layout.mobileBreakpoint;
 
 export default function Sidebar({
   items = [],
@@ -55,18 +38,16 @@ export default function Sidebar({
   );
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // تتبع حجم الشاشة
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;
       setIsMobile(mobile);
-      if (!mobile) setMobileOpen(false); // أغلق الـ mobile menu عند الانتقال لـ desktop
+      if (!mobile) setMobileOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // أغلق الـ mobile menu عند الضغط خارجها
   useEffect(() => {
     if (!isMobile || !mobileOpen) return;
     const handleClickOutside = (e) => {
@@ -82,7 +63,7 @@ export default function Sidebar({
 
   const handleItemClick = (item) => {
     if (onItemClick) onItemClick(item);
-    setMobileOpen(false); // أغلق الـ mobile menu بعد الاختيار
+    setMobileOpen(false);
   };
 
   // ── Mobile: Hamburger button ──
@@ -97,21 +78,21 @@ export default function Sidebar({
         width: 42,
         height: 42,
         borderRadius: 12,
-        background: C.card,
-        border: `1px solid ${C.border}`,
+        background: backgrounds.card,
+        border: `1px solid ${borders.card}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
         zIndex: 100,
-        boxShadow: "0 4px 12px rgba(0,0,0,.4)",
+        boxShadow: shadows.sm,
       }}
     >
-      <Menu size={20} color={C.silver} />
+      <Menu size={20} color={text.secondary} />
     </div>
   );
 
-  // ── Mobile: Top bar (يظهر فقط في الموبايل لأن الـ sidebar مخفي) ──
+  // ── Mobile: Top bar ──
   const MobileTopBar = () => (
     <div style={{
       position: "fixed",
@@ -119,42 +100,42 @@ export default function Sidebar({
       left: 0,
       right: 0,
       height: 62,
-      background: C.surface,
-      borderBottom: `1px solid ${C.border}`,
+      background: backgrounds.header,
+      borderBottom: `1px solid ${borders.card}`,
       display: isMobile ? "flex" : "none",
       alignItems: "center",
       justifyContent: "space-between",
-      padding: "0 12px 0 70px", // مساحة للـ hamburger على اليسار
+      padding: "0 12px 0 70px",
       zIndex: 90,
+      boxShadow: shadows.sm,
     }}>
-      {/* Logo في المنتصف */}
       <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
         {logo}
       </div>
 
-      {/* Actions على اليمين: bell + avatar */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <button
           onClick={onBellClick}
           style={{
             width: 38, height: 38, borderRadius: "50%",
-            background: C.card, border: `1px solid ${C.border}`,
+            background: backgrounds.card,
+            border: `1px solid ${borders.card}`,
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", position: "relative",
           }}
         >
-          <Bell size={16} color={C.silver} />
+          <Bell size={16} color={text.secondary} />
           {unreadCount > 0 && (
             <div style={{
               position: "absolute",
               top: -2, right: -2,
               minWidth: 16, height: 16, padding: "0 4px",
               borderRadius: 8,
-              background: C.red,
+              background: primary.main,
               color: "#fff",
               fontSize: 9, fontWeight: 700,
               display: "flex", alignItems: "center", justifyContent: "center",
-              border: `2px solid ${C.surface}`,
+              border: `2px solid ${backgrounds.header}`,
             }}>
               {unreadCount > 99 ? "99+" : unreadCount}
             </div>
@@ -165,15 +146,15 @@ export default function Sidebar({
           onClick={onProfileClick}
           style={{
             width: 38, height: 38, borderRadius: "50%",
-            background: avatarUrl ? `url(${avatarUrl}) center/cover` : C.card,
-            border: `2px solid ${C.border}`,
+            background: avatarUrl ? `url(${avatarUrl}) center/cover` : backgrounds.hover,
+            border: `2px solid ${borders.card}`,
             cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             overflow: "hidden",
           }}
         >
           {!avatarUrl && (
-            <span style={{ color: C.silver, fontSize: 14, fontWeight: 700 }}>
+            <span style={{ color: text.secondary, fontSize: 14, fontWeight: 700 }}>
               {(currentUser?.name || "?").charAt(0).toUpperCase()}
             </span>
           )}
@@ -182,19 +163,19 @@ export default function Sidebar({
     </div>
   );
 
-  // ── Sidebar Content (مشترك بين desktop و mobile) ──
+  // ── Sidebar Content ──
   const SidebarContent = () => (
     <div style={{
       display: "flex",
       flexDirection: "column",
       height: "100%",
-      background: C.surface,
-      borderRight: `1px solid ${C.border}`,
+      background: backgrounds.sidebar,
+      borderRight: `1px solid ${borders.sidebar}`,
     }}>
-      {/* ── Logo Header ── */}
+      {/* Logo Header */}
       <div style={{
         padding: "20px 18px 18px",
-        borderBottom: `1px solid ${C.border}`,
+        borderBottom: `1px solid ${borders.divider}`,
         display: "flex",
         alignItems: "center",
         justifyContent: isMobile ? "space-between" : "center",
@@ -208,9 +189,9 @@ export default function Sidebar({
             onClick={() => setMobileOpen(false)}
             style={{
               width: 30, height: 30, borderRadius: 8,
-              background: C.cardAlt, border: `1px solid ${C.border}`,
+              background: backgrounds.hover, border: `1px solid ${borders.card}`,
               display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: C.gray,
+              cursor: "pointer", color: text.secondary,
             }}
           >
             <X size={16} />
@@ -218,7 +199,7 @@ export default function Sidebar({
         )}
       </div>
 
-      {/* ── Navigation Items ── */}
+      {/* Navigation Items */}
       <nav style={{
         flex: 1,
         padding: "16px 12px",
@@ -241,9 +222,9 @@ export default function Sidebar({
                 borderRadius: 10,
                 border: "none",
                 background: isActive
-                  ? `linear-gradient(135deg, ${C.red}22 0%, ${C.red}11 100%)`
+                  ? primary.light
                   : "transparent",
-                color: isActive ? C.white : C.silver,
+                color: isActive ? primary.main : text.secondary,
                 fontSize: ".82rem",
                 fontWeight: isActive ? 700 : 500,
                 fontFamily: "'Archivo', sans-serif",
@@ -252,18 +233,19 @@ export default function Sidebar({
                 width: "100%",
                 position: "relative",
                 transition: "all 0.18s ease",
-                borderLeft: isActive ? `3px solid ${C.red}` : "3px solid transparent",
+                // ✅ border-left أحمر 3px للعنصر النشط (مطابق المطلوب)
+                borderLeft: isActive ? `3px solid ${primary.main}` : "3px solid transparent",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.background = `${C.cardAlt}`;
-                  e.currentTarget.style.color = C.white;
+                  e.currentTarget.style.background = backgrounds.cardAlt;
+                  e.currentTarget.style.color = text.primary;
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = C.silver;
+                  e.currentTarget.style.color = text.secondary;
                 }
               }}
             >
@@ -271,26 +253,20 @@ export default function Sidebar({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: 22,
-                height: 22,
-                color: isActive ? C.red : "inherit",
+                width: 22, height: 22,
+                color: isActive ? primary.main : "inherit",
               }}>
                 {item.icon}
               </span>
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge != null && item.badge > 0 && (
                 <span style={{
-                  minWidth: 18,
-                  height: 18,
-                  padding: "0 5px",
+                  minWidth: 18, height: 18, padding: "0 5px",
                   borderRadius: 9,
-                  background: isActive ? C.red : C.cardAlt,
-                  color: isActive ? "#fff" : C.silver,
-                  fontSize: 10,
-                  fontWeight: 700,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  background: isActive ? primary.main : backgrounds.hover,
+                  color: isActive ? "#fff" : text.secondary,
+                  fontSize: 10, fontWeight: 700,
+                  display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {item.badge > 99 ? "99+" : item.badge}
                 </span>
@@ -300,51 +276,44 @@ export default function Sidebar({
         })}
       </nav>
 
-      {/* ── User Profile (في أسفل الـ sidebar) ── */}
+      {/* User Profile */}
       <div style={{
         padding: "14px 12px",
-        borderTop: `1px solid ${C.border}`,
+        borderTop: `1px solid ${borders.divider}`,
       }}>
         <button
           onClick={onProfileClick}
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            padding: "8px 10px",
-            borderRadius: 10,
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-            width: "100%",
-            textAlign: "left",
+            display: "flex", alignItems: "center", gap: 10,
+            padding: "8px 10px", borderRadius: 10, border: "none",
+            background: "transparent", cursor: "pointer", width: "100%", textAlign: "left",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = C.cardAlt; }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = backgrounds.cardAlt; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
         >
           <div style={{
             width: 34, height: 34, borderRadius: 10,
-            background: avatarUrl ? `url(${avatarUrl}) center/cover` : C.card,
-            border: `1px solid ${C.border}`,
+            background: avatarUrl ? `url(${avatarUrl}) center/cover` : backgrounds.hover,
+            border: `1px solid ${borders.card}`,
             display: "flex", alignItems: "center", justifyContent: "center",
             overflow: "hidden", flexShrink: 0,
           }}>
             {!avatarUrl && (
-              <span style={{ color: C.silver, fontSize: 13, fontWeight: 700 }}>
+              <span style={{ color: text.secondary, fontSize: 13, fontWeight: 700 }}>
                 {(currentUser?.name || "?").charAt(0).toUpperCase()}
               </span>
             )}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontSize: ".75rem", fontWeight: 700, color: C.white,
+              fontSize: ".75rem", fontWeight: 700, color: text.primary,
               fontFamily: "'Archivo', sans-serif",
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>
               {currentUser?.name || "User"}
             </div>
             <div style={{
-              fontSize: ".6rem", color: C.gray,
+              fontSize: ".6rem", color: text.secondary,
               fontFamily: "'Archivo', sans-serif",
               textTransform: "capitalize",
             }}>
@@ -374,28 +343,22 @@ export default function Sidebar({
           }
         `}</style>
 
-        {/* Hamburger button */}
         <HamburgerButton />
-
-        {/* Top bar مع logo + bell + avatar */}
         <MobileTopBar />
 
-        {/* Mobile sidebar overlay */}
         {mobileOpen && (
           <>
-            {/* Backdrop */}
             <div
               onClick={() => setMobileOpen(false)}
               style={{
                 position: "fixed",
                 top: 0, left: 0, right: 0, bottom: 0,
-                background: "rgba(0,0,0,.7)",
+                background: "rgba(0,0,0,.5)",
                 backdropFilter: "blur(4px)",
                 zIndex: 200,
                 animation: "onyxSidebarFadeIn 0.2s ease-out",
               }}
             />
-            {/* Sidebar */}
             <div
               id="onyx-sidebar"
               style={{
@@ -414,7 +377,6 @@ export default function Sidebar({
     );
   }
 
-  // Desktop: fixed sidebar
   return (
     <div
       id="onyx-sidebar"
@@ -430,5 +392,4 @@ export default function Sidebar({
   );
 }
 
-// export العرض الثابت للـ sidebar (يستخدم في حساب مساحة المحتوى)
 export { SIDEBAR_WIDTH, MOBILE_BREAKPOINT };

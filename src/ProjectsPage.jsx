@@ -5,17 +5,17 @@ import Icons from "./Icons";
 
 // ─── ONYX Tokens ──────────────────────────────────────────────
 const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  redLight: "#FF2020",
-  blue:     "#253FF6",
+  black:    "#F5F6FA",
+  surface:  "#F5F6FA",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  cardAlt:  "#F9FAFB",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  redLight: "#B91C1C",
+  blue:     "#2563EB",
   green:    "#10b981",
   orange:   "#f97316",
   amber:    "#f59e0b",
@@ -33,12 +33,12 @@ function toWesternNums(str) {
 // ─── Global Styles ────────────────────────────────────────────
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
-  :root { color-scheme: dark only; }
-  html,body { margin:0; padding:0; background:#0D0D0D; }
+  :root { color-scheme: light only; }
+  html,body { margin:0; padding:0; background:#F5F6FA; }
   *, *::before, *::after {
     -webkit-tap-highlight-color:transparent;
     box-sizing:border-box;
-    color-scheme:dark;
+    color-scheme:light;
     -webkit-user-select:none;
     user-select:none;
     font-family:'Archivo',sans-serif !important;
@@ -54,7 +54,7 @@ const STYLES = `
   .tap-scale:active { transform:scale(.96); transition:transform .1s ease; }
   ::-webkit-scrollbar { width:3px; height:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#CC1515; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
   .swipe-hint { animation: swipeHint 2.4s ease 0.6s both; }
 `;
 
@@ -65,8 +65,8 @@ function OnyxLogo({ size = 90, opacity = 0.13 }) {
       <svg width={size * 2.6} height={size} viewBox="0 0 260 100" fill="none">
         <text x="2" y="82" fontSize="88" fontWeight="900" fill="white"
           fontFamily="Archivo,sans-serif" letterSpacing="-3">ONYX</text>
-        <line x1="196" y1="8"  x2="252" y2="88" stroke="#CC1515" strokeWidth="7" strokeLinecap="round"/>
-        <line x1="252" y1="8"  x2="196" y2="88" stroke="#CC1515" strokeWidth="7" strokeLinecap="round"/>
+        <line x1="196" y1="8"  x2="252" y2="88" stroke="#DC2626" strokeWidth="7" strokeLinecap="round"/>
+        <line x1="252" y1="8"  x2="196" y2="88" stroke="#DC2626" strokeWidth="7" strokeLinecap="round"/>
       </svg>
     </div>
   );

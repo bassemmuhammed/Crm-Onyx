@@ -22,16 +22,16 @@ import { Lock, Eye, EyeOff, AlertCircle, ArrowRight, Building2, CheckCircle2, Ma
 import { supabase } from "./lib/supabase";
 
 const C = {
-  black:    "#0a0a0a",
+  black:    "#F5F6FA",
   surface:  "#0f172a",
-  card:     "#161618",
-  border:   "#2a2a2e",
-  gray:     "#6b6c73",
-  silver:   "#cecece",
-  white:    "#ffffff",
-  red:      "#cc1515",
-  redLight: "#ff2020",
-  blue:     "#253ff6",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  redLight: "#B91C1C",
+  blue:     "#2563EB",
   green:    "#10b981",
   amber:    "#f59e0b",
 };

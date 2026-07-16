@@ -5,17 +5,17 @@ import Icons from "./Icons";
 
 // ─── Design Tokens ────────────────────────────────────────────
 const C = {
-  black:    "#000000",
-  surface:  "#0D0D0D",
-  card:     "#161618",
-  border:   "#2A2A2E",
-  cardAlt:  "#1E1E22",
+  black:    "#F5F6FA",
+  surface:  "#F5F6FA",
+  card:     "#1A1A2E",
+  border:   "#E5E7EB",
+  cardAlt:  "#F9FAFB",
   cardHover:"#252528",
-  gray:     "#6B6C73",
-  silver:   "#CECECE",
-  white:    "#FFFFFF",
-  red:      "#CC1515",
-  blue:     "#253FF6",
+  gray:     "#6B7280",
+  silver:   "#1A1A2E",
+  white:    "#1A1A2E",
+  red:      "#DC2626",
+  blue:     "#2563EB",
 };
 
 const STYLES = `
@@ -393,8 +393,8 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
             {toast && (
               <div style={{
                 margin:"10px 16px 0", padding:"10px 14px", borderRadius:10,
-                background: toast.ok ? "#10b98120" : "#CC151520",
-                border:`1px solid ${toast.ok ? "#10b98155" : "#CC151555"}`,
+                background: toast.ok ? "#10b98120" : "#DC262620",
+                border:`1px solid ${toast.ok ? "#10b98155" : "#DC262655"}`,
                 color: toast.ok ? "#10b981" : C.red,
                 fontSize:".72rem", fontWeight:700,
                 display:"flex", alignItems:"center", gap:8,

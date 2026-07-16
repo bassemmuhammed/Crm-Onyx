@@ -10,7 +10,7 @@ import {
 const NotificationContext = createContext(null);
 
 // ── Insert notification into Supabase ────────────────────────────
-async function insertNotif(text, color = "#CC1515", userId = null, type = "general") {
+async function insertNotif(text, color = "#DC2626", userId = null, type = "general") {
   await supabase.from("notifications").insert({ text, color, is_read: false, user_id: userId, type });
 }
 
@@ -65,7 +65,7 @@ export function NotificationProvider({ children, currentUser }) {
         id:     n.id,
         text:   n.text,
         time:   formatTime(n.created_at),
-        color:  n.color || "#CC1515",
+        color:  n.color || "#DC2626",
         unread: !n.is_read,
         type:   n.type || "general",
       })));
