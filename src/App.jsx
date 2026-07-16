@@ -318,7 +318,7 @@ export default function App() {
         name:         r.name,
         developer:    r.developer,
         location:     r.location,
-        locationLink: r.location_link || "",
+        locationLink: r.location_link || r.location_url || "",  // ✅ P2-3: دعم location_url (Flutter)
         category:     r.category,
         status:       r.status,
         statusColor:  r.status_color,
@@ -330,6 +330,11 @@ export default function App() {
         prevWork:     r.prev_work,
         maintenance:  r.maintenance,
         parking:      r.parking,
+        // ✅ P2-3: حقول إضافية (مطابقة Flutter)
+        consultant:         r.consultant || "",
+        loadingPercentage:  r.loading_percentage || null,
+        pricePerMeterFrom:  r.price_per_meter_from || null,
+        pricePerMeterTo:    r.price_per_meter_to || null,
         description:  r.description,
         coverVideo:   r.cover_video,
         coverThumb:   r.cover_thumb,
@@ -424,6 +429,11 @@ export default function App() {
       prev_work:     project.prevWork,
       maintenance:   project.maintenance,
       parking:       project.parking,
+      // ✅ P2-3: حقول إضافية (مطابقة Flutter)
+      consultant:           project.consultant || null,
+      loading_percentage:   project.loadingPercentage || null,
+      price_per_meter_from: project.pricePerMeterFrom || null,
+      price_per_meter_to:   project.pricePerMeterTo || null,
       description:   project.description,
       cover_video:   project.coverVideo,
       cover_thumb:   project.coverThumb,

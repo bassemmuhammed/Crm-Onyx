@@ -13,6 +13,7 @@ import {
 } from "./sharedLeadsData";
 import { BulkActionBar, SelectionCheckbox } from "./BulkOperations";
 import { C, shadows, layout, LEAD_STATUS_META } from "./theme";
+import { multiFieldSearch, isWithinDateRange } from "./searchUtils";
 
 // ─── STATUS_META (مأخوذ من theme.js — Light Theme backgrounds) ────
 const STATUS_META = {
@@ -987,6 +988,12 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [longPressTimer, setLongPressTimer] = useState(null);
 
+  // ✅ P2-4: Fuzzy Search + P2-5: Date Range Filter
+  const [fuzzySearch, setFuzzySearch] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [showDateFilter, setShowDateFilter] = useState(false);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     const [leadsData, teamData] = await Promise.all([fetchLeads(), fetchTeam()]);
@@ -1074,14 +1081,20 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
 
   // ✅ Move filtered/counts here (before bulk handlers that depend on `filtered`)
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
     return leads.filter(l => {
-      const ms = !q || (l.name||"").toLowerCase().includes(q) || (l.phone||"").includes(q) || (l.project||"").toLowerCase().includes(q);
+      // ✅ P2-4: Fuzzy search (multi-field: name, phone, project)
+      const ms = multiFieldSearch(
+        [l.name, l.phone, l.project],
+        search,
+        fuzzySearch
+      );
       const mst = statusFilter==="all" || l.status===statusFilter;
       const ma  = filterAgent==="all" || (filterAgent==="unassigned" ? !l.assignedTo : String(l.assignedTo)===String(filterAgent));
-      return ms && mst && ma;
+      // ✅ P2-5: Date range filter (على created_at)
+      const md = isWithinDateRange(l.createdAt || l.created_at, dateFrom, dateTo);
+      return ms && mst && ma && md;
     });
-  }, [leads, search, statusFilter, filterAgent]);
+  }, [leads, search, statusFilter, filterAgent, fuzzySearch, dateFrom, dateTo]);
 
   const counts = useMemo(() =>
     ALL_STATUSES.reduce((acc,s) => {
@@ -1338,6 +1351,98 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                       );
                     })}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* ✅ P2-4: Fuzzy Search toggle + P2-5: Date Range Filter */}
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+              {/* Fuzzy search toggle */}
+              <button
+                onClick={() => setFuzzySearch(v => !v)}
+                className="chip-btn"
+                style={{
+                  padding: "5px 10px", borderRadius: 6,
+                  border: `1px solid ${fuzzySearch ? C.red + "66" : C.border}`,
+                  background: fuzzySearch ? `${C.red}15` : C.cardAlt,
+                  color: fuzzySearch ? C.red : C.gray,
+                  fontSize: ".6rem", fontWeight: 700, cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                {fuzzySearch ? "🔍 Fuzzy: ON" : "🔍 Fuzzy: OFF"}
+              </button>
+
+              {/* Date range filter toggle */}
+              <button
+                onClick={() => setShowDateFilter(v => !v)}
+                className="chip-btn"
+                style={{
+                  padding: "5px 10px", borderRadius: 6,
+                  border: `1px solid ${(dateFrom || dateTo) ? C.red + "66" : C.border}`,
+                  background: (dateFrom || dateTo) ? `${C.red}15` : C.cardAlt,
+                  color: (dateFrom || dateTo) ? C.red : C.gray,
+                  fontSize: ".6rem", fontWeight: 700, cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                📅 {(dateFrom || dateTo) ? "Date: Filtered" : "Date: All"}
+              </button>
+
+              {/* Clear date filter */}
+              {(dateFrom || dateTo) && (
+                <button
+                  onClick={() => { setDateFrom(""); setDateTo(""); }}
+                  className="chip-btn"
+                  style={{
+                    padding: "5px 10px", borderRadius: 6,
+                    border: `1px solid ${C.border}`,
+                    background: C.cardAlt, color: C.gray,
+                    fontSize: ".6rem", fontWeight: 700, cursor: "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  ✕ Clear
+                </button>
+              )}
+            </div>
+
+            {/* Date range filter inputs */}
+            {showDateFilter && (
+              <div style={{
+                display: "flex", gap: 8, marginTop: 8,
+                padding: 10, background: C.cardAlt,
+                borderRadius: 8, border: `1px solid ${C.border}`,
+              }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: ".55rem", color: C.gray, fontWeight: 600, display: "block", marginBottom: 3 }}>
+                    From
+                  </label>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={e => setDateFrom(e.target.value)}
+                    style={{
+                      width: "100%", padding: "6px 8px", borderRadius: 6,
+                      border: `1px solid ${C.border}`, background: C.card,
+                      color: C.silver, fontSize: ".7rem",
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: ".55rem", color: C.gray, fontWeight: 600, display: "block", marginBottom: 3 }}>
+                    To
+                  </label>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={e => setDateTo(e.target.value)}
+                    style={{
+                      width: "100%", padding: "6px 8px", borderRadius: 6,
+                      border: `1px solid ${C.border}`, background: C.card,
+                      color: C.silver, fontSize: ".7rem",
+                    }}
+                  />
                 </div>
               </div>
             )}

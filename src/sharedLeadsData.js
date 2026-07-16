@@ -5,6 +5,7 @@
 //    (atomic + row lock) بدلاً من client-side read-compute-write.
 
 import { supabase } from "./lib/supabase";
+import { addLeadsListener, removeLeadsListener } from "./RealtimeHub";
 export { supabase };
 
 export const PROJECTS = ["Nile Heights", "Capital Hub", "Zed East", "Sky Plaza"];
@@ -300,36 +301,35 @@ export async function shareLead(leadId, toUserId) {
   return mapLead({ ...data, comments: [] });
 }
 
-// ── Subscribe to Realtime ────────────────────────────────────────────────
-// استخدمها في صفحة السيلز والأدمن عشان التحديثات تظهر فورًا
+// ── Subscribe to Realtime (P2-1: يستخدم RealtimeHub singleton) ──────
+// بدلاً من فتح channel منفصل لكل صفحة، يستخدم RealtimeHub المشترك
+// هذا يقلل عدد الـ connections من 4 إلى 1 (مطابق Flutter RealtimeHub)
 export function subscribeToLeads(onChange) {
-  const channel = supabase
-    .channel("leads-realtime")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "leads" },
-      async (payload) => {
-        if (payload.eventType === "INSERT") {
-          const lead = mapLead({ ...payload.new, comments: [] });
-          onChange({ type: "INSERT", lead });
-        }
-        if (payload.eventType === "UPDATE") {
-          const { data: comments } = await supabase
-            .from("lead_comments")
-            .select("id, text, by, time, created_at")
-            .eq("lead_id", payload.new.id)
-            .order("created_at", { ascending: false });
-          const lead = mapLead({ ...payload.new, comments: comments || [] });
-          onChange({ type: "UPDATE", lead });
-        }
-        if (payload.eventType === "DELETE") {
-          onChange({ type: "DELETE", id: payload.old.id });
-        }
-      }
-    )
-    .subscribe();
+  const owner = `subscribeToLeads-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-  return () => supabase.removeChannel(channel);
+  const listener = async (event) => {
+    if (event.type === "INSERT") {
+      const lead = mapLead({ ...event.newRecord, comments: [] });
+      onChange({ type: "INSERT", lead });
+    }
+    if (event.type === "UPDATE") {
+      const { data: comments } = await supabase
+        .from("lead_comments")
+        .select("id, text, by, time, created_at")
+        .eq("lead_id", event.newRecord.id)
+        .order("created_at", { ascending: false });
+      const lead = mapLead({ ...event.newRecord, comments: comments || [] });
+      onChange({ type: "UPDATE", lead });
+    }
+    if (event.type === "DELETE") {
+      onChange({ type: "DELETE", id: event.oldRecord.id });
+    }
+  };
+
+  addLeadsListener(owner, listener);
+
+  // إرجاع دالة إلغاء الاشتراك
+  return () => removeLeadsListener(owner);
 }
 
 // ── Helpers ─────────────────────────────────────────────

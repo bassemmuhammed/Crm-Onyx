@@ -40,12 +40,40 @@ async function fetchAdminIds() {
 }
 
 // ── 2) إرسال push للأدمن (يستدعي send-push Edge Function لكل أدمن) ──
+// ✅ P2-6: FCM Duplicate Prevention — deduplication باستخدام Set + TTL
+const _sentPushKeys = new Map(); // key → timestamp
+const DEDUP_TTL_MS = 5 * 60 * 1000; // 5 دقائق
+
+function _getDedupKey(adminId, data) {
+  // مفتاح فريد لكل (admin + lead + type) — يمنع تكرار نفس الإشعار
+  const leadId = data?.leadId || data?.leadName || "";
+  const type = data?.type || "general";
+  return `${adminId}:${type}:${leadId}`;
+}
+
+function _shouldSendPush(key) {
+  const now = Date.now();
+  const lastSent = _sentPushKeys.get(key);
+  if (lastSent && (now - lastSent) < DEDUP_TTL_MS) {
+    return false; // تم إرسال نفس الإشعار خلال 5 دقائق — تجاهل
+  }
+  _sentPushKeys.set(key, now);
+  // تنظيف المفاتيح القديمة (كل 100 إرسال)
+  if (_sentPushKeys.size > 100) {
+    for (const [k, t] of _sentPushKeys) {
+      if (now - t > DEDUP_TTL_MS) _sentPushKeys.delete(k);
+    }
+  }
+  return true;
+}
+
 async function invokeSendPushForAllAdmins({ title, body, data }) {
   const adminIds = await fetchAdminIds();
   const currentUserId = (await supabase.auth.getUser()).data?.user?.id;
 
   const promises = adminIds
     .filter(id => id !== currentUserId) // skip self
+    .filter(id => _shouldSendPush(_getDedupKey(id, data))) // ✅ P2-6: dedup
     .map(adminId =>
       invokeEdgeFunction("send-push", { user_id: adminId, title, body, data })
         .catch(err => console.warn(`send-push failed for admin ${adminId}:`, err))
