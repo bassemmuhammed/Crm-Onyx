@@ -10,9 +10,9 @@ import { C } from "./theme";
 const STATUS_META = {
   new:             { label: "New",             color: "#10b981", bg: "#10b98120" },
   callback:        { label: "Call Back",       color: "#f59e0b", bg: "#f59e0b20" },
-  pendingMeeting:  { label: "Pending Meeting", color: "#2563EB", bg: "#2563EB20" },
+  pendingMeeting:  { label: "Pending Meeting", color: "#4C8DFF", bg: "#4C8DFF20" },
   meetingDone:     { label: "Meeting Done",    color: "#a855f7", bg: "#a855f720" },
-  deal:            { label: "Deal",            color: "#DC2626", bg: "#DC262620" },
+  deal:            { label: "Deal",            color: "#E23A4E", bg: "#E23A4E20" },
   onGoing:         { label: "On Going",        color: "#06b6d4", bg: "#06b6d420" },
   lowBudget:       { label: "Low Budget",      color: "#f97316", bg: "#f9731620" },
   noAnswer:        { label: "No Answer",       color: "#8b949e", bg: "#8b949e20" },
@@ -29,8 +29,8 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: light only; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: dark only; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
   @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
   @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -46,9 +46,9 @@ const STYLES = `
   input[type=date]::-webkit-calendar-picker-indicator,
   input[type=time]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer;  }
   ::-webkit-scrollbar { width:0px }
-  input, select { color-scheme: light }
-  ::placeholder { color:#6B7280 !important; opacity:1 }
-  select option { background:#F9FAFB; color:#fff }
+  input, select { color-scheme: dark }
+  ::placeholder { color:#8B93A7 !important; opacity:1 }
+  select option { background:#1D2230; color:#fff }
 
   /* Body lock without layout shift */
   body.modal-open {
@@ -60,15 +60,15 @@ const STYLES = `
 
 const inputBase = {
   width:"100%", padding:"10px 14px", borderRadius:10,
-  border:`1.5px solid #E5E7EB`, outline:"none",
-  fontSize:".82rem", fontWeight:600, color:"#1A1A2E",
-  fontFamily:"Archivo, sans-serif", background:"#F9FAFB",
+  border:`1.5px solid #242938`, outline:"none",
+  fontSize:".82rem", fontWeight:600, color:"#F2F3F7",
+  fontFamily:"Inter, sans-serif", background:"#1D2230",
 };
 
 // ─── Divider (نفس الريفرنس) ───────────────────────────────────────
 const Div = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-    {label && <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
+    {label && <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
     <div style={{ flex:1, height:1, background:C.border }} />
   </div>
 );
@@ -203,15 +203,15 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 width:46, height:46, borderRadius:12, flexShrink:0,
                 background:C.black, border:`1px solid ${C.border}`,
                 display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
+                fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Inter,sans-serif",
               }}>{(local.name || "?").charAt(0)}</div>
               <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", alignItems:"center" }}>
-                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{local.name}</div>
-                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif", textAlign:"center" }}>{local.phone}</div>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{local.name}</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Inter,sans-serif", textAlign:"center" }}>{local.phone}</div>
               </div>
               <div style={{ background:C.card, borderRadius:6, padding:"5px 11px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
                 <div style={{ width:6, height:6, borderRadius:"50%", background:meta.color }} />
-                <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{meta.label}</span>
+                <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>{meta.label}</span>
               </div>
             </div>
 
@@ -224,7 +224,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 textDecoration:"none",
               }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
-                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>Call</span>
+                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>Call</span>
               </a>
               <a href={`https://wa.me/${(local.phone||"").replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer" style={{
                 flex:1, height:40, borderRadius:10, flexShrink:0,
@@ -233,7 +233,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 textDecoration:"none",
               }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
-                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>WhatsApp</span>
+                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>WhatsApp</span>
               </a>
               <button
                 className="tap-btn"
@@ -246,7 +246,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 }}
               >
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.silver}><path d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88.21,88.21,0,0,0-85.23,65.31,8,8,0,0,1-15.5-4A104.06,104.06,0,0,1,165,96h39.71L170.34,62.34a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM88,208H72a40,40,0,0,1,0-80H88a8,8,0,0,0,0-16H72a56,56,0,0,0,0,112H88a8,8,0,0,0,0-16Z"/></svg>
-                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>Share</span>
+                <span style={{ fontSize:".65rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>Share</span>
               </button>
             </div>
           </div>
@@ -256,7 +256,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
 
             {/* Status */}
             <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>STATUS</span>
+              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>STATUS</span>
               <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
             </div>
             <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
@@ -267,7 +267,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                   <button key={s} className="chip-btn" onClick={() => set("status", s)} style={{
                     padding:"6px 12px", borderRadius:6,
                     border:`1px solid ${active ? C.red+"66" : C.border}`,
-                    cursor:"pointer", fontFamily:"Archivo,sans-serif",
+                    cursor:"pointer", fontFamily:"Inter,sans-serif",
                     fontSize:".63rem", fontWeight:700,
                     background: active ? `${C.red}18` : C.cardAlt,
                     color: active ? C.white : C.gray,
@@ -284,22 +284,22 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
             {isCallback && (
               <>
                 <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-                  <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>CALLBACK SCHEDULE</span>
+                  <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>CALLBACK SCHEDULE</span>
                   <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
                 </div>
                 <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"14px 16px" }}>
                   <div style={{ display:"flex", gap:8 }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>DATE</div>
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>DATE</div>
                       <input type="date" value={local.callbackDate||""} onChange={e => set("callbackDate", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>TIME</div>
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>TIME</div>
                       <input type="time" value={local.callbackTime||""} onChange={e => set("callbackTime", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                   </div>
                   {local.callbackDate && local.callbackTime && (
-                    <div style={{ marginTop:8, fontSize:".7rem", color:C.silver, fontWeight:700, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
+                    <div style={{ marginTop:8, fontSize:".7rem", color:C.silver, fontWeight:700, fontFamily:"Inter,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
                       <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />
                       {new Date(`${local.callbackDate}T${local.callbackTime}`).toLocaleString("en-GB", { dateStyle:"medium", timeStyle:"short" })}
                     </div>
@@ -310,7 +310,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
 
             {/* Client */}
             <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>CLIENT</span>
+              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>CLIENT</span>
               <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
@@ -325,7 +325,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                     <button key={t.key} className="chip-btn" onClick={() => set("clientInfo", { ...local.clientInfo, type: t.key })} style={{
                       flex:1, padding:"8px 4px", borderRadius:9,
                       border:`1px solid ${active ? C.red+"66" : C.border}`, cursor:"pointer",
-                      fontFamily:"Archivo,sans-serif", fontSize:".68rem", fontWeight:700,
+                      fontFamily:"Inter,sans-serif", fontSize:".68rem", fontWeight:700,
                       background: active ? `${C.red}18` : C.cardAlt,
                       color: active ? C.white : C.gray,
                     }}>{t.label}</button>
@@ -342,7 +342,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
 
             {/* Comments */}
             <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>COMMENTS</span>
+              <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>COMMENTS</span>
               <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
             </div>
             <div style={{ display:"flex", gap:8 }}>
@@ -367,13 +367,13 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
             {local.comments.length > 0
               ? local.comments.map(c => (
                   <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:7, padding:"8px 12px 6px" }}>
-                    <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                    <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Inter,sans-serif" }}>{c.text}</div>
+                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:3, display:"flex", justifyContent:"space-between", fontFamily:"Inter,sans-serif" }}>
                       <span>{c.by || "Me"}</span><span>{c.time}</span>
                     </div>
                   </div>
                 ))
-              : <div style={{ textAlign:"center", padding:"8px 0", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif" }}>No comments yet</div>
+              : <div style={{ textAlign:"center", padding:"8px 0", color:C.gray, fontSize:".68rem", fontFamily:"Inter,sans-serif" }}>No comments yet</div>
             }
 
             <div style={{ height:8 }} />
@@ -385,13 +385,13 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
               <button onClick={onClose} style={{
                 flex:1, padding:"11px 0", borderRadius:10,
                 border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray,
-                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
+                fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
               }}>Close</button>
               <button className="tap-btn" onClick={handleSave} disabled={saving} style={{
                 flex:2, padding:"11px 0", borderRadius:10, border:"none",
                 background: saving ? C.gray : C.red,
                 color:"#fff", boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
-                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
+                fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
               }}>{saving ? "Saving..." : "Save Changes"}</button>
             </div>
           </div>
@@ -419,7 +419,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <div style={{ fontSize: ".85rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".85rem", fontWeight: 800, color: C.white, fontFamily: "Inter,sans-serif" }}>
                 Share Lead
               </div>
               <div
@@ -433,7 +433,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                 }}
               >✕</div>
             </div>
-            <div style={{ fontSize: ".62rem", color: C.gray, marginBottom: 12, fontFamily: "Archivo,sans-serif" }}>
+            <div style={{ fontSize: ".62rem", color: C.gray, marginBottom: 12, fontFamily: "Inter,sans-serif" }}>
               Select a sales agent to transfer "{local?.name}" to them. This lead will be removed from your list.
             </div>
             {sharing ? (
@@ -454,7 +454,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
                       display: "flex", alignItems: "center", gap: 10,
                       padding: "10px 12px", borderRadius: 10,
                       background: C.cardAlt, border: `1px solid ${C.border}`,
-                      cursor: "pointer", fontFamily: "Archivo,sans-serif",
+                      cursor: "pointer", fontFamily: "Inter,sans-serif",
                     }}
                   >
                     <div style={{
@@ -515,7 +515,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             width:40, height:40, borderRadius:10, flexShrink:0,
             background: C.black, border:`1px solid ${C.border}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
+            fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Inter,sans-serif",
           }}>{initial}</div>
 
           {/* Name + phone — absolutely centered in the whole row */}
@@ -524,8 +524,8 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             display:"flex", flexDirection:"column", alignItems:"center",
             pointerEvents:"none",
           }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.phone}</div>
+            <div style={{ fontFamily:"Inter,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Inter,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.phone}</div>
           </div>
 
           {/* Spacer */}
@@ -570,7 +570,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
           <div style={{
             fontSize:".68rem", fontWeight:700, color:C.white,
             background:C.cardAlt, padding:"6px 12px", borderRadius:7,
-            border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+            border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
             display:"flex", alignItems:"center", gap:6,
           }}>
             <div style={{ width:7, height:7, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
@@ -581,7 +581,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.silver,
               background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
             }}>
               {new Date(`${lead.callbackDate}T${lead.callbackTime}`).toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" })}
             </div>
@@ -591,7 +591,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.silver,
               background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Archivo,sans-serif",
+              border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
             }}>💰 {lead.clientInfo.budget}</div>
           )}
 
@@ -600,7 +600,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
             <div style={{
               fontSize:".58rem", fontWeight:800, color:"#10b981",
               background:"#10b98118", padding:"3px 8px", borderRadius:5,
-              border:"1px solid #10b98144", fontFamily:"Archivo,sans-serif",
+              border:"1px solid #10b98144", fontFamily:"Inter,sans-serif",
               letterSpacing:.4, animation:"pulse2 2s ease infinite",
             }}>✦ NEW</div>
           )}
@@ -723,9 +723,9 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
 
   return (
     <div style={{
-      fontFamily:"Archivo,sans-serif",
+      fontFamily:"Inter,sans-serif",
       color:C.white,
-      colorScheme:"light", userSelect:"none", WebkitUserSelect:"none",
+      colorScheme:"dark", userSelect:"none", WebkitUserSelect:"none",
     }}>
       <style>{STYLES}</style>
 
@@ -748,7 +748,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
 
         {/* Filter row */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ fontSize:".72rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>
+          <div style={{ fontSize:".72rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>
             {filtered.length} results
             {statusFilter !== "all" && <span style={{ color:C.gray }}> · {STATUS_META[statusFilter]?.label}</span>}
           </div>
@@ -758,7 +758,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
             border:`1px solid ${showFilters ? C.red+"44" : C.border}`,
             background: showFilters ? `${C.red}12` : C.card,
             color: showFilters ? C.red : C.gray,
-            fontFamily:"Archivo,sans-serif", fontSize:".65rem", fontWeight:700, cursor:"pointer",
+            fontFamily:"Inter,sans-serif", fontSize:".65rem", fontWeight:700, cursor:"pointer",
           }}>
             <svg width="10" height="10" viewBox="0 0 256 256" fill="currentColor"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53Z"/></svg>
             Filter {showFilters ? "▲" : "▼"}
@@ -776,7 +776,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
                   <button key={s} className="chip-btn" onClick={() => setStatus(s)} style={{
                     padding:"5px 10px", borderRadius:6,
                     border:`1px solid ${active ? C.red+"66" : C.border}`,
-                    cursor:"pointer", fontFamily:"Archivo,sans-serif", fontSize:".62rem", fontWeight:700,
+                    cursor:"pointer", fontFamily:"Inter,sans-serif", fontSize:".62rem", fontWeight:700,
                     background: active ? `${C.red}15` : C.cardAlt,
                     color: active ? C.white : C.gray,
                     display:"flex", alignItems:"center", gap:5,
@@ -793,9 +793,9 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         {/* Lead list */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"fadeInUp .3s ease" }}>⏳ Loading your leads...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"fadeInUp .3s ease" }}>⏳ Loading your leads...</div>
             : filtered.length === 0
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif" }}>No leads found 🔍</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found 🔍</div>
             : filtered.map((lead, i) => (
                 <div key={lead.id} className="lead-item" style={{ animationDelay:`${i * 22}ms` }}>
                   <LeadCard lead={lead} onClick={() => openDetail(lead)} />

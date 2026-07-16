@@ -38,8 +38,8 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: light only; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: dark only; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes slideUp  { from { transform:translateY(100%) } to { transform:translateY(0) } }
   @keyframes fadeIn   { from { opacity:0 } to { opacity:1 } }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:translateY(0) } }
@@ -57,10 +57,10 @@ const STYLES = `
   ::-webkit-scrollbar { width: 8px; height: 8px }
   ::-webkit-scrollbar-track { background: transparent }
   ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px }
-  ::-webkit-scrollbar-thumb:hover { background: #9CA3AF }
-  input,select { color-scheme: light }
-  ::placeholder { color: #9CA3AF !important; opacity: 1 }
-  select option { background: #FFFFFF; color: #1A1A2E }
+  ::-webkit-scrollbar-thumb:hover { background: #5B6478 }
+  input,select { color-scheme: dark }
+  ::placeholder { color: #5B6478 !important; opacity: 1 }
+  select option { background: #171B24; color: #F2F3F7 }
 
   @keyframes spin { to { transform:rotate(360deg) } }
 
@@ -73,9 +73,9 @@ const STYLES = `
 
 const inputBase = {
   width:"100%", padding:"10px 14px", borderRadius:10,
-  border:`1.5px solid #E5E7EB`, outline:"none",
-  fontSize:".82rem", fontWeight:600, color:"#1A1A2E",
-  fontFamily:"Archivo, sans-serif", background:"#F9FAFB",
+  border:`1.5px solid #242938`, outline:"none",
+  fontSize:".82rem", fontWeight:600, color:"#F2F3F7",
+  fontFamily:"Inter, sans-serif", background:"#1D2230",
 };
 
 // ─── Loading Bar ──────────────────────────────────────────────────
@@ -96,7 +96,7 @@ function LoadingBar({ show }) {
 // ─── Section Header (نفس LeadsPage بالظبط) ───────────────────────
 const SectionHeader = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-    <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>
+    <span style={{ fontSize:".6rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>
     <div style={{ flex:1, height:1, background:`linear-gradient(90deg, ${C.red}88 0%, transparent 100%)` }} />
   </div>
 );
@@ -219,19 +219,19 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 width:46, height:46, borderRadius:12, flexShrink:0,
                 background:C.black, border:`1px solid ${C.border}`,
                 display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Archivo,sans-serif",
+                fontSize:"1.1rem", fontWeight:900, color:C.white, fontFamily:"Inter,sans-serif",
               }}>{(local.name||"?").charAt(0)}</div>
 
               {/* Name + phone — CENTERED */}
               <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
-                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
-                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>{local.phone}</div>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{local.name}</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Inter,sans-serif" }}>{local.phone}</div>
               </div>
 
               {/* Status pill */}
               <div style={{ background:C.card, borderRadius:6, padding:"5px 11px", border:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
                 <div style={{ width:6, height:6, borderRadius:"50%", background:meta.color }} />
-                <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>{meta.label}</span>
+                <span style={{ fontSize:".6rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>{meta.label}</span>
               </div>
             </div>
           </div>
@@ -262,10 +262,10 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <div style={{ width:30, height:30, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
               </div>
-              <span style={{ fontSize:".75rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
+              <span style={{ fontSize:".75rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Inter,sans-serif", flex:1 }}>
                 {agent ? agent.name : "Assign Sales"}
               </span>
-              {agent && <span style={{ fontSize:".6rem", color:C.gray, fontWeight:700, fontFamily:"Archivo,sans-serif" }}>Change →</span>}
+              {agent && <span style={{ fontSize:".6rem", color:C.gray, fontWeight:700, fontFamily:"Inter,sans-serif" }}>Change →</span>}
               {!agent && <svg width="12" height="12" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>}
             </div>
 
@@ -279,7 +279,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                   <button key={s} className="chip-btn" onClick={() => set("status", s)} style={{
                     padding:"5px 10px", borderRadius:6,
                     border:`1px solid ${active ? C.red+"66" : C.border}`,
-                    cursor:"pointer", fontFamily:"Archivo,sans-serif",
+                    cursor:"pointer", fontFamily:"Inter,sans-serif",
                     fontSize:".63rem", fontWeight:700,
                     background: active ? `${C.red}18` : C.cardAlt,
                     color: active ? C.white : C.gray,
@@ -299,16 +299,16 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"12px 14px" }}>
                   <div style={{ display:"flex", gap:8 }}>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>DATE</div>
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>DATE</div>
                       <input type="date" value={local.callbackDate||""} onChange={e => set("callbackDate", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                     <div style={{ flex:1 }}>
-                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>TIME</div>
+                      <div style={{ fontSize:".6rem", color:C.gray, fontWeight:700, marginBottom:5, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>TIME</div>
                       <input type="time" value={local.callbackTime||""} onChange={e => set("callbackTime", e.target.value)} style={{ ...inputBase, fontSize:".8rem" }} />
                     </div>
                   </div>
                   {local.callbackDate && local.callbackTime && (
-                    <div style={{ marginTop:8, fontSize:".7rem", color:C.silver, fontWeight:700, fontFamily:"Archivo,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
+                    <div style={{ marginTop:8, fontSize:".7rem", color:C.silver, fontWeight:700, fontFamily:"Inter,sans-serif", display:"flex", alignItems:"center", gap:5 }}>
                       <div style={{ width:5, height:5, borderRadius:"50%", background:C.red }} />
                       {new Date(`${local.callbackDate}T${local.callbackTime}`).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
                     </div>
@@ -332,7 +332,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                     <button key={t.key} className="chip-btn" onClick={() => set("clientInfo",{...local.clientInfo, type:t.key})} style={{
                       flex:1, padding:"7px 4px", borderRadius:9,
                       border:`1px solid ${active ? C.red+"66" : C.border}`, cursor:"pointer",
-                      fontFamily:"Archivo,sans-serif", fontSize:".68rem", fontWeight:700,
+                      fontFamily:"Inter,sans-serif", fontSize:".68rem", fontWeight:700,
                       background: active ? `${C.red}18` : C.cardAlt,
                       color: active ? C.white : C.gray,
                       transition:"all .15s",
@@ -373,13 +373,13 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             {local.comments.length > 0
               ? local.comments.map(c => (
                   <div key={c.id} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:7, padding:"5px 9px 3px" }}>
-                    <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Archivo,sans-serif" }}>{c.text}</div>
-                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:1, display:"flex", justifyContent:"space-between", fontFamily:"Archivo,sans-serif" }}>
+                    <div style={{ fontSize:".68rem", color:C.silver, fontWeight:600, lineHeight:1.4, fontFamily:"Inter,sans-serif" }}>{c.text}</div>
+                    <div style={{ fontSize:".52rem", color:C.gray, marginTop:1, display:"flex", justifyContent:"space-between", fontFamily:"Inter,sans-serif" }}>
                       <span>{c.by}</span><span>{c.time}</span>
                     </div>
                   </div>
                 ))
-              : <div style={{ textAlign:"center", padding:"4px 0", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif" }}>No comments yet</div>
+              : <div style={{ textAlign:"center", padding:"4px 0", color:C.gray, fontSize:".68rem", fontFamily:"Inter,sans-serif" }}>No comments yet</div>
             }
 
             <div style={{ height:2 }} />
@@ -398,7 +398,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                         borderLeft: `3px solid #f59e0b`,
                         borderRadius: 10,
                         padding: "9px 11px",
-                        fontFamily: "Archivo, sans-serif",
+                        fontFamily: "Inter, sans-serif",
                       }}>
                         {/* Header: من + امتى */}
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: hasChanges || entry.comment ? 7 : 0 }}>
@@ -406,7 +406,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                             <svg width="10" height="10" viewBox="0 0 256 256" fill={C.amber}><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
                             {entry.by || "Unknown"}
                           </span>
-                          <span style={{ fontSize:".58rem", color: C.gray, fontFamily:"Archivo,sans-serif" }}>
+                          <span style={{ fontSize:".58rem", color: C.gray, fontFamily:"Inter,sans-serif" }}>
                             {new Date(entry.at).toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" })}
                           </span>
                         </div>
@@ -416,7 +416,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                           <div key={j} style={{
                             display:"flex", alignItems:"center", gap:5, flexWrap:"wrap",
                             fontSize:".65rem", marginBottom: j < entry.changes.length - 1 ? 4 : 0,
-                            fontFamily:"Archivo,sans-serif",
+                            fontFamily:"Inter,sans-serif",
                           }}>
                             <span style={{ color: C.gray, minWidth:60 }}>{c.field}:</span>
                             <span style={{
@@ -442,7 +442,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                             borderRadius: 6, padding: "5px 9px",
                             borderLeft: `2px solid ${C.blue}`,
                             lineHeight: 1.5,
-                            fontFamily:"Archivo,sans-serif",
+                            fontFamily:"Inter,sans-serif",
                           }}>
                             <span style={{ color: C.blue, fontWeight:700, marginRight:4 }}>💬</span>
                             {entry.comment}
@@ -462,8 +462,8 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.cardAlt }}>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Confirm permanent delete?</span>
-                <button onClick={() => setConfirmDel(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.gray, fontSize:".68rem", fontFamily:"Archivo,sans-serif", fontWeight:700 }}>Cancel ✕</button>
+                <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Inter,sans-serif" }}>Confirm permanent delete?</span>
+                <button onClick={() => setConfirmDel(false)} style={{ background:"none", border:"none", cursor:"pointer", color:C.gray, fontSize:".68rem", fontFamily:"Inter,sans-serif", fontWeight:700 }}>Cancel ✕</button>
               </div>
             )}
             <div style={{ display:"flex", gap:7, alignItems:"center" }}>
@@ -483,14 +483,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <button onClick={onClose} style={{
                 flex:1, padding:"9px 0", borderRadius:9,
                 border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray,
-                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
+                fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
               }}>Close</button>
               {/* Save */}
               <button className="tap-btn" onClick={handleSave} disabled={saving} style={{
                 flex:2, padding:"9px 0", borderRadius:9, border:"none",
                 background: saving ? C.gray : C.red,
                 color:C.white, boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
-                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
+                fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
               }}>{saving ? "Saving..." : "Save Changes"}</button>
             </div>
           </div>
@@ -515,7 +515,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <div style={{ width:32, height:3, borderRadius:99, background:C.border }} />
             </div>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-              <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Add Comment</div>
+              <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>Add Comment</div>
               <div onClick={() => { setCommentOpen(false); setComment(""); }} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
             </div>
             <textarea
@@ -530,13 +530,13 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
             <div style={{ display:"flex", gap:8, marginTop:10 }}>
               <button onClick={() => { setCommentOpen(false); setComment(""); }} style={{
                 flex:1, padding:"10px 0", borderRadius:10, border:`1px solid ${C.border}`,
-                background:C.cardAlt, color:C.gray, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
+                background:C.cardAlt, color:C.gray, fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer",
               }}>Cancel</button>
               <button className="tap-btn" onClick={handleAddComment} disabled={!comment.trim()} style={{
                 flex:2, padding:"10px 0", borderRadius:10, border:"none",
                 background: comment.trim() ? C.red : C.cardAlt,
                 color: comment.trim() ? C.white : C.gray,
-                fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor: comment.trim() ? "pointer" : "default",
+                fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:800, cursor: comment.trim() ? "pointer" : "default",
                 boxShadow: comment.trim() ? `0 4px 14px ${C.red}44` : "none",
               }}>Add Comment</button>
             </div>
@@ -561,7 +561,7 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
         </div>
         <div style={{ padding:"12px 16px 24px", display:"flex", flexDirection:"column", gap:8 }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:2 }}>
-            <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Assign Sales</div>
+            <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>Assign Sales</div>
             <div onClick={onClose} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
           </div>
           {/* Agent chips — same style as status chips */}
@@ -577,13 +577,13 @@ function AssignModal({ lead, onClose, onAssign, onUnassign, team }) {
                   cursor:"pointer",
                 }}>
                   <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />
-                  <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{agent.name}</span>
+                  <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Inter,sans-serif" }}>{agent.name}</span>
                 </div>
               );
             })}
           </div>
           {lead.assignedTo && (
-            <div onClick={onUnassign} style={{ textAlign:"center", fontSize:".62rem", color:C.red, fontWeight:700, cursor:"pointer", padding:"4px 0", fontFamily:"Archivo,sans-serif" }}>
+            <div onClick={onUnassign} style={{ textAlign:"center", fontSize:".62rem", color:C.red, fontWeight:700, cursor:"pointer", padding:"4px 0", fontFamily:"Inter,sans-serif" }}>
               Remove Assignment ✕
             </div>
           )}
@@ -629,13 +629,13 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             width:40, height:40, borderRadius:10, flexShrink:0,
             background: C.cardAlt, border:`1px solid ${C.border}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:".95rem", fontWeight:900, color:C.red, fontFamily:"Archivo,sans-serif",
+            fontSize:".95rem", fontWeight:900, color:C.red, fontFamily:"Inter,sans-serif",
           }}>{initial}</div>
 
           {/* Name + phone */}
           <div style={{ flex:1, minWidth:0, textAlign:"center" }}>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontWeight:800, fontSize:".88rem", color:C.silver, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Archivo,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
+            <div style={{ fontFamily:"Inter,sans-serif", fontWeight:800, fontSize:".88rem", color:C.silver, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"Inter,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
           {/* Call button — ✅ Light theme: gray bg, darker on hover */}
@@ -675,7 +675,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
           <div style={{
             fontSize:".68rem", fontWeight:700, color: meta.color,
             background: meta.bg, padding:"4px 12px", borderRadius: layout.pillRadius,
-            fontFamily:"Archivo,sans-serif",
+            fontFamily:"Inter,sans-serif",
             display:"flex", alignItems:"center", gap:6,
           }}>
             <div style={{ width:7, height:7, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
@@ -687,7 +687,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.gray,
               background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
             }}>
               {new Date(`${lead.callbackDate}T${lead.callbackTime}`).toLocaleString("en-GB",{dateStyle:"short",timeStyle:"short"})}
             </div>
@@ -698,13 +698,13 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.silver,
               background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
             }}>{agent.name.split(" ")[0]}</div>
           ) : (
             <div style={{
               fontSize:".6rem", color:C.muted,
               background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
-              border:`1px dashed ${C.border}`, fontFamily:"Archivo,sans-serif",
+              border:`1px dashed ${C.border}`, fontFamily:"Inter,sans-serif",
             }}>غير موزع</div>
           )}
 
@@ -713,7 +713,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             <div style={{
               fontSize:".6rem", fontWeight:600, color:C.gray,
               background: C.cardAlt, padding:"4px 12px", borderRadius: layout.pillRadius,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
               display:"flex", alignItems:"center", gap:5,
             }}>
               <svg width="9" height="9" viewBox="0 0 256 256" fill={C.gray}><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
@@ -749,7 +749,7 @@ function ModalWrap({ onClose, title, children }) {
         onTouchMove={e=>e.stopPropagation()}
         style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:"22px 22px 0 0", width:"100%", maxWidth:430, maxHeight:"88vh", overflowY:"auto", padding:"20px 16px 24px", boxShadow:`0 -8px 40px rgba(204,21,21,.18)` }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
-          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>{title}</div>
+          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>{title}</div>
           <div onClick={onClose} style={{ width:28, height:28, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".75rem", color:C.gray }}>✕</div>
         </div>
         {children}
@@ -761,7 +761,7 @@ function ModalWrap({ onClose, title, children }) {
 function Field({ label, value, onChange, placeholder, type="text" }) {
   return (
     <div style={{ marginBottom:10 }}>
-      <div style={{ fontSize:".6rem", fontWeight:700, color:C.gray, marginBottom:4, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>{label}</div>
+      <div style={{ fontSize:".6rem", fontWeight:700, color:C.gray, marginBottom:4, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>{label}</div>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} style={{ ...inputBase }} />
     </div>
   );
@@ -776,7 +776,7 @@ function PrimaryBtn({ label, onClick, disabled }) {
       borderRadius:10, padding:"11px 0", textAlign:"center",
       fontSize:".75rem", fontWeight:800, cursor: disabled ? "default" : "pointer",
       boxShadow: disabled ? "none" : `0 4px 14px ${C.red}44`,
-      transition:"all .2s", fontFamily:"Archivo,sans-serif",
+      transition:"all .2s", fontFamily:"Inter,sans-serif",
       marginTop:4,
     }}>{label}</div>
   );
@@ -827,17 +827,17 @@ function ExcelModal({ onClose, onAdd }) {
             <div style={{ display:"flex", justifyContent:"center", marginBottom:8 }}>
               <svg width="28" height="28" viewBox="0 0 256 256" fill={C.white}><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-45.54-48.87L136,195.31l-18.46-28.18a8,8,0,1,0-13.08,9.18L124.69,208l-20.23,31.69a8,8,0,1,0,13.08,9.18L136,220.69l18.46,28.18a8,8,0,0,0,13.08-9.18L147.31,208l20.23-31.69a8,8,0,0,0-13.08-9.18Z"/></svg>
             </div>
-            <div style={{ fontSize:".72rem", fontWeight:700, color:C.white, fontFamily:"Archivo,sans-serif" }}>Tap to upload CSV</div>
-            <div style={{ fontSize:".58rem", color:C.gray, marginTop:2, fontFamily:"Archivo,sans-serif" }}>CSV (name, phone, project)</div>
+            <div style={{ fontSize:".72rem", fontWeight:700, color:C.white, fontFamily:"Inter,sans-serif" }}>Tap to upload CSV</div>
+            <div style={{ fontSize:".58rem", color:C.gray, marginTop:2, fontFamily:"Inter,sans-serif" }}>CSV (name, phone, project)</div>
           </div>
           <input ref={fileRef} type="file" accept=".csv" style={{ display:"none" }} onChange={handleFile} />
           {rows.length > 0 && (
             <>
-              <div style={{ fontSize:".62rem", color:C.red, fontWeight:700, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>✓ {rows.length} leads ready</div>
+              <div style={{ fontSize:".62rem", color:C.red, fontWeight:700, marginBottom:8, fontFamily:"Inter,sans-serif" }}>✓ {rows.length} leads ready</div>
               {rows.slice(0,4).map((r,i) => (
-                <div key={i} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"7px 10px", marginBottom:5, fontSize:".62rem", color:C.silver, fontFamily:"Archivo,sans-serif" }}>{r.name} — {r.phone}</div>
+                <div key={i} style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`2px solid ${C.red}44`, borderRadius:8, padding:"7px 10px", marginBottom:5, fontSize:".62rem", color:C.silver, fontFamily:"Inter,sans-serif" }}>{r.name} — {r.phone}</div>
               ))}
-              {rows.length > 4 && <div style={{ fontSize:".58rem", color:C.gray, marginBottom:8, fontFamily:"Archivo,sans-serif" }}>and {rows.length - 4} more...</div>}
+              {rows.length > 4 && <div style={{ fontSize:".58rem", color:C.gray, marginBottom:8, fontFamily:"Inter,sans-serif" }}>and {rows.length - 4} more...</div>}
               <PrimaryBtn label={loading ? "Importing..." : `Import ${rows.length} Leads`} disabled={loading} onClick={async () => {
                 setLoading(true); for (const r of rows) await onAdd({...r,source:"excel"}); setLoading(false); setDone(true);
               }} />
@@ -849,7 +849,7 @@ function ExcelModal({ onClose, onAdd }) {
           <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}>
             <svg width="36" height="36" viewBox="0 0 256 256" fill={C.red}><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>
           </div>
-          <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", marginBottom:14 }}>Import successful!</div>
+          <div style={{ fontSize:".8rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", marginBottom:14 }}>Import successful!</div>
           <PrimaryBtn label="Close" onClick={onClose} />
         </div>
       )}
@@ -866,8 +866,8 @@ function FacebookModal({ onClose }) {
             <svg width="22" height="22" viewBox="0 0 256 256" fill={C.white}><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>
           </div>
         </div>
-        <div style={{ fontSize:".75rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", marginBottom:4 }}>Facebook Lead Ads</div>
-        <div style={{ fontSize:".62rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>Facebook API integration coming soon</div>
+        <div style={{ fontSize:".75rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", marginBottom:4 }}>Facebook Lead Ads</div>
+        <div style={{ fontSize:".62rem", color:C.gray, fontFamily:"Inter,sans-serif" }}>Facebook API integration coming soon</div>
       </div>
       <PrimaryBtn label="Close" onClick={onClose} />
     </ModalWrap>
@@ -887,14 +887,14 @@ function DeletePopup({ lead, onConfirm, onCancel }) {
       }}>
         <div style={{ textAlign:"center", marginBottom:18 }}>
           <div style={{ fontSize:"1.8rem", marginBottom:8 }}>🗑️</div>
-          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", marginBottom:6 }}>حذف الليد</div>
-          <div style={{ fontSize:".7rem", color:C.gray, fontFamily:"Archivo,sans-serif", lineHeight:1.6 }}>
+          <div style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", marginBottom:6 }}>حذف الليد</div>
+          <div style={{ fontSize:".7rem", color:C.gray, fontFamily:"Inter,sans-serif", lineHeight:1.6 }}>
             هل أنت متأكد من حذف <span style={{ color:C.white, fontWeight:700 }}>{lead.name}</span>؟<br/>الإجراء لا يمكن التراجع عنه.
           </div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
-          <button onClick={onCancel} style={{ flex:1, padding:"10px 0", borderRadius:10, border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer" }}>إلغاء</button>
-          <button onClick={onConfirm} style={{ flex:1, padding:"10px 0", borderRadius:10, border:"none", background:C.red, color:C.white, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer", boxShadow:`0 4px 12px ${C.red}44` }}>حذف نهائياً</button>
+          <button onClick={onCancel} style={{ flex:1, padding:"10px 0", borderRadius:10, border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray, fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer" }}>إلغاء</button>
+          <button onClick={onConfirm} style={{ flex:1, padding:"10px 0", borderRadius:10, border:"none", background:C.red, color:C.white, fontFamily:"Inter,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer", boxShadow:`0 4px 12px ${C.red}44` }}>حذف نهائياً</button>
         </div>
       </div>
     </div>
@@ -939,7 +939,7 @@ function FabChooserModal({ onClose, onChoose }) {
           <div style={{ width:32, height:3, borderRadius:99, background:C.border }} />
         </div>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-          <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Add New Lead</div>
+          <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>Add New Lead</div>
           <div onClick={onClose} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
         </div>
         <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
@@ -953,7 +953,7 @@ function FabChooserModal({ onClose, onChoose }) {
               <div style={{ width:30, height:30, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 {b.icon}
               </div>
-              <span style={{ fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif", flex:1 }}>{b.label}</span>
+              <span style={{ fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif", flex:1 }}>{b.label}</span>
               <svg width="11" height="11" viewBox="0 0 256 256" fill={C.gray}><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
             </div>
           ))}
@@ -1210,10 +1210,10 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
 
   const page = (
     <div style={{
-      fontFamily:"Archivo, sans-serif",
+      fontFamily:"Inter, sans-serif",
       background:"transparent",
       color:C.silver,  // ✅ Light theme: text primary
-      colorScheme:"light",
+      colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column",
       minHeight:"100%",
@@ -1267,7 +1267,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
 
         {/* Filter row */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-          <div style={{ fontSize:".72rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif" }}>
+          <div style={{ fontSize:".72rem", fontWeight:700, color:C.silver, fontFamily:"Inter,sans-serif" }}>
             {filtered.length} results
             {statusFilter!=="all" && <span style={{ color:C.gray }}> · {STATUS_META[statusFilter]?.label}</span>}
           </div>
@@ -1277,7 +1277,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
             border:`1px solid ${showFilters ? C.red+"44" : C.border}`,
             background: showFilters ? `${C.red}12` : C.card,
             color: showFilters ? C.red : C.gray,
-            fontFamily:"Archivo,sans-serif", fontSize:".65rem", fontWeight:700, cursor:"pointer",
+            fontFamily:"Inter,sans-serif", fontSize:".65rem", fontWeight:700, cursor:"pointer",
           }}>
             <svg width="10" height="10" viewBox="0 0 256 256" fill="currentColor"><path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53Z"/></svg>
             Filter {showFilters ? "▲" : "▼"}
@@ -1295,7 +1295,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                   <button key={s} className="chip-btn" onClick={()=>setStatus(s)} style={{
                     padding:"5px 10px", borderRadius:6,
                     border:`1px solid ${active ? C.red+"66" : C.border}`,
-                    cursor:"pointer", fontFamily:"Archivo,sans-serif", fontSize:".62rem", fontWeight:700,
+                    cursor:"pointer", fontFamily:"Inter,sans-serif", fontSize:".62rem", fontWeight:700,
                     background: active ? `${C.red}15` : C.cardAlt,
                     color: active ? C.white : C.gray,
                     display:"flex", alignItems:"center", gap:5,
@@ -1315,7 +1315,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
               cursor:"pointer", alignSelf:"flex-start",
             }}>
               <svg width="10" height="10" viewBox="0 0 256 256" fill={filterAgent!=="all" ? C.red : C.gray}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
-              <span style={{ fontSize:".65rem", fontWeight:700, color: filterAgent!=="all" ? C.red : C.gray, fontFamily:"Archivo,sans-serif" }}>
+              <span style={{ fontSize:".65rem", fontWeight:700, color: filterAgent!=="all" ? C.red : C.gray, fontFamily:"Inter,sans-serif" }}>
                 {filterAgent==="all" ? "All Sales" : filterAgent==="unassigned" ? "Unassigned" : team.find(t=>t.id===filterAgent)?.name || "All Sales"}
               </span>
             </div>
@@ -1327,7 +1327,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
               >
                 <div onClick={e=>e.stopPropagation()} style={{ background:C.card, border:`1px solid ${C.border}`, borderTop:`2px solid ${C.red}`, borderRadius:20, padding:"20px 16px", width:"100%", maxWidth:360, boxShadow:`0 8px 40px rgba(204,21,21,.2)` }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-                    <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>Filter by Sales</div>
+                    <div style={{ fontSize:".82rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>Filter by Sales</div>
                     <div onClick={() => setAgentPickerOpen(false)} style={{ width:26, height:26, borderRadius:7, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:".7rem", color:C.gray }}>✕</div>
                   </div>
                   <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
@@ -1346,7 +1346,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                           cursor:"pointer",
                         }}>
                           {active && <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />}
-                          <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Archivo,sans-serif" }}>{opt.name}</span>
+                          <span style={{ fontSize:".63rem", fontWeight:700, color: active ? C.white : C.gray, fontFamily:"Inter,sans-serif" }}>{opt.name}</span>
                         </div>
                       );
                     })}
@@ -1452,9 +1452,9 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         {/* Lead list */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom: selectionMode ? 180 : 100 }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
             : filtered.length===0
-              ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif" }}>No leads found 🔍</div>
+              ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found 🔍</div>
               : filtered.map((lead,i) => (
                   <div
                     key={lead.id}
@@ -1541,7 +1541,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
             touchAction:"none",
           }}
         >
-          <svg width="22" height="22" viewBox="0 0 256 256" fill="#FFFFFF"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 256 256" fill="#171B24"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
         </div>
       )}
     </>

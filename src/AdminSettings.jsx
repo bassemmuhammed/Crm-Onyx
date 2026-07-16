@@ -11,9 +11,9 @@ import { invokeEdgeFunction } from "./lib/edgeFunction";
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: light only; }
-  html, body { margin:0; padding:0; background:#F5F6FA; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: dark only; }
+  html, body { margin:0; padding:0; background:#0B0D12; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   .section-card { animation: fadeInUp .3s ease both; }
   .tap-btn { transition: all .15s ease; }
@@ -21,23 +21,23 @@ const STYLES = `
   input, select, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-appearance: none; appearance: none; }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#E23A4E; border-radius:99px }
 `;
 
 // ─── Input Style ──────────────────────────────────────────────────
 const inputStyle = {
   width: "100%", padding: "10px 14px", borderRadius: 10,
-  border: `1.5px solid #E5E7EB`, outline: "none",
-  fontSize: ".82rem", fontWeight: 600, color: "#1A1A2E",
-  fontFamily: "Archivo, sans-serif", background: "#F9FAFB",
+  border: `1.5px solid #242938`, outline: "none",
+  fontSize: ".82rem", fontWeight: 600, color: "#F2F3F7",
+  fontFamily: "Inter, sans-serif", background: "#1D2230",
   boxSizing: "border-box",
 };
 
 // ─── Label Style ──────────────────────────────────────────────────
 const labelStyle = {
-  fontSize: ".6rem", fontWeight: 700, color: "#6B7280",
+  fontSize: ".6rem", fontWeight: 700, color: "#8B93A7",
   textTransform: "uppercase", letterSpacing: 0.6,
-  marginBottom: 5, display: "block", fontFamily: "Archivo, sans-serif",
+  marginBottom: 5, display: "block", fontFamily: "Inter, sans-serif",
 };
 
 // ─── Toggle ───────────────────────────────────────────────────────
@@ -78,7 +78,7 @@ function Section({ title, icon, children, delay = 0 }) {
         display: "flex", alignItems: "center", gap: 8,
       }}>
         <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red, flexShrink: 0 }} />
-        <span style={{ fontSize: ".72rem", fontWeight: 800, color: C.silver, fontFamily: "Archivo,sans-serif", textTransform: "uppercase", letterSpacing: .6 }}>
+        <span style={{ fontSize: ".72rem", fontWeight: 800, color: C.silver, fontFamily: "Inter,sans-serif", textTransform: "uppercase", letterSpacing: .6 }}>
           {title}
         </span>
       </div>
@@ -116,7 +116,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
 
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-          <div style={{ fontSize: ".9rem", fontWeight: 900, color: C.white, fontFamily: "Archivo,sans-serif" }}>
+          <div style={{ fontSize: ".9rem", fontWeight: 900, color: C.white, fontFamily: "Inter,sans-serif" }}>
             Add Team Member
           </div>
           <div
@@ -154,7 +154,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
                   border: `1px solid ${form.role === r ? C.red : C.border}`,
                   color: form.role === r ? C.white : C.gray,
                   fontSize: ".63rem", fontWeight: 800, transition: "all .15s",
-                  fontFamily: "Archivo,sans-serif",
+                  fontFamily: "Inter,sans-serif",
                 }}
               >{r}</div>
             ))}
@@ -166,7 +166,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
           background: `${C.blue}18`, border: `1px solid ${C.blue}33`,
           borderRadius: 10, padding: "8px 12px", marginBottom: 16,
           fontSize: ".65rem", color: C.silver, fontWeight: 600,
-          fontFamily: "Archivo,sans-serif",
+          fontFamily: "Inter,sans-serif",
         }}>
           ✉️ An invite email will be sent so they can set their own password.
         </div>
@@ -181,7 +181,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
             border: `1px solid ${valid ? C.red : C.border}`,
             color: valid ? C.white : C.gray,
             fontSize: ".85rem", fontWeight: 800, cursor: valid ? "pointer" : "default",
-            fontFamily: "Archivo,sans-serif",
+            fontFamily: "Inter,sans-serif",
             boxShadow: valid ? `0 4px 20px ${C.red}44` : "none",
           }}
         >{loading ? "Sending invite..." : "Send Invite"}</div>
@@ -204,10 +204,10 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
         borderRadius: 20, padding: "24px 20px",
         width: "100%", maxWidth: 320, textAlign: "center",
       }}>
-        <div style={{ fontSize: ".9rem", fontWeight: 800, color: C.white, marginBottom: 8, fontFamily: "Archivo,sans-serif" }}>
+        <div style={{ fontSize: ".9rem", fontWeight: 800, color: C.white, marginBottom: 8, fontFamily: "Inter,sans-serif" }}>
           Are you sure?
         </div>
-        <div style={{ fontSize: ".75rem", color: C.gray, marginBottom: 20, fontFamily: "Archivo,sans-serif" }}>
+        <div style={{ fontSize: ".75rem", color: C.gray, marginBottom: 20, fontFamily: "Inter,sans-serif" }}>
           {message}
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -218,7 +218,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
               flex: 1, padding: "11px 0", borderRadius: 12,
               background: C.cardAlt, border: `1px solid ${C.border}`,
               color: C.silver, fontWeight: 700, fontSize: ".8rem",
-              cursor: "pointer", textAlign: "center", fontFamily: "Archivo,sans-serif",
+              cursor: "pointer", textAlign: "center", fontFamily: "Inter,sans-serif",
             }}
           >Cancel</div>
           <div
@@ -228,7 +228,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
               flex: 1, padding: "11px 0", borderRadius: 12,
               background: C.red, border: `1px solid ${C.red}`,
               color: C.white, fontWeight: 700, fontSize: ".8rem",
-              cursor: "pointer", textAlign: "center", fontFamily: "Archivo,sans-serif",
+              cursor: "pointer", textAlign: "center", fontFamily: "Inter,sans-serif",
               boxShadow: `0 4px 14px ${C.red}44`,
             }}
           >Confirm</div>
@@ -535,7 +535,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       onContextMenu={e => e.preventDefault()}
       style={{
         padding: "16px 16px 100px",
-        fontFamily: "Archivo, sans-serif",
+        fontFamily: "Inter, sans-serif",
         background: C.surface,
         minHeight: "100vh",
         userSelect: "none", WebkitUserSelect: "none",
@@ -549,11 +549,11 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
 
       {/* Page title */}
       <div style={{ marginBottom: 18 }}>
-        <div style={{ fontSize: "1.1rem", fontWeight: 900, color: C.white, display: "flex", alignItems: "center", gap: 8, fontFamily: "Archivo,sans-serif" }}>
+        <div style={{ fontSize: "1.1rem", fontWeight: 900, color: C.white, display: "flex", alignItems: "center", gap: 8, fontFamily: "Inter,sans-serif" }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, flexShrink: 0 }} />
           Settings
         </div>
-        <div style={{ fontSize: ".72rem", color: C.gray, marginTop: 3, fontFamily: "Archivo,sans-serif" }}>
+        <div style={{ fontSize: ".72rem", color: C.gray, marginTop: 3, fontFamily: "Inter,sans-serif" }}>
           Manage system, team & projects
         </div>
       </div>
@@ -566,7 +566,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
           borderRadius: 12, padding: "10px 14px", marginBottom: 14,
           fontSize: ".78rem", fontWeight: 700,
           color: saved.startsWith("✗") ? C.redLight : C.green,
-          textAlign: "center", fontFamily: "Archivo,sans-serif",
+          textAlign: "center", fontFamily: "Inter,sans-serif",
         }}>
           {saved}
         </div>
@@ -601,7 +601,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
 
               <div style={{ minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
+                  <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Inter,sans-serif" }}>
                     {item.label}
                   </div>
                   {/* Active badge for autoDistribute */}
@@ -609,11 +609,11 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
                     <div style={{
                       fontSize: ".5rem", fontWeight: 900, padding: "2px 6px",
                       borderRadius: 99, background: C.red, color: C.white,
-                      fontFamily: "Archivo,sans-serif", letterSpacing: .5,
+                      fontFamily: "Inter,sans-serif", letterSpacing: .5,
                     }}>{item.badge}</div>
                   )}
                 </div>
-                <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
+                <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Inter,sans-serif" }}>
                   {item.sub}
                 </div>
               </div>
@@ -632,7 +632,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
             marginTop: 8, background: `${C.red}10`, border: `1px solid ${C.red}33`,
             borderRadius: 10, padding: "8px 12px",
             fontSize: ".65rem", color: C.silver, fontWeight: 600,
-            fontFamily: "Archivo,sans-serif", lineHeight: 1.5,
+            fontFamily: "Inter,sans-serif", lineHeight: 1.5,
           }}>
             🔄 Auto Distribute is <span style={{ color: C.red, fontWeight: 800 }}>active</span> — new leads will be round-robined across {activeCount} active agent{activeCount !== 1 ? "s" : ""}{inactiveCount > 0 ? ` (${inactiveCount} inactive excluded)` : ""}.
           </div>
@@ -642,7 +642,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       {/* ── Sales Team ── */}
       <Section title="Sales Team" icon="users" delay={60}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <div style={{ fontSize: ".7rem", color: C.gray, fontWeight: 600, fontFamily: "Archivo,sans-serif" }}>
+          <div style={{ fontSize: ".7rem", color: C.gray, fontWeight: 600, fontFamily: "Inter,sans-serif" }}>
             {activeCount} active · {inactiveCount} inactive
           </div>
           <div
@@ -653,18 +653,18 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
               background: C.red, border: `1px solid ${C.red}`,
               color: C.white, padding: "6px 14px", borderRadius: 10,
               fontSize: ".68rem", fontWeight: 800, cursor: "pointer",
-              fontFamily: "Archivo,sans-serif",
+              fontFamily: "Inter,sans-serif",
               boxShadow: `0 3px 12px ${C.red}44`,
             }}
           >+ Add</div>
         </div>
 
         {loadingTeam ? (
-          <div style={{ textAlign: "center", color: C.gray, fontSize: ".75rem", padding: "12px 0", fontFamily: "Archivo,sans-serif" }}>
+          <div style={{ textAlign: "center", color: C.gray, fontSize: ".75rem", padding: "12px 0", fontFamily: "Inter,sans-serif" }}>
             Loading…
           </div>
         ) : team.length === 0 ? (
-          <div style={{ textAlign: "center", color: C.gray, fontSize: ".75rem", padding: "12px 0", fontFamily: "Archivo,sans-serif" }}>
+          <div style={{ textAlign: "center", color: C.gray, fontSize: ".75rem", padding: "12px 0", fontFamily: "Inter,sans-serif" }}>
             No team members yet
           </div>
         ) : team.map((m, i) => (
@@ -680,17 +680,17 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
               width: 36, height: 36, borderRadius: 11,
               background: C.black, border: `1px solid ${C.border}`, display: "flex", alignItems: "center",
               justifyContent: "center", fontSize: ".8rem", fontWeight: 900,
-              color: C.white, flexShrink: 0, fontFamily: "Archivo,sans-serif",
+              color: C.white, flexShrink: 0, fontFamily: "Inter,sans-serif",
             }}>
               {(m.name || "?").charAt(0)}
             </div>
 
             {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Inter,sans-serif" }}>
                 {m.name}
               </div>
-              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Inter,sans-serif" }}>
                 {m.role} · {m.email}
               </div>
             </div>
@@ -703,7 +703,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
                 background: m.active ? `${C.green}18` : C.cardAlt,
                 border: `1px solid ${m.active ? C.green + "44" : C.border}`,
                 color: m.active ? C.green : C.gray,
-                fontFamily: "Archivo,sans-serif",
+                fontFamily: "Inter,sans-serif",
               }}>
                 {m.active ? "Active" : "Off"}
               </div>
@@ -739,10 +739,10 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
             }}
           >
             <div>
-              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".78rem", fontWeight: 800, color: C.white, fontFamily: "Inter,sans-serif" }}>
                 Reset System
               </div>
-              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Archivo,sans-serif" }}>
+              <div style={{ fontSize: ".62rem", color: C.gray, marginTop: 1, fontFamily: "Inter,sans-serif" }}>
                 Restore all settings to default
               </div>
             </div>
@@ -761,13 +761,13 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
           color: C.white, fontSize: ".88rem", fontWeight: 800,
           cursor: "pointer", display: "flex", alignItems: "center",
           justifyContent: "center", gap: 8, marginBottom: 10,
-          fontFamily: "Archivo,sans-serif",
+          fontFamily: "Inter,sans-serif",
         }}
       >
         {Icons.signOut} Sign Out
       </div>
 
-      <div style={{ textAlign: "center", fontSize: ".62rem", color: C.gray, fontWeight: 600, fontFamily: "Archivo,sans-serif" }}>
+      <div style={{ textAlign: "center", fontSize: ".62rem", color: C.gray, fontWeight: 600, fontFamily: "Inter,sans-serif" }}>
         ONYX CRM v1.0.0
       </div>
     </div>

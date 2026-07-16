@@ -23,10 +23,10 @@ import {  getDeveloperProject,
 } from "./developerData";
 
 const STATUS_META = {
-  [UnitStatus.AVAILABLE]: { label: "Available", color: "#10B981" },
-  [UnitStatus.RESERVED]:  { label: "Reserved",  color: "#F59E0B" },
-  [UnitStatus.SOLD]:      { label: "Sold",      color: "#DC2626" },
-  [UnitStatus.LOCKED]:    { label: "Locked",    color: "#6B7280" },
+  [UnitStatus.AVAILABLE]: { label: "Available", color: "#2BD97C" },
+  [UnitStatus.RESERVED]:  { label: "Reserved",  color: "#F2A93B" },
+  [UnitStatus.SOLD]:      { label: "Sold",      color: "#E23A4E" },
+  [UnitStatus.LOCKED]:    { label: "Locked",    color: "#8B93A7" },
 };
 
 export default function DeveloperUnitsPage({ currentUser }) {
@@ -58,10 +58,10 @@ export default function DeveloperUnitsPage({ currentUser }) {
 
   return (
     <div style={{
-      fontFamily: "Archivo, sans-serif",
+      fontFamily: "Inter, sans-serif",
       background: "transparent",
       color: C.white,
-      colorScheme: "light",
+      colorScheme: "dark",
       userSelect: "none",
       WebkitUserSelect: "none",
       minHeight: "100%",
@@ -490,8 +490,8 @@ function ResultRow({ label, value, color }) {
 
 const inputStyle = {
   width: "100%", padding: "8px 10px", borderRadius: 8,
-  border: `1px solid #E5E7EB`, background: "#FFFFFF",
-  color: "#1A1A2E", fontSize: ".72rem", fontFamily: "inherit",
+  border: `1px solid #242938`, background: "#171B24",
+  color: "#F2F3F7", fontSize: ".72rem", fontFamily: "inherit",
   outline: "none",
 };
 

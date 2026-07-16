@@ -27,41 +27,47 @@ import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar"
 import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // ✅ Sidebar icons
 import { bg, text, border, primary, shadow, radius, CSS_VARS } from "./theme";  // ✅ Centralized theme
 
-// ─── ONYX Design (Light Theme) ────────────────────────────────────
+// ─── ONYX Design (Dark Theme — مطابقة الموك أب) ───────────────────
 const OnyxGlobalStyles = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     :root {
       ${CSS_VARS}
     }
     body, html {
-      background: var(--bg-page) !important;
+      background: var(--bg-base) !important;
       color: var(--text-primary) !important;
-      font-family: 'Archivo', sans-serif !important;
-      color-scheme: light !important;
+      font-family: var(--font-body) !important;
+      color-scheme: dark !important;
+      -webkit-font-smoothing: antialiased;
     }
-    /* السماح بتحديد النص في حقول الإدخال فقط */
     * { -webkit-user-select: none; user-select: none; }
     input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+    ::selection { background: var(--accent); color: #fff; }
     @keyframes onyx-fade-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .onyx-animate { animation: onyx-fade-up 0.35s ease both; }
   `}</style>
 );
 
 const OnyxLogo = ({ size = 32 }) => (
-  <svg width={size * 3.2} height={size} viewBox="0 0 128 40" fill="none">
-    <text x="0" y="30" fontFamily="'Archivo','Arial Black',sans-serif" fontWeight="700" fontSize="28" fill="#1A1A2E" letterSpacing="-0.5">ONY</text>
-    <g transform="translate(88, 4)">
-      <line x1="0"  y1="0"  x2="18" y2="32" stroke="#DC2626" strokeWidth="5.5" strokeLinecap="round"/>
-      <line x1="18" y1="0"  x2="0"  y2="32" stroke="#DC2626" strokeWidth="5.5" strokeLinecap="round"/>
-      <line x1="4"  y1="16" x2="14" y2="16" stroke="#DC2626" strokeWidth="3"   strokeLinecap="round"/>
-    </g>
-  </svg>
+  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+    <div style={{
+      width: 34, height: 34, borderRadius: 9,
+      background: "linear-gradient(135deg, #E23A4E, #8E1B2C)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16,
+      color: "#fff", boxShadow: "0 4px 14px rgba(226,58,78,0.35)",
+    }}>O</div>
+    <span style={{
+      fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: 18,
+      color: "#F2F3F7", letterSpacing: 0.2,
+    }}>ONY<span style={{ color: "#E23A4E" }}>X</span></span>
+  </div>
 );
 
 function NotifConnectedHeader({ onBellClick, onProfileClick, logo, avatarUrl }) {
@@ -503,10 +509,10 @@ export default function App() {
   const TopLoadingBar = () => topLoading ? (
     <div style={{
       position: "fixed", top: 0, left: 0, right: 0, height: 3,
-      zIndex: 9999, background: "#E5E7EB", overflow: "hidden",
+      zIndex: 9999, background: "#242938", overflow: "hidden",
     }}>
       <div style={{
-        height: "100%", background: "#DC2626",
+        height: "100%", background: "#E23A4E",
         animation: "topbar-slide 1.2s ease-in-out infinite",
       }} />
       <style>{`
@@ -523,7 +529,7 @@ export default function App() {
     <>
       <OnyxGlobalStyles />
       <TopLoadingBar />
-      <div style={{ minHeight: "100vh", background: "#F5F6FA" }} />
+      <div style={{ minHeight: "100vh", background: "#0B0D12" }} />
     </>
   );
 
@@ -577,9 +583,9 @@ export default function App() {
       <NotificationProvider currentUser={currentUser}>
       <div style={{
         height: "100dvh",
-        background: bg.page,
-        fontFamily: "'Archivo', sans-serif",
-        color: text.primary,
+        background: "#0B0D12",
+        fontFamily: "'Inter', sans-serif",
+        color: "#F2F3F7",
         display: "flex",
         flexDirection: "row",
         backgroundImage: `
@@ -631,7 +637,7 @@ export default function App() {
           minHeight: "100dvh",
           transition: "margin-left 0.2s ease",
           // ✅ Container padding
-          padding: "24px",
+          padding: "32px 40px 60px",
           // ✅ max-width + centered على الشاشات العريضة
           overflowY: "auto",
         }}>
@@ -640,7 +646,7 @@ export default function App() {
             className="onyx-animate"
             style={{
               width: "100%",
-              maxWidth: 1200,
+              maxWidth: 1180,
               margin: "0 auto",
               minHeight: "100%",
             }}
@@ -729,9 +735,9 @@ export default function App() {
     <NotificationProvider currentUser={currentUser}>
     <div style={{
       height: "100dvh",
-      background: bg.page,
-      fontFamily: "'Archivo', sans-serif",
-      color: text.primary,
+      background: "#0B0D12",
+      fontFamily: "'Inter', sans-serif",
+      color: "#F2F3F7",
       display: "flex",
       flexDirection: "row",
       backgroundImage: `
@@ -783,7 +789,7 @@ export default function App() {
         marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
         minHeight: "100dvh",
         transition: "margin-left 0.2s ease",
-        padding: "24px",
+        padding: "32px 40px 60px",
         overflowY: "auto",
       }}>
         <div
@@ -791,7 +797,7 @@ export default function App() {
           className="onyx-animate"
           style={{
             width: "100%",
-            maxWidth: 1200,
+            maxWidth: 1180,
             margin: "0 auto",
             minHeight: "100%",
           }}

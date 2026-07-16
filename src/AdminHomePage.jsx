@@ -6,7 +6,7 @@ import { C } from "./theme";
 
 const NoSelect = () => <style>{`
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
-  * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Archivo', sans-serif !important; }
+  * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Inter', sans-serif !important; }
   @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:.35} }
   @keyframes countUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
@@ -42,9 +42,9 @@ function useAnimatedNumber(target, duration = 800, delay = 0) {
 const STATUS_META = {
   new:             { label: "New",             color: "#10b981", bg: "#10b98120" },
   callback:        { label: "Call Back",       color: "#f59e0b", bg: "#f59e0b20" },
-  pendingMeeting:  { label: "Pending Meeting", color: "#2563EB", bg: "#2563EB20" },
+  pendingMeeting:  { label: "Pending Meeting", color: "#4C8DFF", bg: "#4C8DFF20" },
   meetingDone:     { label: "Meeting Done",    color: "#a855f7", bg: "#a855f720" },
-  deal:            { label: "Deal",            color: "#DC2626", bg: "#DC262620" },
+  deal:            { label: "Deal",            color: "#E23A4E", bg: "#E23A4E20" },
   onGoing:         { label: "On Going",        color: "#06b6d4", bg: "#06b6d420" },
   lowBudget:       { label: "Low Budget",      color: "#f97316", bg: "#f9731620" },
   noAnswer:        { label: "No Answer",       color: "#8b949e", bg: "#8b949e20" },
@@ -59,9 +59,9 @@ const LEAD_OVERVIEW_CARDS = [
   { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#10b981", accentLine: "#10b981" },
   { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#10b981", accentLine: "#10b981", accent: true },
   { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#f59e0b", accentLine: "#f59e0b" },
-  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#2563EB", accentLine: "#2563EB" },
+  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#4C8DFF", accentLine: "#4C8DFF" },
   { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#a855f7", accentLine: "#a855f7" },
-  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#DC2626", accentLine: "#DC2626" },
+  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#E23A4E", accentLine: "#E23A4E" },
   { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#06b6d4", accentLine: "#06b6d4" },
   { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#f97316", accentLine: "#f97316" },
   { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8b949e", accentLine: "#8b949e" },
@@ -98,7 +98,7 @@ function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: hovered ? "#F9FAFB" : C.card,
+        background: hovered ? "#1D2230" : C.card,
         borderRadius: 14,
         padding: "14px 12px",
         border: `1px solid ${hovered ? card.color + "55" : C.border}`,
@@ -127,7 +127,7 @@ function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
       {/* Icon with black background */}
       <div style={{
         width: 44, height: 44, borderRadius: 10,
-        background: "#F5F6FA",
+        background: "#0B0D12",
         border: `1px solid #222226`,
         display: "flex", alignItems: "center", justifyContent: "center",
         flexShrink: 0,
@@ -209,7 +209,7 @@ function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
           <div
             key={agent.id}
             style={{
-              background: i === 0 ? "linear-gradient(135deg,#F9FAFB 0%,#FFFFFF 100%)" : "#1A1A2E",
+              background: i === 0 ? "linear-gradient(135deg,#1D2230 0%,#171B24 100%)" : "#F2F3F7",
               borderRadius: 16,
               border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
               boxShadow: rankStyle ? `0 0 20px ${rankStyle.glow}` : "0 2px 8px rgba(0,0,0,.4)",
@@ -404,7 +404,7 @@ export default function AdminHomePage({ onTabChange }) {
       <NoSelect />
 
       {loading && (
-        <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Archivo,sans-serif", animation:"pulse2 1.5s ease infinite" }}>
+        <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"pulse2 1.5s ease infinite" }}>
           Loading...
         </div>
       )}

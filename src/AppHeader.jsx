@@ -13,8 +13,8 @@
 import Icons from "./Icons";
 
 // ── ONYX Brand Tokens ─────────────────────────────────────
-// Black: #F5F6FA | Fiery Red: #DC2626 | White: #1A1A2E
-// Vibrant Silver: #1A1A2E | Anchor Gray: #6B7280 | Bright Blue: #2563EB
+// Black: #0B0D12 | Fiery Red: #E23A4E | White: #F2F3F7
+// Vibrant Silver: #F2F3F7 | Anchor Gray: #8B93A7 | Bright Blue: #4C8DFF
 // Typeface: Archivo (900 weight for logo)
 
 const styles = `
@@ -24,13 +24,13 @@ const styles = `
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #1A1A2E;
+    background: #F2F3F7;
     padding: 0 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 62px;
-    font-family: 'Archivo', sans-serif;
+    font-family: 'Inter', sans-serif;
     overflow: hidden;
   }
 
@@ -42,7 +42,7 @@ const styles = `
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, #DC2626 0%, #ff2a2a 40%, transparent 100%);
+    background: linear-gradient(90deg, #E23A4E 0%, #ff2a2a 40%, transparent 100%);
   }
 
   /* Subtle diagonal background texture */
@@ -53,7 +53,7 @@ const styles = `
     right: -20px;
     width: 100px;
     height: 100px;
-    background: #DC2626;
+    background: #E23A4E;
     opacity: 0.04;
     transform: rotate(30deg) skewX(-15deg);
     pointer-events: none;
@@ -71,7 +71,7 @@ const styles = `
     display: flex;
     align-items: baseline;
     gap: 0;
-    font-family: 'Archivo', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 900;
     font-size: 1.25rem;
     letter-spacing: -0.5px;
@@ -79,12 +79,12 @@ const styles = `
   }
 
   .onyx-wordmark-ony {
-    color: #1A1A2E;
+    color: #F2F3F7;
   }
 
   /* The "X" replaced with the brand's red slash symbol */
   .onyx-wordmark-x {
-    color: #DC2626;
+    color: #E23A4E;
     display: inline-flex;
     align-items: center;
     line-height: 1;
@@ -98,7 +98,7 @@ const styles = `
   }
 
   .onyx-crm-label {
-    color: #6B7280;
+    color: #8B93A7;
     font-size: 0.62rem;
     font-weight: 700;
     letter-spacing: 2px;
@@ -110,9 +110,9 @@ const styles = `
   /* Broker badge — sharp-cornered, red-accented */
   .onyx-badge {
     background: transparent;
-    border: 1px solid #DC2626;
-    color: #DC2626;
-    font-family: 'Archivo', sans-serif;
+    border: 1px solid #E23A4E;
+    color: #E23A4E;
+    font-family: 'Inter', sans-serif;
     font-size: 0.5rem;
     font-weight: 800;
     padding: 3px 8px;
@@ -128,7 +128,7 @@ const styles = `
     content: '';
     position: absolute;
     inset: 0;
-    background: #DC2626;
+    background: #E23A4E;
     opacity: 0.08;
   }
 
@@ -143,20 +143,20 @@ const styles = `
     width: 38px;
     height: 38px;
     border-radius: 50%;              /* ← دائري كامل */
-    background: #F9FAFB;
+    background: #1D2230;
     border: 1px solid #2a2a2a;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    color: #1A1A2E;
+    color: #F2F3F7;
     transition: border-color 0.15s, background 0.15s, transform 0.15s;
   }
 
   .onyx-btn:active {
     background: #222222;
-    border-color: #DC2626;
+    border-color: #E23A4E;
     transform: scale(0.9);
   }
 
@@ -165,9 +165,9 @@ const styles = `
     position: absolute;
     top: -5px;
     right: -5px;
-    background: #DC2626;
-    color: #1A1A2E;
-    font-family: 'Archivo', sans-serif;
+    background: #E23A4E;
+    color: #F2F3F7;
+    font-family: 'Inter', sans-serif;
     font-size: 0.48rem;
     font-weight: 900;
     width: 16px;
@@ -176,7 +176,7 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid #1A1A2E;
+    border: 1.5px solid #F2F3F7;
     letter-spacing: 0;
   }
 
@@ -191,8 +191,8 @@ const styles = `
 // The ONYX brand "X" — abstract slash mark in SVG
 const OnyxMark = () => (
   <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="3" y1="15" x2="15" y2="3" stroke="#DC2626" strokeWidth="2.8" strokeLinecap="round"/>
-    <line x1="3" y1="3" x2="10" y2="10" stroke="#DC2626" strokeWidth="2.8" strokeLinecap="round"/>
+    <line x1="3" y1="15" x2="15" y2="3" stroke="#E23A4E" strokeWidth="2.8" strokeLinecap="round"/>
+    <line x1="3" y1="3" x2="10" y2="10" stroke="#E23A4E" strokeWidth="2.8" strokeLinecap="round"/>
   </svg>
 );
 

@@ -1,26 +1,32 @@
 // ── components/Sidebar.jsx ──────────────────────────────────────────
-// Sidebar احترافي — Light Theme (مطابقة نظام ألوان ONYX CRM الجديد)
-//
-// الميزات:
-//   - ثابت (fixed) في الشاشات الكبيرة (Desktop ≥ 1024px)
-//   - hamburger menu في الشاشات الصغيرة (Mobile/Tablet < 1024px)
-//   - active state بصري واضح (border-left أحمر 3px + خلفية حمراء فاتحة)
-//   - role-based: إخفاء روابط Inventory للمستخدمين بدون صلاحية
-//   - Light theme: خلفية بيضاء، نص رمادي، hover خفيف
+// Sidebar — Dark Theme (مطابقة الموك أب)
+// خلفية #12151C، active state بشريط أحمر 3px، خطوط Space Grotesk + Inter + JetBrains Mono
 
 import { useState, useEffect } from "react";
 import { Menu, X, Bell } from "lucide-react";
-import {
-  bg as backgrounds,
-  border as borders,
-  text,
-  primary,
-  shadow as shadows,
-  layout,
-} from "../theme";
 
-const SIDEBAR_WIDTH = layout.sidebarWidth;
-const MOBILE_BREAKPOINT = layout.mobileBreakpoint;
+const C = {
+  bgElevated:    "#12151C",
+  surface:       "#171B24",
+  surfaceHover:  "#1D2230",
+  borderSoft:    "#1B1F2A",
+  border:        "#242938",
+  textPrimary:   "#F2F3F7",
+  textSecondary: "#8B93A7",
+  textTertiary:  "#5B6478",
+  accent:        "#E23A4E",
+  accentHover:   "#FF4C5E",
+  accentDim:     "rgba(226,58,78,0.12)",
+};
+
+const F = {
+  display: "'Space Grotesk', sans-serif",
+  body:    "'Inter', sans-serif",
+  mono:    "'JetBrains Mono', monospace",
+};
+
+const SIDEBAR_WIDTH = 264;
+const MOBILE_BREAKPOINT = 1024;
 
 export default function Sidebar({
   items = [],
@@ -66,98 +72,60 @@ export default function Sidebar({
     setMobileOpen(false);
   };
 
-  // ── Mobile: Hamburger button ──
+  // ── Hamburger ──
   const HamburgerButton = () => (
     <div
       id="onyx-sidebar-hamburger"
       onClick={() => setMobileOpen(true)}
       style={{
-        position: "fixed",
-        top: 12,
-        left: 12,
-        width: 42,
-        height: 42,
-        borderRadius: 12,
-        background: backgrounds.card,
-        border: `1px solid ${borders.card}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        zIndex: 100,
-        boxShadow: shadows.sm,
+        position: "fixed", top: 12, left: 12,
+        width: 42, height: 42, borderRadius: 10,
+        background: C.surface, border: `1px solid ${C.borderSoft}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", zIndex: 100,
       }}
     >
-      <Menu size={20} color={text.secondary} />
+      <Menu size={20} color={C.textSecondary} />
     </div>
   );
 
-  // ── Mobile: Top bar ──
+  // ── Mobile Top Bar ──
   const MobileTopBar = () => (
     <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 62,
-      background: backgrounds.header,
-      borderBottom: `1px solid ${borders.card}`,
+      position: "fixed", top: 0, left: 0, right: 0, height: 62,
+      background: C.bgElevated, borderBottom: `1px solid ${C.borderSoft}`,
       display: isMobile ? "flex" : "none",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 12px 0 70px",
-      zIndex: 90,
-      boxShadow: shadows.sm,
+      alignItems: "center", justifyContent: "space-between",
+      padding: "0 12px 0 70px", zIndex: 90,
     }}>
-      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-        {logo}
-      </div>
-
+      <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>{logo}</div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <button
-          onClick={onBellClick}
-          style={{
-            width: 38, height: 38, borderRadius: "50%",
-            background: backgrounds.card,
-            border: `1px solid ${borders.card}`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", position: "relative",
-          }}
-        >
-          <Bell size={16} color={text.secondary} />
+        <button onClick={onBellClick} style={{
+          width: 38, height: 38, borderRadius: 10,
+          background: C.surface, border: `1px solid ${C.borderSoft}`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", position: "relative",
+        }}>
+          <Bell size={16} color={C.textSecondary} />
           {unreadCount > 0 && (
             <div style={{
-              position: "absolute",
-              top: -2, right: -2,
-              minWidth: 16, height: 16, padding: "0 4px",
-              borderRadius: 8,
-              background: primary.main,
-              color: "#fff",
-              fontSize: 9, fontWeight: 700,
+              position: "absolute", top: -4, right: -4,
+              minWidth: 18, height: 18, padding: "0 4px", borderRadius: 20,
+              background: C.accent, color: "#fff",
+              fontFamily: F.mono, fontSize: 10, fontWeight: 700,
               display: "flex", alignItems: "center", justifyContent: "center",
-              border: `2px solid ${backgrounds.header}`,
-            }}>
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </div>
+              border: `2px solid ${C.bgElevated}`,
+            }}>{unreadCount > 99 ? "99+" : unreadCount}</div>
           )}
         </button>
-
-        <button
-          onClick={onProfileClick}
-          style={{
-            width: 38, height: 38, borderRadius: "50%",
-            background: avatarUrl ? `url(${avatarUrl}) center/cover` : backgrounds.hover,
-            border: `2px solid ${borders.card}`,
-            cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            overflow: "hidden",
-          }}
-        >
-          {!avatarUrl && (
-            <span style={{ color: text.secondary, fontSize: 14, fontWeight: 700 }}>
-              {(currentUser?.name || "?").charAt(0).toUpperCase()}
-            </span>
-          )}
+        <button onClick={onProfileClick} style={{
+          width: 38, height: 38, borderRadius: 10,
+          background: avatarUrl ? `url(${avatarUrl}) center/cover` : "linear-gradient(135deg, #9B7CFF, #5B3FBF)",
+          border: `1px solid ${C.borderSoft}`,
+          cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+          overflow: "hidden", fontFamily: F.display, fontWeight: 600, fontSize: 14, color: "#fff",
+        }}>
+          {!avatarUrl && (currentUser?.name || "?").charAt(0).toUpperCase()}
         </button>
       </div>
     </div>
@@ -166,48 +134,24 @@ export default function Sidebar({
   // ── Sidebar Content ──
   const SidebarContent = () => (
     <div style={{
-      display: "flex",
-      flexDirection: "column",
-      height: "100%",
-      background: backgrounds.sidebar,
-      borderRight: `1px solid ${borders.sidebar}`,
+      display: "flex", flexDirection: "column", height: "100%",
+      background: C.bgElevated, borderRight: `1px solid ${C.borderSoft}`,
+      padding: "28px 18px",
     }}>
-      {/* Logo Header */}
-      <div style={{
-        padding: "20px 18px 18px",
-        borderBottom: `1px solid ${borders.divider}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: isMobile ? "space-between" : "center",
-        gap: 10,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {logo}
-        </div>
-        {isMobile && (
-          <button
-            onClick={() => setMobileOpen(false)}
-            style={{
-              width: 30, height: 30, borderRadius: 8,
-              background: backgrounds.hover, border: `1px solid ${borders.card}`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", color: text.secondary,
-            }}
-          >
-            <X size={16} />
-          </button>
-        )}
+      {/* Brand */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 8px 28px 8px" }}>
+        {logo}
       </div>
 
-      {/* Navigation Items */}
-      <nav style={{
-        flex: 1,
-        padding: "16px 12px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 4,
-        overflowY: "auto",
-      }}>
+      {/* Nav */}
+      <nav style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 2 }}>
+        {/* Group label */}
+        <div style={{
+          fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
+          textTransform: "uppercase", color: C.textTertiary,
+          padding: "14px 12px 8px", fontFamily: F.body,
+        }}>Workspace</div>
+
         {items.map((item) => {
           const isActive = activeKey === item.key;
           return (
@@ -215,110 +159,71 @@ export default function Sidebar({
               key={item.key}
               onClick={() => handleItemClick(item)}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "11px 14px",
-                borderRadius: 10,
-                border: "none",
-                background: isActive
-                  ? primary.light
-                  : "transparent",
-                color: isActive ? primary.main : text.secondary,
-                fontSize: ".82rem",
-                fontWeight: isActive ? 700 : 500,
-                fontFamily: "'Archivo', sans-serif",
-                cursor: "pointer",
-                textAlign: "left",
-                width: "100%",
-                position: "relative",
-                transition: "all 0.18s ease",
-                // ✅ border-left أحمر 3px للعنصر النشط (مطابق المطلوب)
-                borderLeft: isActive ? `3px solid ${primary.main}` : "3px solid transparent",
+                display: "flex", alignItems: "center", gap: 12,
+                padding: "10px 12px", borderRadius: 10, border: "none",
+                background: isActive ? C.accentDim : "transparent",
+                color: isActive ? C.accentHover : C.textSecondary,
+                fontSize: 14.5, fontWeight: 500,
+                fontFamily: F.body, cursor: "pointer", textAlign: "left",
+                width: "100%", position: "relative",
+                transition: "background .15s ease, color .15s ease",
               }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = backgrounds.cardAlt;
-                  e.currentTarget.style.color = text.primary;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = text.secondary;
-                }
-              }}
+              onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = C.surfaceHover; e.currentTarget.style.color = C.textPrimary; } }}
+              onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.textSecondary; } }}
             >
-              <span style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 22, height: 22,
-                color: isActive ? primary.main : "inherit",
-              }}>
+              {/* Active left border */}
+              {isActive && (
+                <div style={{
+                  position: "absolute", left: -18, top: 8, bottom: 8,
+                  width: 3, borderRadius: "0 4px 4px 0", background: C.accent,
+                }} />
+              )}
+              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, flexShrink: 0 }}>
                 {item.icon}
               </span>
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge != null && item.badge > 0 && (
                 <span style={{
-                  minWidth: 18, height: 18, padding: "0 5px",
-                  borderRadius: 9,
-                  background: isActive ? primary.main : backgrounds.hover,
-                  color: isActive ? "#fff" : text.secondary,
-                  fontSize: 10, fontWeight: 700,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  {item.badge > 99 ? "99+" : item.badge}
-                </span>
+                  fontFamily: F.mono, fontSize: 11, fontWeight: 600,
+                  background: C.surfaceHover, color: C.textSecondary,
+                  padding: "2px 7px", borderRadius: 20,
+                }}>{item.badge > 99 ? "99+" : item.badge}</span>
               )}
             </button>
           );
         })}
       </nav>
 
-      {/* User Profile */}
-      <div style={{
-        padding: "14px 12px",
-        borderTop: `1px solid ${borders.divider}`,
-      }}>
+      {/* User Card */}
+      <div style={{ marginTop: "auto", paddingTop: 16, borderTop: `1px solid ${C.borderSoft}` }}>
         <button
           onClick={onProfileClick}
           style={{
             display: "flex", alignItems: "center", gap: 10,
-            padding: "8px 10px", borderRadius: 10, border: "none",
+            padding: 8, borderRadius: 10, border: "none",
             background: "transparent", cursor: "pointer", width: "100%", textAlign: "left",
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = backgrounds.cardAlt; }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = C.surfaceHover; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
         >
           <div style={{
-            width: 34, height: 34, borderRadius: 10,
-            background: avatarUrl ? `url(${avatarUrl}) center/cover` : backgrounds.hover,
-            border: `1px solid ${borders.card}`,
+            width: 36, height: 36, borderRadius: 10,
+            background: avatarUrl ? `url(${avatarUrl}) center/cover` : "linear-gradient(135deg, #9B7CFF, #5B3FBF)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            overflow: "hidden", flexShrink: 0,
+            fontFamily: F.display, fontWeight: 600, fontSize: 14, color: "#fff",
+            flexShrink: 0, overflow: "hidden",
           }}>
-            {!avatarUrl && (
-              <span style={{ color: text.secondary, fontSize: 13, fontWeight: 700 }}>
-                {(currentUser?.name || "?").charAt(0).toUpperCase()}
-              </span>
-            )}
+            {!avatarUrl && (currentUser?.name || "?").charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontSize: ".75rem", fontWeight: 700, color: text.primary,
-              fontFamily: "'Archivo', sans-serif",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-            }}>
-              {currentUser?.name || "User"}
-            </div>
+              fontSize: 13.5, fontWeight: 600, color: C.textPrimary,
+              fontFamily: F.body, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>{currentUser?.name || "User"}</div>
             <div style={{
-              fontSize: ".6rem", color: text.secondary,
-              fontFamily: "'Archivo', sans-serif",
-              textTransform: "capitalize",
-            }}>
-              {currentUser?.role || "sales"}
-            </div>
+              fontSize: 11.5, color: C.textTertiary,
+              fontFamily: F.body, textTransform: "capitalize",
+            }}>{currentUser?.role || "sales"}</div>
           </div>
         </button>
       </div>
@@ -333,42 +238,23 @@ export default function Sidebar({
     return (
       <>
         <style>{`
-          @keyframes onyxSidebarSlideIn {
-            from { transform: translateX(-100%); }
-            to   { transform: translateX(0); }
-          }
-          @keyframes onyxSidebarFadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-          }
+          @keyframes onyxSidebarSlideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+          @keyframes onyxSidebarFadeIn { from { opacity: 0; } to { opacity: 1; } }
         `}</style>
-
         <HamburgerButton />
         <MobileTopBar />
-
         {mobileOpen && (
           <>
-            <div
-              onClick={() => setMobileOpen(false)}
-              style={{
-                position: "fixed",
-                top: 0, left: 0, right: 0, bottom: 0,
-                background: "rgba(0,0,0,.5)",
-                backdropFilter: "blur(4px)",
-                zIndex: 200,
-                animation: "onyxSidebarFadeIn 0.2s ease-out",
-              }}
-            />
-            <div
-              id="onyx-sidebar"
-              style={{
-                position: "fixed",
-                top: 0, left: 0, bottom: 0,
-                width: SIDEBAR_WIDTH,
-                zIndex: 201,
-                animation: "onyxSidebarSlideIn 0.25s ease-out",
-              }}
-            >
+            <div onClick={() => setMobileOpen(false)} style={{
+              position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+              background: "rgba(0,0,0,.6)", backdropFilter: "blur(4px)",
+              zIndex: 200, animation: "onyxSidebarFadeIn 0.2s ease-out",
+            }} />
+            <div id="onyx-sidebar" style={{
+              position: "fixed", top: 0, left: 0, bottom: 0,
+              width: SIDEBAR_WIDTH, zIndex: 201,
+              animation: "onyxSidebarSlideIn 0.25s ease-out",
+            }}>
               <SidebarContent />
             </div>
           </>
@@ -378,15 +264,10 @@ export default function Sidebar({
   }
 
   return (
-    <div
-      id="onyx-sidebar"
-      style={{
-        position: "fixed",
-        top: 0, left: 0, bottom: 0,
-        width: SIDEBAR_WIDTH,
-        zIndex: 50,
-      }}
-    >
+    <div id="onyx-sidebar" style={{
+      position: "fixed", top: 0, left: 0, bottom: 0,
+      width: SIDEBAR_WIDTH, zIndex: 50,
+    }}>
       <SidebarContent />
     </div>
   );

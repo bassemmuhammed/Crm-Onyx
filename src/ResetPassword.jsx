@@ -32,15 +32,15 @@ export default function ResetPassword() {
 
   const inputStyle = {
     width: "100%", padding: "13px 44px 13px 44px",
-    border: "1.5px solid #e2e8f0", borderRadius: "12px",
-    fontSize: "14px", fontFamily: "inherit", color: "#0f172a",
-    background: "#f8fafc", outline: "none",
+    border: "1.5px solid #242938", borderRadius: "12px",
+    fontSize: "14px", fontFamily: "inherit", color: "#0B0D12",
+    background: "#171B24", outline: "none",
     transition: "all 0.25s ease", boxSizing: "border-box",
   };
   const iconL = { position: "absolute", display: "flex", alignItems: "center", top: "50%", transform: "translateY(-50%)", left: "14px", pointerEvents: "none" };
   const iconR = { position: "absolute", display: "flex", alignItems: "center", top: "50%", transform: "translateY(-50%)", right: "14px", background: "none", border: "none", cursor: "pointer", padding: "4px", borderRadius: "6px" };
-  const focusOn  = e => { e.target.style.borderColor = "#6366f1"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 4px rgba(99,102,241,0.08)"; };
-  const focusOff = e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.background = "#f8fafc"; e.target.style.boxShadow = "none"; };
+  const focusOn  = e => { e.target.style.borderColor = "#4C8DFF"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 4px rgba(99,102,241,0.08)"; };
+  const focusOff = e => { e.target.style.borderColor = "#242938"; e.target.style.background = "#171B24"; e.target.style.boxShadow = "none"; };
 
   const strength = newPw.length >= 10 ? 4 : newPw.length >= 8 ? 3 : newPw.length >= 6 ? 2 : newPw.length > 0 ? 1 : 0;
   const strengthColors = ["#ef4444", "#f97316", "#eab308", "#22c55e"];
@@ -81,23 +81,23 @@ export default function ResetPassword() {
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         html, body, #root { height:100%; width:100%; margin:0; padding:0; }
         *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-        body { background:#0f172a; font-family:'Plus Jakarta Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-        .rp-root { position:fixed; inset:0; display:flex; width:100vw; height:100vh; font-family:'Plus Jakarta Sans',sans-serif; background:#0f172a; }
-        .rp-left { flex:1; min-width:0; height:100vh; background:#0f172a; position:relative; display:flex; flex-direction:column; padding:36px 48px; overflow:hidden; }
+        body { background:#0B0D12; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+        .rp-root { position:fixed; inset:0; display:flex; width:100vw; height:100vh; font-family:'Inter',sans-serif; background:#0B0D12; }
+        .rp-left { flex:1; min-width:0; height:100vh; background:#0B0D12; position:relative; display:flex; flex-direction:column; padding:36px 48px; overflow:hidden; }
         .rp-glow1 { position:absolute; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(99,102,241,0.22) 0%,transparent 65%); top:-140px; left:-120px; pointer-events:none; }
         .rp-glow2 { position:absolute; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle,rgba(6,182,212,0.16) 0%,transparent 65%); bottom:-100px; right:-60px; pointer-events:none; }
         .rp-right { flex-shrink:0; width:460px; height:100vh; background:#fff; display:flex; align-items:center; justify-content:center; position:relative; box-shadow:-24px 0 80px rgba(0,0,0,0.2); }
         .rp-form { width:100%; padding:0 48px; display:flex; flex-direction:column; justify-content:center; }
-        .rp-title { font-size:28px; font-weight:800; color:#0f172a; letter-spacing:-0.8px; margin-bottom:6px; }
-        .rp-bar { width:36px; height:3px; background:linear-gradient(90deg,#6366f1,#06b6d4); border-radius:100px; margin-bottom:10px; }
-        .rp-sub { color:#94a3b8; font-size:13px; line-height:1.6; margin-bottom:24px; }
+        .rp-title { font-size:28px; font-weight:800; color:#0B0D12; letter-spacing:-0.8px; margin-bottom:6px; }
+        .rp-bar { width:36px; height:3px; background:linear-gradient(90deg,#4C8DFF,#06b6d4); border-radius:100px; margin-bottom:10px; }
+        .rp-sub { color:#5B6478; font-size:13px; line-height:1.6; margin-bottom:24px; }
         .rp-field { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
         .rp-label { font-size:13px; font-weight:600; color:#334155; }
-        .rp-btn { width:100%; padding:13px; background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%); color:#fff; border:none; border-radius:12px; font-size:15px; font-family:inherit; font-weight:600; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .rp-btn { width:100%; padding:13px; background:linear-gradient(135deg,#4C8DFF 0%,#4f46e5 100%); color:#fff; border:none; border-radius:12px; font-size:15px; font-family:inherit; font-weight:600; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
         .rp-btn:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(99,102,241,0.35); }
         .rp-btn:disabled { opacity:0.7; cursor:not-allowed; transform:none; }
         .rp-error { display:flex; align-items:center; gap:9px; background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:10px 14px; color:#dc2626; font-size:13px; margin-bottom:12px; }
-        .brand-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.4); }
+        .brand-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#4C8DFF,#4f46e5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.4); }
         .spinner { width:17px; height:17px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.65s linear infinite; }
         @keyframes spin { to{transform:rotate(360deg)} }
         @media (max-width:768px) { .rp-left{display:none;} .rp-right{width:100%;} .rp-form{padding:0 32px;} }
@@ -112,14 +112,14 @@ export default function ResetPassword() {
                 <div style={{ width:64, height:64, borderRadius:"50%", background:"#f0fdf4", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <CheckCircle2 size={32} color="#22c55e" strokeWidth={2} />
                 </div>
-                <div style={{ fontSize:20, fontWeight:800, color:"#0f172a" }}>Password Set!</div>
-                <div style={{ fontSize:13, color:"#94a3b8" }}>Redirecting you to sign in...</div>
+                <div style={{ fontSize:20, fontWeight:800, color:"#0B0D12" }}>Password Set!</div>
+                <div style={{ fontSize:13, color:"#5B6478" }}>Redirecting you to sign in...</div>
               </div>
             ) : !validToken ? (
               <div style={{ textAlign:"center", padding:"32px 0" }}>
-                <div style={{ fontSize:16, fontWeight:700, color:"#0f172a", marginBottom:8 }}>Invalid or expired link</div>
-                <div style={{ fontSize:13, color:"#94a3b8", marginBottom:20 }}>Please ask your admin to send a new invite.</div>
-                <a href="/" style={{ color:"#6366f1", fontWeight:600, fontSize:14 }}>← Back to Sign In</a>
+                <div style={{ fontSize:16, fontWeight:700, color:"#0B0D12", marginBottom:8 }}>Invalid or expired link</div>
+                <div style={{ fontSize:13, color:"#5B6478", marginBottom:20 }}>Please ask your admin to send a new invite.</div>
+                <a href="/" style={{ color:"#4C8DFF", fontWeight:600, fontSize:14 }}>← Back to Sign In</a>
               </div>
             ) : (
               <>
@@ -137,17 +137,17 @@ export default function ResetPassword() {
                 <div className="rp-field">
                   <label className="rp-label">New Password</label>
                   <div style={{ position:"relative", display:"flex", alignItems:"center" }}>
-                    <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                    <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                     <input style={inputStyle} type={showNew ? "text" : "password"} placeholder="Min. 6 characters"
                       value={newPw} onChange={e => setNewPw(e.target.value)} onFocus={focusOn} onBlur={focusOff} />
                     <button style={iconR} onClick={() => setShowNew(v => !v)} type="button">
-                      {showNew ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                      {showNew ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                     </button>
                   </div>
                   {newPw && (
                     <div style={{ display:"flex", gap:4, marginTop:4 }}>
                       {[1,2,3,4].map(i => (
-                        <div key={i} style={{ flex:1, height:3, borderRadius:100, background: i <= strength ? strengthColors[strength-1] : "#f1f5f9", transition:"all 0.3s ease" }} />
+                        <div key={i} style={{ flex:1, height:3, borderRadius:100, background: i <= strength ? strengthColors[strength-1] : "#1D2230", transition:"all 0.3s ease" }} />
                       ))}
                     </div>
                   )}
@@ -156,12 +156,12 @@ export default function ResetPassword() {
                 <div className="rp-field">
                   <label className="rp-label">Confirm Password</label>
                   <div style={{ position:"relative", display:"flex", alignItems:"center" }}>
-                    <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                    <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                     <input style={inputStyle} type={showConf ? "text" : "password"} placeholder="Re-enter password"
                       value={confirmPw} onChange={e => setConfirmPw(e.target.value)} onFocus={focusOn} onBlur={focusOff}
                       onKeyDown={e => e.key === "Enter" && handleSubmit()} />
                     <button style={iconR} onClick={() => setShowConf(v => !v)} type="button">
-                      {showConf ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                      {showConf ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                     </button>
                   </div>
                 </div>

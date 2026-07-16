@@ -8,7 +8,7 @@ import { C } from "./theme";
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap');
-  * { font-family: 'Archivo', sans-serif !important; }
+  * { font-family: 'Inter', sans-serif !important; }
   @keyframes sheet-up {
     from { transform: translateY(100%); opacity: 0; }
     to   { transform: translateY(0);    opacity: 1; }
@@ -381,8 +381,8 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
             {toast && (
               <div style={{
                 margin:"10px 16px 0", padding:"10px 14px", borderRadius:10,
-                background: toast.ok ? "#10b98120" : "#DC262620",
-                border:`1px solid ${toast.ok ? "#10b98155" : "#DC262655"}`,
+                background: toast.ok ? "#10b98120" : "#E23A4E20",
+                border:`1px solid ${toast.ok ? "#10b98155" : "#E23A4E55"}`,
                 color: toast.ok ? "#10b981" : C.red,
                 fontSize:".72rem", fontWeight:700,
                 display:"flex", alignItems:"center", gap:8,

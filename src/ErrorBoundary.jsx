@@ -14,13 +14,13 @@
 import { Component } from "react";
 
 const C = {
-  page:    "#F5F6FA",
-  card:    "#FFFFFF",
-  border:  "#E5E7EB",
-  text:    "#1A1A2E",
-  gray:    "#6B7280",
-  red:     "#DC2626",
-  redBg:   "#FEE2E2",
+  page:    "#0B0D12",
+  card:    "#171B24",
+  border:  "#242938",
+  text:    "#F2F3F7",
+  gray:    "#8B93A7",
+  red:     "#E23A4E",
+  redBg:   "rgba(226,58,78,0.12)",
 };
 
 export default class ErrorBoundary extends Component {
@@ -81,7 +81,7 @@ export default class ErrorBoundary extends Component {
         <div style={{
           minHeight: "100dvh",
           background: C.page,
-          fontFamily: "'Archivo', sans-serif",
+          fontFamily: "'Inter', sans-serif",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

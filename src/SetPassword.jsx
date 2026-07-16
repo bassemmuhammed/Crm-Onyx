@@ -297,7 +297,7 @@ export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
         minHeight: "100dvh",
         background: `radial-gradient(circle at 30% 20%, ${C.red}22 0%, transparent 50%), ${C.black}`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "Archivo, sans-serif",
+        fontFamily: "Inter, sans-serif",
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.5s ease",
       }}>
@@ -318,7 +318,7 @@ export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
         minHeight: "100dvh",
         background: `radial-gradient(circle at 30% 20%, ${C.green}22 0%, transparent 50%), ${C.black}`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "Archivo, sans-serif",
+        fontFamily: "Inter, sans-serif",
         padding: 24,
       }}>
         <div style={{ textAlign: "center", maxWidth: 380 }}>
@@ -344,7 +344,7 @@ export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
         minHeight: "100dvh",
         background: `radial-gradient(circle at 30% 20%, ${C.red}22 0%, transparent 50%), ${C.black}`,
         display: "flex", alignItems: "center", justifyContent: "center",
-        fontFamily: "Archivo, sans-serif",
+        fontFamily: "Inter, sans-serif",
         padding: 24,
         opacity: mounted ? 1 : 0,
         transition: "opacity 0.5s ease",

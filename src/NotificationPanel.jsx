@@ -18,9 +18,9 @@ const STYLES = `
     from { opacity: 0; transform: translateY(-8px) scale(.97); }
     to   { opacity: 1; transform: translateY(0)   scale(1);   }
   }
-  .notif-panel { animation: notif-drop .2s cubic-bezier(.4,0,.2,1) both; font-family: 'Archivo', sans-serif; }
+  .notif-panel { animation: notif-drop .2s cubic-bezier(.4,0,.2,1) both; font-family: 'Inter', sans-serif; }
   .notif-item { transition: background .15s; cursor: pointer; }
-  .notif-item:active { background: #E5E7EB !important; }
+  .notif-item:active { background: #242938 !important; }
 `;
 
 export default function NotificationPanel({ open, onClose, notifs = [], onMarkAll, onMarkRead }) {
@@ -104,7 +104,7 @@ export default function NotificationPanel({ open, onClose, notifs = [], onMarkAl
             >
               <div style={{
                 width: 28, height: 28, borderRadius: 8,
-                background: n.unread ? `${n.color}18` : "#F9FAFB",
+                background: n.unread ? `${n.color}18` : "#1D2230",
                 border: `1px solid ${n.unread ? n.color + "44" : C.border}`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 flexShrink: 0,

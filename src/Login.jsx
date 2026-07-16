@@ -206,12 +206,12 @@ export default function Login({ onLogin }) {
   const inputStyle = {
     width: "100%",
     padding: "13px 44px 13px 44px",
-    border: "1.5px solid #e2e8f0",
+    border: "1.5px solid #242938",
     borderRadius: "12px",
     fontSize: "14px",
     fontFamily: "inherit",
-    color: "#0f172a",
-    background: "#f8fafc",
+    color: "#0B0D12",
+    background: "#171B24",
     outline: "none",
     direction: "ltr",
     transition: "all 0.25s ease",
@@ -219,8 +219,8 @@ export default function Login({ onLogin }) {
   const inputNoRightPad = { ...inputStyle, padding: "13px 16px 13px 44px" };
   const iconL = { position: "absolute", display: "flex", alignItems: "center", top: "50%", transform: "translateY(-50%)", left: "14px", pointerEvents: "none", zIndex: 1 };
   const iconR = { position: "absolute", display: "flex", alignItems: "center", top: "50%", transform: "translateY(-50%)", right: "14px", background: "none", border: "none", cursor: "pointer", padding: "4px", borderRadius: "6px" };
-  const focusOn  = e => { e.target.style.borderColor = "#6366f1"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 4px rgba(99,102,241,0.08)"; };
-  const focusOff = e => { e.target.style.borderColor = "#e2e8f0"; e.target.style.background = "#f8fafc"; e.target.style.boxShadow = "none"; };
+  const focusOn  = e => { e.target.style.borderColor = "#4C8DFF"; e.target.style.background = "#fff"; e.target.style.boxShadow = "0 0 0 4px rgba(99,102,241,0.08)"; };
+  const focusOff = e => { e.target.style.borderColor = "#242938"; e.target.style.background = "#171B24"; e.target.style.boxShadow = "none"; };
 
   return (
     <>
@@ -245,7 +245,7 @@ export default function Login({ onLogin }) {
                   <div className="field">
                     <label className="field-label">Phone Number</label>
                     <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                      <span style={iconL}><Phone size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                      <span style={iconL}><Phone size={16} color="#5B6478" strokeWidth={1.8} /></span>
                       <input
                         style={inputNoRightPad}
                         type="tel"
@@ -264,7 +264,7 @@ export default function Login({ onLogin }) {
                   <div className="field">
                     <label className="field-label">Password</label>
                     <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                      <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                      <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                       <input
                         style={inputStyle}
                         type={showPassword ? "text" : "password"}
@@ -276,9 +276,9 @@ export default function Login({ onLogin }) {
                         onBlur={focusOff}
                       />
                       <button style={iconR} onClick={() => setShowPassword(!showPassword)} type="button"
-                        onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                        onMouseEnter={e => e.currentTarget.style.background = "#1D2230"}
                         onMouseLeave={e => e.currentTarget.style.background = "none"}>
-                        {showPassword ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                        {showPassword ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                       </button>
                     </div>
                   </div>
@@ -288,8 +288,8 @@ export default function Login({ onLogin }) {
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div onClick={() => setRememberMe(r => !r)} style={{
                         width: 18, height: 18, borderRadius: 5, flexShrink: 0,
-                        border: rememberMe ? "2px solid #6366f1" : "2px solid #cbd5e1",
-                        background: rememberMe ? "#6366f1" : "#fff",
+                        border: rememberMe ? "2px solid #4C8DFF" : "2px solid #242938",
+                        background: rememberMe ? "#4C8DFF" : "#fff",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         cursor: "pointer", transition: "all 0.2s ease",
                       }}>
@@ -305,7 +305,7 @@ export default function Login({ onLogin }) {
                       </span>
                     </div>
                     <button onClick={() => { setView("changePassword"); setError(""); }} type="button"
-                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#6366f1", fontWeight: 600, fontFamily: "inherit", padding: 0 }}>
+                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#4C8DFF", fontWeight: 600, fontFamily: "inherit", padding: 0 }}>
                       Change Password
                     </button>
                   </div>
@@ -332,7 +332,7 @@ export default function Login({ onLogin }) {
               <>
                 <div className="form-header">
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#6366f1,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#4C8DFF,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <KeyRound size={18} color="#fff" strokeWidth={1.8} />
                     </div>
                     <h2 className="form-title" style={{ marginBottom: 0 }}>Change Password</h2>
@@ -346,8 +346,8 @@ export default function Login({ onLogin }) {
                     <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#f0fdf4", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <CheckCircle2 size={28} color="#22c55e" strokeWidth={2} />
                     </div>
-                    <p style={{ fontSize: 15, fontWeight: 700, color: "#0f172a" }}>Password Updated!</p>
-                    <p style={{ fontSize: 13, color: "#94a3b8" }}>Redirecting to sign in...</p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: "#0B0D12" }}>Password Updated!</p>
+                    <p style={{ fontSize: 13, color: "#5B6478" }}>Redirecting to sign in...</p>
                   </div>
                 ) : (
                   <div className="fields">
@@ -355,7 +355,7 @@ export default function Login({ onLogin }) {
                     <div className="field">
                       <label className="field-label">Phone Number</label>
                       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                        <span style={iconL}><Phone size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                        <span style={iconL}><Phone size={16} color="#5B6478" strokeWidth={1.8} /></span>
                         <input style={inputNoRightPad} type="tel" placeholder="010XXXXXXXX"
                           value={cpPhone} onChange={e => setCpPhone(e.target.value.replace(/\D/g, ""))}
                           onKeyDown={handleKey} onFocus={focusOn} onBlur={focusOff} maxLength={11} />
@@ -366,14 +366,14 @@ export default function Login({ onLogin }) {
                     <div className="field">
                       <label className="field-label">Current Password</label>
                       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                        <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                        <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                         <input style={inputStyle} type={cpShowCurrent ? "text" : "password"} placeholder="••••••••"
                           value={cpCurrentPw} onChange={e => setCpCurrentPw(e.target.value)}
                           onKeyDown={handleKey} onFocus={focusOn} onBlur={focusOff} />
                         <button style={iconR} onClick={() => setCpShowCurrent(!cpShowCurrent)} type="button"
-                          onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                          onMouseEnter={e => e.currentTarget.style.background = "#1D2230"}
                           onMouseLeave={e => e.currentTarget.style.background = "none"}>
-                          {cpShowCurrent ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                          {cpShowCurrent ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                         </button>
                       </div>
                     </div>
@@ -382,14 +382,14 @@ export default function Login({ onLogin }) {
                     <div className="field">
                       <label className="field-label">New Password</label>
                       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                        <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                        <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                         <input style={inputStyle} type={cpShowNew ? "text" : "password"} placeholder="Min. 6 characters"
                           value={cpNewPw} onChange={e => setCpNewPw(e.target.value)}
                           onKeyDown={handleKey} onFocus={focusOn} onBlur={focusOff} />
                         <button style={iconR} onClick={() => setCpShowNew(!cpShowNew)} type="button"
-                          onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                          onMouseEnter={e => e.currentTarget.style.background = "#1D2230"}
                           onMouseLeave={e => e.currentTarget.style.background = "none"}>
-                          {cpShowNew ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                          {cpShowNew ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                         </button>
                       </div>
                     </div>
@@ -398,14 +398,14 @@ export default function Login({ onLogin }) {
                     <div className="field">
                       <label className="field-label">Confirm New Password</label>
                       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                        <span style={iconL}><Lock size={16} color="#94a3b8" strokeWidth={1.8} /></span>
+                        <span style={iconL}><Lock size={16} color="#5B6478" strokeWidth={1.8} /></span>
                         <input style={inputStyle} type={cpShowConfirm ? "text" : "password"} placeholder="Re-enter new password"
                           value={cpConfirmPw} onChange={e => setCpConfirmPw(e.target.value)}
                           onKeyDown={handleKey} onFocus={focusOn} onBlur={focusOff} />
                         <button style={iconR} onClick={() => setCpShowConfirm(!cpShowConfirm)} type="button"
-                          onMouseEnter={e => e.currentTarget.style.background = "#f1f5f9"}
+                          onMouseEnter={e => e.currentTarget.style.background = "#1D2230"}
                           onMouseLeave={e => e.currentTarget.style.background = "none"}>
-                          {cpShowConfirm ? <EyeOff size={16} color="#94a3b8" strokeWidth={1.8} /> : <Eye size={16} color="#94a3b8" strokeWidth={1.8} />}
+                          {cpShowConfirm ? <EyeOff size={16} color="#5B6478" strokeWidth={1.8} /> : <Eye size={16} color="#5B6478" strokeWidth={1.8} />}
                         </button>
                       </div>
                     </div>
@@ -416,7 +416,7 @@ export default function Login({ onLogin }) {
                         {[1, 2, 3, 4].map(i => {
                           const strength = cpNewPw.length >= 10 ? 4 : cpNewPw.length >= 8 ? 3 : cpNewPw.length >= 6 ? 2 : 1;
                           const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e"];
-                          return <div key={i} style={{ flex: 1, height: 3, borderRadius: 100, background: i <= strength ? colors[strength - 1] : "#f1f5f9", transition: "all 0.3s ease" }} />;
+                          return <div key={i} style={{ flex: 1, height: 3, borderRadius: 100, background: i <= strength ? colors[strength - 1] : "#1D2230", transition: "all 0.3s ease" }} />;
                         })}
                       </div>
                     )}
@@ -435,9 +435,9 @@ export default function Login({ onLogin }) {
                     </button>
 
                     <button onClick={() => { setView("login"); setError(""); }} type="button"
-                      style={{ background: "none", border: "1.5px solid #e2e8f0", borderRadius: 12, padding: "11px", width: "100%", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#64748b", fontFamily: "inherit", transition: "all 0.2s ease" }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = "#6366f1"; e.currentTarget.style.color = "#6366f1"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.color = "#64748b"; }}>
+                      style={{ background: "none", border: "1.5px solid #242938", borderRadius: 12, padding: "11px", width: "100%", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#64748b", fontFamily: "inherit", transition: "all 0.2s ease" }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = "#4C8DFF"; e.currentTarget.style.color = "#4C8DFF"; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = "#242938"; e.currentTarget.style.color = "#64748b"; }}>
                       ← Back to Sign In
                     </button>
                   </div>
@@ -505,8 +505,8 @@ const globalStyles = `
   html, body, #root { height:100%; width:100%; margin:0; padding:0; overflow:hidden; }
   *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
   body {
-    background:#0f172a;
-    font-family:'Plus Jakarta Sans', sans-serif;
+    background:#0B0D12;
+    font-family:'Inter', sans-serif;
     -webkit-font-smoothing:antialiased;
   }
 
@@ -515,13 +515,13 @@ const globalStyles = `
     display:flex; flex-direction:row;
     width:100vw; height:100vh;
     overflow:hidden; user-select:none;
-    font-family:'Plus Jakarta Sans', sans-serif;
-    background:#0f172a;
+    font-family:'Inter', sans-serif;
+    background:#0B0D12;
   }
 
   .left-panel {
     flex:1; min-width:0; height:100vh;
-    background:#0f172a; position:relative;
+    background:#0B0D12; position:relative;
     display:flex; flex-direction:column;
     padding:36px 48px; overflow:hidden;
   }
@@ -534,7 +534,7 @@ const globalStyles = `
 
   .left-topbar { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; position:relative; z-index:2; animation:fadeUp 0.6s 0.1s ease both; }
   .brand { display:flex; align-items:center; gap:12px; }
-  .brand-icon { width:40px; height:40px; flex-shrink:0; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.4); }
+  .brand-icon { width:40px; height:40px; flex-shrink:0; border-radius:10px; background:linear-gradient(135deg,#4C8DFF,#4f46e5); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(99,102,241,0.4); }
   .brand-name { color:#fff; font-size:16px; font-weight:700; white-space:nowrap; }
 
   .left-center { flex:1; position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; animation:fadeUp 0.7s 0.25s ease both; min-height:0; padding:24px 0; }
@@ -554,9 +554,9 @@ const globalStyles = `
   .right-panel { flex-shrink:0; width:460px; height:100vh; background:#fff; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; box-shadow:-24px 0 80px rgba(0,0,0,0.2); }
   .form-wrap { width:100%; max-height:100vh; padding:0 48px; display:flex; flex-direction:column; justify-content:center; animation:fadeUp 0.6s 0.2s ease both; }
   .form-header { margin-bottom:24px; }
-  .form-title { font-size:clamp(20px,2vw,28px); font-weight:800; color:#0f172a; letter-spacing:-0.8px; line-height:1.15; margin-bottom:10px; }
-  .form-title-bar { width:36px; height:3px; background:linear-gradient(90deg,#6366f1,#06b6d4); border-radius:100px; margin-bottom:10px; }
-  .form-sub { color:#94a3b8; font-size:13px; line-height:1.6; }
+  .form-title { font-size:clamp(20px,2vw,28px); font-weight:800; color:#0B0D12; letter-spacing:-0.8px; line-height:1.15; margin-bottom:10px; }
+  .form-title-bar { width:36px; height:3px; background:linear-gradient(90deg,#4C8DFF,#06b6d4); border-radius:100px; margin-bottom:10px; }
+  .form-sub { color:#5B6478; font-size:13px; line-height:1.6; }
 
   .fields { display:flex; flex-direction:column; gap:14px; }
   .field { display:flex; flex-direction:column; gap:6px; }
@@ -565,7 +565,7 @@ const globalStyles = `
   .error-box { display:flex; align-items:center; gap:9px; background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:10px 14px; color:#dc2626; font-size:13px; animation:shake 0.35s ease; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
 
-  .submit-btn { width:100%; padding:13px; background:linear-gradient(135deg,#6366f1 0%,#4f46e5 100%); color:#fff; border:none; border-radius:12px; font-size:15px; font-family:inherit; font-weight:600; cursor:pointer; margin-top:4px; transition:all 0.25s ease; }
+  .submit-btn { width:100%; padding:13px; background:linear-gradient(135deg,#4C8DFF 0%,#4f46e5 100%); color:#fff; border:none; border-radius:12px; font-size:15px; font-family:inherit; font-weight:600; cursor:pointer; margin-top:4px; transition:all 0.25s ease; }
   .submit-btn:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(99,102,241,0.35); }
   .submit-btn:active { transform:translateY(0); }
   .submit-btn:disabled { opacity:0.7; cursor:not-allowed; transform:none; }
@@ -574,8 +574,8 @@ const globalStyles = `
   @keyframes spin { to{transform:rotate(360deg)} }
 
   .divider { display:flex; align-items:center; gap:12px; margin:18px 0 14px; }
-  .divider-line { flex:1; height:1px; background:#f1f5f9; }
-  .divider-text { font-size:11px; color:#cbd5e1; letter-spacing:1px; white-space:nowrap; }
+  .divider-line { flex:1; height:1px; background:#1D2230; }
+  .divider-text { font-size:11px; color:#242938; letter-spacing:1px; white-space:nowrap; }
 
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 

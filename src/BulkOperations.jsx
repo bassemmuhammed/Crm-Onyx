@@ -22,18 +22,18 @@ import { useState, useEffect } from "react";
 import { C } from "./theme";
 
 const STATUS_OPTIONS = [
-  { value: "new",            label: "New",            color: "#2563EB" },
-  { value: "callback",       label: "Call Back",      color: "#F59E0B" },
-  { value: "pendingMeeting", label: "Pending Meeting",color: "#F97316" },
-  { value: "meetingDone",    label: "Meeting Done",   color: "#10B981" },
-  { value: "deal",           label: "Deal",           color: "#10B981" },
-  { value: "onGoing",        label: "On Going",       color: "#2563EB" },
-  { value: "lowBudget",      label: "Low Budget",     color: "#F59E0B" },
-  { value: "noAnswer",       label: "No Answer",      color: "#6B7280" },
-  { value: "notInterested",  label: "Not Interested", color: "#DC2626" },
-  { value: "chooseCompetitor", label: "Competitor",   color: "#DC2626" },
-  { value: "longTerm",       label: "Long Term",      color: "#6B7280" },
-  { value: "closed",         label: "Closed",         color: "#6B7280" },
+  { value: "new",            label: "New",            color: "#4C8DFF" },
+  { value: "callback",       label: "Call Back",      color: "#F2A93B" },
+  { value: "pendingMeeting", label: "Pending Meeting",color: "#F2A93B" },
+  { value: "meetingDone",    label: "Meeting Done",   color: "#2BD97C" },
+  { value: "deal",           label: "Deal",           color: "#2BD97C" },
+  { value: "onGoing",        label: "On Going",       color: "#4C8DFF" },
+  { value: "lowBudget",      label: "Low Budget",     color: "#F2A93B" },
+  { value: "noAnswer",       label: "No Answer",      color: "#8B93A7" },
+  { value: "notInterested",  label: "Not Interested", color: "#E23A4E" },
+  { value: "chooseCompetitor", label: "Competitor",   color: "#E23A4E" },
+  { value: "longTerm",       label: "Long Term",      color: "#8B93A7" },
+  { value: "closed",         label: "Closed",         color: "#8B93A7" },
 ];
 
 // ─── Bulk Action Bar (overlay at bottom) ──────────────────────────
@@ -82,7 +82,7 @@ export function BulkActionBar({
         gap: 8,
         width: "calc(100% - 28px)",
         maxWidth: 420,
-        fontFamily: "Archivo, sans-serif",
+        fontFamily: "Inter, sans-serif",
       }}>
         {/* Header row */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

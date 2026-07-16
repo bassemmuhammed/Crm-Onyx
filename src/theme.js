@@ -1,55 +1,39 @@
 // ── theme.js ───────────────────────────────────────────────────────
-// نظام الألوان المركزي الموحّد — Light Theme (ONYX CRM)
+// نظام التصميم المركزي — Dark Theme (مطابقة الموك أب)
 //
-// هذا هو المصدر الوحيد للحقيقة (single source of truth) لكل الألوان في التطبيق.
-// ممنوع استخدام أي hardcoded hex value في أي component — استورد من هنا فقط.
-//
-// لتحديث لون في كل التطبيق: عدّله هنا فقط.
+// الألوان والخطوط مأخوذة من onyx_dashboard_mockup.html
+// هذا هو المصدر الوحيد للحقيقة (single source of truth) لكل الألوان.
 
 // ══════════════════════════════════════════════════════════════════
 // CSS VARIABLES — تُحقن في :root عبر OnyxGlobalStyles في App.jsx
 // ══════════════════════════════════════════════════════════════════
 export const CSS_VARS = `
-  --bg-page: #F5F6FA;
-  --bg-surface: #FFFFFF;
-  --bg-surface-hover: #F9FAFB;
-  --bg-sidebar: #FFFFFF;
-
-  --border-default: #E5E7EB;
-  --border-light: #EDEEF2;
-
-  --text-primary: #1A1A2E;
-  --text-secondary: #6B7280;
-  --text-muted: #9CA3AF;
-  --text-on-dark: #FFFFFF;
-
-  --primary: #DC2626;
-  --primary-hover: #B91C1C;
-  --primary-light: #FEE2E2;
-
-  --status-success: #10B981;
-  --status-success-bg: #D1FAE5;
-  --status-info: #3B82F6;
-  --status-info-bg: #DBEAFE;
-  --status-warning: #F59E0B;
-  --status-warning-bg: #FEF3C7;
-  --status-danger: #EF4444;
-  --status-danger-bg: #FEE2E2;
-  --status-purple: #8B5CF6;
-  --status-purple-bg: #EDE9FE;
-  --status-orange: #F97316;
-  --status-orange-bg: #FFEDD5;
-  --status-neutral: #6B7280;
-  --status-neutral-bg: #F3F4F6;
-
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 9999px;
+  --bg-base:#0B0D12;
+  --bg-elevated:#12151C;
+  --surface:#171B24;
+  --surface-hover:#1D2230;
+  --border:#242938;
+  --border-soft:#1B1F2A;
+  --text-primary:#F2F3F7;
+  --text-secondary:#8B93A7;
+  --text-tertiary:#5B6478;
+  --accent:#E23A4E;
+  --accent-hover:#FF4C5E;
+  --accent-dim:rgba(226,58,78,0.12);
+  --success:#2BD97C;
+  --success-dim:rgba(43,217,124,0.12);
+  --warning:#F2A93B;
+  --warning-dim:rgba(242,169,59,0.12);
+  --info:#4C8DFF;
+  --info-dim:rgba(76,141,255,0.12);
+  --violet:#9B7CFF;
+  --violet-dim:rgba(155,124,255,0.12);
+  --sidebar-w:264px;
+  --radius:14px;
+  --radius-sm:10px;
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
 `;
 
 // ══════════════════════════════════════════════════════════════════
@@ -58,134 +42,144 @@ export const CSS_VARS = `
 
 // Backgrounds
 export const bg = {
-  page:           "#F5F6FA",
-  surface:        "#FFFFFF",
-  surfaceHover:   "#F9FAFB",
-  sidebar:        "#FFFFFF",
-  input:          "#F9FAFB",
-  overlay:        "rgba(0,0,0,0.5)",
+  base:           "#0B0D12",
+  elevated:       "#12151C",
+  surface:        "#171B24",
+  surfaceHover:   "#1D2230",
+  sidebar:        "#12151C",
+  input:          "#171B24",
+  overlay:        "rgba(0,0,0,0.6)",
 };
 
 // Borders
 export const border = {
-  default: "#E5E7EB",
-  light:   "#EDEEF2",
+  default: "#242938",
+  soft:   "#1B1F2A",
 };
 
 // Text
 export const text = {
-  primary:   "#1A1A2E",
-  secondary: "#6B7280",
-  muted:     "#9CA3AF",
+  primary:   "#F2F3F7",
+  secondary: "#8B93A7",
+  tertiary:  "#5B6478",
   onDark:    "#FFFFFF",
-  white:     "#FFFFFF",  // alias
+  white:     "#FFFFFF",
 };
 
 // Primary (Brand)
 export const primary = {
-  main:   "#DC2626",
-  hover:  "#B91C1C",
-  light:  "#FEE2E2",
+  main:   "#E23A4E",
+  hover:  "#FF4C5E",
+  dim:    "rgba(226,58,78,0.12)",
 };
 
 // Status
 export const status = {
-  success: { color: "#10B981", bg: "#D1FAE5" },
-  info:    { color: "#3B82F6", bg: "#DBEAFE" },
-  warning: { color: "#F59E0B", bg: "#FEF3C7" },
-  danger:  { color: "#EF4444", bg: "#FEE2E2" },
-  purple:  { color: "#8B5CF6", bg: "#EDE9FE" },
-  orange:  { color: "#F97316", bg: "#FFEDD5" },
-  neutral: { color: "#6B7280", bg: "#F3F4F6" },
+  success: { color: "#2BD97C", bg: "rgba(43,217,124,0.12)",  dim: "rgba(43,217,124,0.12)"  },
+  info:    { color: "#4C8DFF", bg: "rgba(76,141,255,0.12)",  dim: "rgba(76,141,255,0.12)"  },
+  warning: { color: "#F2A93B", bg: "rgba(242,169,59,0.12)",  dim: "rgba(242,169,59,0.12)"  },
+  danger:  { color: "#E23A4E", bg: "rgba(226,58,78,0.12)",   dim: "rgba(226,58,78,0.12)"   },
+  violet:  { color: "#9B7CFF", bg: "rgba(155,124,255,0.12)", dim: "rgba(155,124,255,0.12)" },
+  orange:  { color: "#F2A93B", bg: "rgba(242,169,59,0.12)",  dim: "rgba(242,169,59,0.12)"  },
+  neutral: { color: "#8B93A7", bg: "#1D2230",                dim: "#1D2230"                },
 };
 
 // Shadows
 export const shadow = {
-  sm: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
-  md: "0 4px 12px rgba(0,0,0,0.1)",
-  lg: "0 10px 25px rgba(0,0,0,0.15)",
+  sm: "0 1px 3px rgba(0,0,0,0.3)",
+  md: "0 4px 12px rgba(0,0,0,0.4)",
+  lg: "0 10px 25px rgba(0,0,0,0.5)",
+  accent: "0 4px 14px rgba(226,58,78,0.35)",
 };
 
 // Radius
 export const radius = {
-  sm:   8,
-  md:   12,
+  sm:   10,
+  md:   14,
   lg:   16,
   full: 9999,
 };
 
+// Fonts
+export const fonts = {
+  display: "'Space Grotesk', sans-serif",
+  body:    "'Inter', sans-serif",
+  mono:    "'JetBrains Mono', monospace",
+};
+
 // Layout
 export const layout = {
-  sidebarWidth:     240,
+  sidebarWidth:     264,
   mobileBreakpoint: 1024,
-  contentPadding:   24,
-  contentMaxWidth:  1200,
-  cardPadding:      18,
-  cardGap:          12,
+  contentPadding:   32,
+  contentMaxWidth:  1180,
+  cardPadding:      20,
+  cardGap:          16,
 };
 
 // ══════════════════════════════════════════════════════════════════
-// LEAD STATUS META — بيانات الـ Lead statuses
+// LEAD STATUS META
 // ══════════════════════════════════════════════════════════════════
 export const LEAD_STATUS_META = {
   new:              { label: "New",              ...status.success },
   callback:         { label: "Call Back",        ...status.warning },
   pendingMeeting:   { label: "Pending Meeting",  ...status.orange  },
-  meetingDone:      { label: "Meeting Done",     ...status.info    },
-  deal:             { label: "Deal",             ...status.success },
+  meetingDone:      { label: "Meeting Done",     ...status.violet  },
+  deal:             { label: "Deal",             ...status.danger  },
   onGoing:          { label: "On Going",         ...status.info    },
   lowBudget:        { label: "Low Budget",       ...status.warning },
   noAnswer:         { label: "No Answer",        ...status.neutral },
-  notInterested:    { label: "Not Interested",   ...status.danger  },
+  notInterested:    { label: "Not Interested",   ...status.neutral },
   chooseCompetitor: { label: "Competitor",       ...status.danger  },
-  longTerm:         { label: "Long Term",        ...status.purple  },
+  longTerm:         { label: "Long Term",        ...status.violet  },
   closed:           { label: "Closed",           ...status.neutral },
   duplicate:        { label: "Duplicate",        ...status.neutral },
 };
 
 // ══════════════════════════════════════════════════════════════════
-// COMPATIBILITY OBJECT — C (مستقلة تماماً — لا تعتمد على أي export آخر)
-// هذا يمنع TDZ (Temporal Dead Zone) errors في production builds
+// COMPATIBILITY OBJECT — C
 // ══════════════════════════════════════════════════════════════════
 export const C = {
   // Backgrounds
-  black:     "#F5F6FA",
-  surface:   "#F5F6FA",
-  card:      "#FFFFFF",
-  cardAlt:   "#F9FAFB",
-  cardHover: "#F9FAFB",
-  cardGrad1: "#FFFFFF",
-  cardGrad2: "#FFFFFF",
-  unread:    "#F9FAFB",
+  black:     "#0B0D12",
+  surface:   "#0B0D12",
+  card:      "#171B24",
+  cardAlt:   "#1D2230",
+  cardHover: "#1D2230",
+  cardGrad1: "#171B24",
+  cardGrad2: "#171B24",
+  unread:    "#1D2230",
 
   // Borders
-  border:    "#E5E7EB",
-  borderLt:  "#EDEEF2",
-  divider:   "#EDEEF2",
+  border:    "#242938",
+  borderLt:  "#1B1F2A",
+  divider:   "#1B1F2A",
 
   // Text
-  white:     "#1A1A2E",
-  silver:    "#1A1A2E",
-  gray:      "#6B7280",
-  muted:     "#9CA3AF",
+  white:     "#F2F3F7",
+  silver:    "#F2F3F7",
+  gray:      "#8B93A7",
+  muted:     "#5B6478",
 
-  // Primary (أحمر)
-  red:       "#DC2626",
-  redLight:  "#B91C1C",
-  redBg:     "#FEE2E2",
+  // Primary
+  red:       "#E23A4E",
+  redLight:  "#FF4C5E",
+  redBg:     "rgba(226,58,78,0.12)",
 
-  // Status (legacy aliases)
-  green:     "#10B981",
-  greenBg:   "#D1FAE5",
-  blue:      "#2563EB",
-  blueBg:    "#DBEAFE",
-  amber:     "#F59E0B",
-  amberBg:   "#FEF3C7",
-  orange:    "#F97316",
-  orangeBg:  "#FFEDD5",
-  purple:    "#8B5CF6",
-  purpleBg:  "#EDE9FE",
+  // Status
+  green:     "#2BD97C",
+  greenBg:   "rgba(43,217,124,0.12)",
+  blue:      "#4C8DFF",
+  blueBg:    "rgba(76,141,255,0.12)",
+  amber:     "#F2A93B",
+  amberBg:   "rgba(242,169,59,0.12)",
+  orange:    "#F2A93B",
+  orangeBg:  "rgba(242,169,59,0.12)",
+  purple:    "#9B7CFF",
+  purpleBg:  "rgba(155,124,255,0.12)",
 };
 
-// Aliases للظلال (للتوافق)
+// Aliases
 export const shadows = shadow;
+
+export default C;

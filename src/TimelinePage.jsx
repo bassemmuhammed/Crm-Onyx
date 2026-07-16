@@ -8,8 +8,8 @@ import { C } from "./theme";
 // ─── Global Styles ────────────────────────────────────────────
 const NoSelect = () => <style>{`
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
-  * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Archivo', sans-serif !important; }
-  html, body { margin:0; padding:0; background:#F5F6FA; }
+  * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Inter', sans-serif !important; }
+  html, body { margin:0; padding:0; background:#0B0D12; }
   *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:light; }
   @keyframes fadeInUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   @keyframes slideInLeft{ from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
@@ -19,7 +19,7 @@ const NoSelect = () => <style>{`
   .tap-scale:active { transform:scale(.96); transition:transform .1s ease; }
   ::-webkit-scrollbar { width:3px; height:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#E23A4E; border-radius:99px }
 `}</style>;
 
 // ─── Mock Data ────────────────────────────────────────────────
@@ -475,7 +475,7 @@ export default function TimelinePage({ activeTab = 2, onTabChange, onSignOut }) 
   const [tabIndex, setTabIndex] = useState(0);
 
   return (
-    <div style={{ fontFamily: "Archivo,sans-serif", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ fontFamily: "Inter,sans-serif", color: C.white, width: "100%", display: "flex", flexDirection: "column" }}>
       <NoSelect />
 
       {/* Section header */}

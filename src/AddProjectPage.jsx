@@ -24,8 +24,8 @@ import {  uploadCoverImage,
 const STATUS_OPTIONS = [
   { value: "Under Construction", label: "Under Construction", color: "#f97316" },
   { value: "Ready to Move",      label: "Ready to Move",      color: "#10b981" },
-  { value: "Off Plan",           label: "Off Plan",           color: "#2563EB" },
-  { value: "On Hold",            label: "On Hold",            color: "#6B7280" },
+  { value: "Off Plan",           label: "Off Plan",           color: "#4C8DFF" },
+  { value: "On Hold",            label: "On Hold",            color: "#8B93A7" },
   { value: "Launch",             label: "Launch",             color: "#f59e0b" },
 ];
 
@@ -43,9 +43,9 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: light only; }
-  html, body { margin:0; padding:0; border:none; outline:none; background:#F5F6FA; overflow-x:hidden; }
-  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: light; -webkit-user-select: none; user-select: none; }
+  :root { color-scheme: dark only; }
+  html, body { margin:0; padding:0; border:none; outline:none; background:#0B0D12; overflow-x:hidden; }
+  *, *::before, *::after { -webkit-tap-highlight-color: transparent; box-sizing: border-box; color-scheme: dark; -webkit-user-select: none; user-select: none; }
   @keyframes fadeInUp { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
   @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
   @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.14);opacity:1} }
@@ -60,30 +60,30 @@ const STYLES = `
   input, select, textarea { -webkit-appearance: none; appearance: none; -webkit-user-select: text !important; user-select: text !important; }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#E23A4E; border-radius:99px }
   input[type=date]::-webkit-calendar-picker-indicator { opacity:.4; cursor:pointer;  }
-  input, select { color-scheme: light; }
-  ::placeholder { color:#6B7280 !important; opacity:1 }
-  select option  { background:#F9FAFB; color:#1A1A2E }
+  input, select { color-scheme: dark; }
+  ::placeholder { color:#8B93A7 !important; opacity:1 }
+  select option  { background:#1D2230; color:#F2F3F7 }
 `;
 
 const inputBase = {
   width: "100%", padding: "10px 14px", borderRadius: 10,
-  border: `1.5px solid #E5E7EB`, outline: "none",
-  fontSize: ".82rem", fontWeight: 600, color: "#1A1A2E",
-  fontFamily: "Archivo, sans-serif", background: "#F9FAFB",
+  border: `1.5px solid #242938`, outline: "none",
+  fontSize: ".82rem", fontWeight: 600, color: "#F2F3F7",
+  fontFamily: "Inter, sans-serif", background: "#1D2230",
 };
 
 const labelStyle = {
-  fontSize: ".6rem", fontWeight: 700, color: "#6B7280",
+  fontSize: ".6rem", fontWeight: 700, color: "#8B93A7",
   textTransform: "uppercase", letterSpacing: 0.6,
-  marginBottom: 5, display: "block", fontFamily: "Archivo, sans-serif",
+  marginBottom: 5, display: "block", fontFamily: "Inter, sans-serif",
 };
 
 // ─── Divider ──────────────────────────────────────────────────────────
 const Divider = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
-    {label && <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
+    {label && <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>{label}</span>}
     <div style={{ flex:1, height:1, background:C.border }} />
   </div>
 );
@@ -100,7 +100,7 @@ function Section({ title, children, delay = 0 }) {
     }}>
       <div style={{ padding:"10px 14px 8px", borderBottom:`1px solid ${C.border}`, display:"flex", alignItems:"center", gap:8 }}>
         <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, flexShrink:0 }} />
-        <span style={{ fontSize:".72rem", fontWeight:800, color:C.silver, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>{title}</span>
+        <span style={{ fontSize:".72rem", fontWeight:800, color:C.silver, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>{title}</span>
       </div>
       <div style={{ padding:"12px 14px" }}>{children}</div>
     </div>
@@ -113,7 +113,7 @@ function UnitRow({ unit, index, onChange, onRemove }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:6, paddingBottom:10, borderBottom:`1px solid ${C.border}` }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Unit #{index + 1}</span>
+        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Unit #{index + 1}</span>
         <button onClick={() => onRemove(index)} style={{
           background:"none", border:"none", color:C.gray, cursor:"pointer",
           fontSize:".78rem", fontWeight:700, padding:"2px 4px", lineHeight:1,
@@ -151,7 +151,7 @@ function PaymentRow({ plan, index, onChange, onRemove }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:6, paddingBottom:10, borderBottom:`1px solid ${C.border}` }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Plan #{index + 1}</span>
+        <span style={{ fontSize:".6rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>Plan #{index + 1}</span>
         <button onClick={()=>onRemove(index)} style={{ background:"none", border:"none", color:C.gray, cursor:"pointer", fontSize:".78rem", fontWeight:700, padding:"2px 4px", lineHeight:1 }}>✕</button>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
@@ -382,19 +382,19 @@ export default function AddProjectPage({
   // ── Project List View ──
   if (view === "list") {
     return (
-      <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:80 }}>
+      <div style={{ background:"transparent", fontFamily:"Inter, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:80 }}>
         <style>{STYLES}</style>
         <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:4 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
               <div style={{ width:3, height:20, background:C.red, borderRadius:2 }}/>
-              <span style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>PROJECTS</span>
-              <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderRadius:6, padding:"2px 8px", fontSize:".65rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif" }}>{projects.length}</div>
+              <span style={{ fontSize:".88rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>PROJECTS</span>
+              <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderRadius:6, padding:"2px 8px", fontSize:".65rem", fontWeight:700, color:C.gray, fontFamily:"Inter,sans-serif" }}>{projects.length}</div>
             </div>
             <button onClick={()=>setView("form")} className="tap-btn" style={{
               background:C.red, border:"none", borderRadius:10, padding:"8px 14px",
               color:C.white, fontSize:".72rem", fontWeight:800, cursor:"pointer",
-              display:"flex", alignItems:"center", gap:5, fontFamily:"Archivo,sans-serif",
+              display:"flex", alignItems:"center", gap:5, fontFamily:"Inter,sans-serif",
             }}>
               <span style={{fontSize:"1rem"}}>+</span> Add Project
             </button>
@@ -414,8 +414,8 @@ export default function AddProjectPage({
                   </svg>
                 </div>
               </div>
-              <div style={{fontSize:"1.05rem",fontWeight:900,color:C.white,fontFamily:"Archivo,sans-serif",marginBottom:8}}>No Projects Yet</div>
-              <div style={{fontSize:".75rem",color:C.gray,fontWeight:600,fontFamily:"Archivo,sans-serif",lineHeight:1.6,maxWidth:220}}>اضغط + Add Project عشان تضيف مشروع جديد</div>
+              <div style={{fontSize:"1.05rem",fontWeight:900,color:C.white,fontFamily:"Inter,sans-serif",marginBottom:8}}>No Projects Yet</div>
+              <div style={{fontSize:".75rem",color:C.gray,fontWeight:600,fontFamily:"Inter,sans-serif",lineHeight:1.6,maxWidth:220}}>اضغط + Add Project عشان تضيف مشروع جديد</div>
             </div>
           ) : (
             projects.map((proj, i) => {
@@ -434,19 +434,19 @@ export default function AddProjectPage({
                       : <div style={{width:48,height:48,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0}}>🏢</div>
                     }
                     <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:".88rem",fontWeight:800,color:C.white,fontFamily:"Archivo,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proj.name}</div>
-                      <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Archivo,sans-serif"}}>{proj.developer}</div>
-                      {proj.location && <div style={{fontSize:".62rem",color:C.gray,fontWeight:600,marginTop:1,fontFamily:"Archivo,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>📍 {proj.location}</div>}
+                      <div style={{fontSize:".88rem",fontWeight:800,color:C.white,fontFamily:"Inter,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proj.name}</div>
+                      <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Inter,sans-serif"}}>{proj.developer}</div>
+                      {proj.location && <div style={{fontSize:".62rem",color:C.gray,fontWeight:600,marginTop:1,fontFamily:"Inter,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>📍 {proj.location}</div>}
                     </div>
                     <svg width="14" height="14" viewBox="0 0 256 256" fill={C.gray}><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>
                   </div>
                   <div style={{ padding:"8px 14px 12px", borderTop:`1px solid ${C.border}`, display:"flex", gap:6, flexWrap:"wrap", alignItems:"center" }}>
-                    <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".58rem",fontWeight:700,padding:"3px 8px",borderRadius:6,fontFamily:"Archivo,sans-serif"}}>{proj.category}</div>
-                    <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".58rem",fontWeight:800,padding:"3px 8px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Archivo,sans-serif"}}>
+                    <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".58rem",fontWeight:700,padding:"3px 8px",borderRadius:6,fontFamily:"Inter,sans-serif"}}>{proj.category}</div>
+                    <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".58rem",fontWeight:800,padding:"3px 8px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Inter,sans-serif"}}>
                       <div style={{width:5,height:5,borderRadius:"50%",background:sMeta.color}}/>
                       {proj.status}
                     </div>
-                    {proj.price && <div style={{marginLeft:"auto",fontSize:".6rem",fontWeight:700,color:C.red,fontFamily:"Archivo,sans-serif"}}>From {proj.price}</div>}
+                    {proj.price && <div style={{marginLeft:"auto",fontSize:".6rem",fontWeight:700,color:C.red,fontFamily:"Inter,sans-serif"}}>From {proj.price}</div>}
                   </div>
                 </div>
               );
@@ -462,14 +462,14 @@ export default function AddProjectPage({
     const proj = selectedProject;
     const sMeta = STATUS_OPTIONS.find(s=>s.value===proj.status) || STATUS_OPTIONS[0];
     return (
-      <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:100 }}>
+      <div style={{ background:"transparent", fontFamily:"Inter, sans-serif", maxWidth:430, margin:"0 auto", paddingBottom:100 }}>
         <style>{STYLES}</style>
         <div style={{ padding:"12px 16px 0", display:"flex", flexDirection:"column", gap:10 }}>
           {/* Back */}
           <button onClick={()=>setView("list")} className="tap-btn" style={{
             background:"none", border:"none", color:C.gray, cursor:"pointer",
             display:"flex", alignItems:"center", gap:6, padding:"4px 0",
-            fontSize:".72rem", fontWeight:700, fontFamily:"Archivo,sans-serif",
+            fontSize:".72rem", fontWeight:700, fontFamily:"Inter,sans-serif",
           }}>
             <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
             Back to Projects
@@ -483,15 +483,15 @@ export default function AddProjectPage({
                 : <div style={{width:60,height:60,borderRadius:12,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.6rem",flexShrink:0}}>🏢</div>
               }
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:"1rem",fontWeight:900,color:C.white,fontFamily:"Archivo,sans-serif"}}>{proj.name}</div>
-                {proj.developer && <div style={{fontSize:".68rem",color:C.gray,fontWeight:600,marginTop:3,fontFamily:"Archivo,sans-serif"}}>{proj.developer}</div>}
-                {proj.location && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Archivo,sans-serif"}}>📍 {proj.location}</div>}
-                {proj.locationLink && <a href={proj.locationLink} target="_blank" rel="noopener noreferrer" style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif",textDecoration:"none",display:"block",marginTop:2}}>🗺️ View on Google Maps</a>}
+                <div style={{fontSize:"1rem",fontWeight:900,color:C.white,fontFamily:"Inter,sans-serif"}}>{proj.name}</div>
+                {proj.developer && <div style={{fontSize:".68rem",color:C.gray,fontWeight:600,marginTop:3,fontFamily:"Inter,sans-serif"}}>{proj.developer}</div>}
+                {proj.location && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Inter,sans-serif"}}>📍 {proj.location}</div>}
+                {proj.locationLink && <a href={proj.locationLink} target="_blank" rel="noopener noreferrer" style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Inter,sans-serif",textDecoration:"none",display:"block",marginTop:2}}>🗺️ View on Google Maps</a>}
               </div>
             </div>
             <div style={{ padding:"8px 14px 14px", borderTop:`1px solid ${C.border}`, display:"flex", gap:6, flexWrap:"wrap" }}>
-              <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Archivo,sans-serif"}}>{proj.category}</div>
-              <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".6rem",fontWeight:800,padding:"4px 10px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Archivo,sans-serif"}}>
+              <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Inter,sans-serif"}}>{proj.category}</div>
+              <div style={{background:`${sMeta.color}20`,border:`1px solid ${sMeta.color}44`,color:sMeta.color,fontSize:".6rem",fontWeight:800,padding:"4px 10px",borderRadius:6,display:"flex",alignItems:"center",gap:4,fontFamily:"Inter,sans-serif"}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:sMeta.color}}/>
                 {proj.status}
               </div>
@@ -503,12 +503,12 @@ export default function AddProjectPage({
             <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"40ms"}}>
               <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
-                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Pricing & Details</span>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Inter,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Pricing & Details</span>
               </div>
               <div style={{padding:"12px 14px",display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-                {proj.price && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Starting Price</div><div style={{fontSize:".75rem",fontWeight:800,color:C.red,fontFamily:"Archivo,sans-serif"}}>{proj.price}</div></div>}
-                {proj.area && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Unit Size</div><div style={{fontSize:".75rem",fontWeight:800,color:C.white,fontFamily:"Archivo,sans-serif"}}>{proj.area}</div></div>}
-                {proj.delivery && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",marginBottom:3}}>Delivery</div><div style={{fontSize:".75rem",fontWeight:800,color:C.launch,fontFamily:"Archivo,sans-serif"}}>{proj.delivery}</div></div>}
+                {proj.price && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Inter,sans-serif",textTransform:"uppercase",marginBottom:3}}>Starting Price</div><div style={{fontSize:".75rem",fontWeight:800,color:C.red,fontFamily:"Inter,sans-serif"}}>{proj.price}</div></div>}
+                {proj.area && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Inter,sans-serif",textTransform:"uppercase",marginBottom:3}}>Unit Size</div><div style={{fontSize:".75rem",fontWeight:800,color:C.white,fontFamily:"Inter,sans-serif"}}>{proj.area}</div></div>}
+                {proj.delivery && <div><div style={{fontSize:".55rem",fontWeight:700,color:C.gray,fontFamily:"Inter,sans-serif",textTransform:"uppercase",marginBottom:3}}>Delivery</div><div style={{fontSize:".75rem",fontWeight:800,color:C.launch,fontFamily:"Inter,sans-serif"}}>{proj.delivery}</div></div>}
               </div>
             </div>
           )}
@@ -518,11 +518,11 @@ export default function AddProjectPage({
             <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"80ms"}}>
               <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
-                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Amenities</span>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Inter,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Amenities</span>
               </div>
               <div style={{padding:"12px 14px",display:"flex",flexWrap:"wrap",gap:5}}>
                 {proj.amenities.map(a=>(
-                  <div key={a} style={{background:`${C.red}18`,border:`1px solid ${C.red}44`,color:C.white,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Archivo,sans-serif",display:"flex",alignItems:"center",gap:4}}>
+                  <div key={a} style={{background:`${C.red}18`,border:`1px solid ${C.red}44`,color:C.white,fontSize:".6rem",fontWeight:700,padding:"4px 10px",borderRadius:6,fontFamily:"Inter,sans-serif",display:"flex",alignItems:"center",gap:4}}>
                     <div style={{width:4,height:4,borderRadius:"50%",background:C.red}}/>
                     {a}
                   </div>
@@ -536,20 +536,20 @@ export default function AddProjectPage({
             <div className="section-card" style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${C.red}`,boxShadow:`inset 3px 0 0 0 ${C.red}, inset 3.5px 0 12px -2px ${C.red}44`,borderRadius:14,overflow:"hidden",animationDelay:"100ms"}}>
               <div style={{padding:"10px 14px 8px",borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:8}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>
-                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Archivo,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Description</span>
+                <span style={{fontSize:".72rem",fontWeight:800,color:C.silver,fontFamily:"Inter,sans-serif",textTransform:"uppercase",letterSpacing:.6}}>Description</span>
               </div>
-              <div style={{padding:"12px 14px",fontSize:".75rem",color:C.silver,fontWeight:500,fontFamily:"Archivo,sans-serif",lineHeight:1.7}}>{proj.description}</div>
+              <div style={{padding:"12px 14px",fontSize:".75rem",color:C.silver,fontWeight:500,fontFamily:"Inter,sans-serif",lineHeight:1.7}}>{proj.description}</div>
             </div>
           )}
 
           {/* Delete Confirm */}
           {confirmDelete === proj.id && (
             <div style={{background:`${C.red}12`,border:`1px solid ${C.red}44`,borderRadius:12,padding:"14px",display:"flex",flexDirection:"column",gap:10}}>
-              <div style={{fontSize:".75rem",fontWeight:700,color:C.white,fontFamily:"Archivo,sans-serif",textAlign:"center"}}>🗑️ حذف المشروع نهائياً؟</div>
-              <div style={{fontSize:".65rem",color:C.gray,fontFamily:"Archivo,sans-serif",textAlign:"center"}}>لا يمكن التراجع عن هذه العملية</div>
+              <div style={{fontSize:".75rem",fontWeight:700,color:C.white,fontFamily:"Inter,sans-serif",textAlign:"center"}}>🗑️ حذف المشروع نهائياً؟</div>
+              <div style={{fontSize:".65rem",color:C.gray,fontFamily:"Inter,sans-serif",textAlign:"center"}}>لا يمكن التراجع عن هذه العملية</div>
               <div style={{display:"flex",gap:8}}>
-                <button onClick={()=>setConfirmDelete(null)} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:`1px solid ${C.border}`,background:C.cardAlt,color:C.white,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:"Archivo,sans-serif"}}>إلغاء</button>
-                <button onClick={()=>{onDeleteProject?.(proj.id);setView("list");setConfirmDelete(null);}} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:"none",background:C.red,color:C.white,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:"Archivo,sans-serif"}}>تأكيد الحذف</button>
+                <button onClick={()=>setConfirmDelete(null)} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:`1px solid ${C.border}`,background:C.cardAlt,color:C.white,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:"Inter,sans-serif"}}>إلغاء</button>
+                <button onClick={()=>{onDeleteProject?.(proj.id);setView("list");setConfirmDelete(null);}} className="tap-btn" style={{flex:1,padding:"10px",borderRadius:10,border:"none",background:C.red,color:C.white,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:"Inter,sans-serif"}}>تأكيد الحذف</button>
               </div>
             </div>
           )}
@@ -559,7 +559,7 @@ export default function AddProjectPage({
             <button onClick={()=>{setSelectedProject(proj);setView("form");}} className="tap-btn" style={{
               flex:1,padding:"13px",borderRadius:12,border:`1px solid ${C.border}`,
               background:C.cardAlt,color:C.white,fontSize:".8rem",fontWeight:800,
-              cursor:"pointer",fontFamily:"Archivo,sans-serif",
+              cursor:"pointer",fontFamily:"Inter,sans-serif",
               display:"flex",alignItems:"center",justifyContent:"center",gap:6,
             }}>
               <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
@@ -568,7 +568,7 @@ export default function AddProjectPage({
             <button onClick={()=>setConfirmDelete(proj.id)} className="tap-btn" style={{
               flex:1,padding:"13px",borderRadius:12,border:`1px solid ${C.red}44`,
               background:`${C.red}18`,color:C.red,fontSize:".8rem",fontWeight:800,
-              cursor:"pointer",fontFamily:"Archivo,sans-serif",
+              cursor:"pointer",fontFamily:"Inter,sans-serif",
               display:"flex",alignItems:"center",justifyContent:"center",gap:6,
             }}>
               <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>
@@ -582,7 +582,7 @@ export default function AddProjectPage({
 
   // ── Add/Edit Form View ──
   return (
-    <div style={{ background:"transparent", fontFamily:"Archivo, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:80 }}>
+    <div style={{ background:"transparent", fontFamily:"Inter, sans-serif", maxWidth:430, margin:"0 auto", position:"relative", paddingBottom:80 }}>
       <style>{STYLES}</style>
 
       {/* ── Form Body ── */}
@@ -592,7 +592,7 @@ export default function AddProjectPage({
         <button onClick={()=>setView(selectedProject?"detail":"list")} className="tap-btn" style={{
           background:"none", border:"none", color:C.gray, cursor:"pointer",
           display:"flex", alignItems:"center", gap:6, padding:"4px 0",
-          fontSize:".72rem", fontWeight:700, fontFamily:"Archivo,sans-serif",
+          fontSize:".72rem", fontWeight:700, fontFamily:"Inter,sans-serif",
         }}>
           <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>
           {selectedProject ? "Back to Project" : "Back to Projects"}
@@ -608,7 +608,7 @@ export default function AddProjectPage({
               <input value={name} onChange={e=>{setName(e.target.value);setErrors(v=>({...v,name:""}));}}
                 placeholder="e.g. Nile Heights Tower"
                 style={{...inputBase, borderColor:errors.name?C.red:C.border}}/>
-              {errors.name && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.name}</div>}
+              {errors.name && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Inter,sans-serif"}}>{errors.name}</div>}
             </div>
 
             {/* Developer */}
@@ -617,7 +617,7 @@ export default function AddProjectPage({
               <input value={developer} onChange={e=>{setDeveloper(e.target.value);setErrors(v=>({...v,developer:""}));}}
                 placeholder="e.g. Arabella Developments"
                 style={{...inputBase, borderColor:errors.developer?C.red:C.border}}/>
-              {errors.developer && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.developer}</div>}
+              {errors.developer && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Inter,sans-serif"}}>{errors.developer}</div>}
             </div>
 
             {/* Location */}
@@ -626,7 +626,7 @@ export default function AddProjectPage({
               <input value={location} onChange={e=>{setLocation(e.target.value);setErrors(v=>({...v,location:""}));}}
                 placeholder="e.g. New Cairo — 5th Settlement"
                 style={{...inputBase, borderColor:errors.location?C.red:C.border}}/>
-              {errors.location && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.location}</div>}
+              {errors.location && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Inter,sans-serif"}}>{errors.location}</div>}
             </div>
 
             {/* Location Link — Google Maps */}
@@ -638,7 +638,7 @@ export default function AddProjectPage({
               {locationLink && locationLink.includes("google") && (
                 <div style={{marginTop:6,display:"flex",alignItems:"center",gap:6}}>
                   <a href={locationLink} target="_blank" rel="noopener noreferrer" style={{
-                    fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif",
+                    fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Inter,sans-serif",
                     textDecoration:"none",display:"flex",alignItems:"center",gap:4,
                   }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
@@ -686,7 +686,7 @@ export default function AddProjectPage({
                       color: active ? C.white : C.gray,
                       fontSize:".63rem", fontWeight:700, cursor:"pointer",
                       display:"flex", alignItems:"center", gap:5,
-                      fontFamily:"Archivo,sans-serif",
+                      fontFamily:"Inter,sans-serif",
                     }}>
                       {active && <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>}
                       {c}
@@ -713,7 +713,7 @@ export default function AddProjectPage({
                   color: active ? C.white : C.gray,
                   fontSize:".63rem", fontWeight:700, cursor:"pointer",
                   display:"flex", alignItems:"center", gap:5,
-                  fontFamily:"Archivo,sans-serif",
+                  fontFamily:"Inter,sans-serif",
                 }}>
                   {active && <div style={{width:5,height:5,borderRadius:"50%",background:isLaunch?C.launch:C.red,flexShrink:0}}/>}
                   <div style={{width:6,height:6,borderRadius:"50%",background:opt.color,flexShrink:0}}/>
@@ -726,7 +726,7 @@ export default function AddProjectPage({
           {status === "Launch" && (
             <div style={{ marginTop:10, padding:"8px 12px", borderRadius:8, background:`${C.launch}12`, border:`1px solid ${C.launch}44`, display:"flex", alignItems:"center", gap:6 }}>
               <span style={{fontSize:"1rem"}}>🚀</span>
-              <span style={{fontSize:".65rem",fontWeight:700,color:C.launch,fontFamily:"Archivo,sans-serif"}}>
+              <span style={{fontSize:".65rem",fontWeight:700,color:C.launch,fontFamily:"Inter,sans-serif"}}>
                 This project will appear in the Sales Launch page
               </span>
             </div>
@@ -741,7 +741,7 @@ export default function AddProjectPage({
               <input value={price} onChange={e=>{setPrice(e.target.value);setErrors(v=>({...v,price:""}));}}
                 placeholder="e.g. Starting from 2,500,000 EGP"
                 style={{...inputBase, borderColor:errors.price?C.red:C.border}}/>
-              {errors.price && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.price}</div>}
+              {errors.price && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Inter,sans-serif"}}>{errors.price}</div>}
             </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
               <div>
@@ -753,7 +753,7 @@ export default function AddProjectPage({
                 <input value={delivery} onChange={e=>{setDelivery(e.target.value);setErrors(v=>({...v,delivery:""}));}}
                   placeholder="e.g. Q4 2027"
                   style={{...inputBase, borderColor:errors.delivery?C.red:C.border}}/>
-                {errors.delivery && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>{errors.delivery}</div>}
+                {errors.delivery && <div style={{fontSize:".62rem",color:C.red,marginTop:4,fontWeight:700,fontFamily:"Inter,sans-serif"}}>{errors.delivery}</div>}
               </div>
             </div>
           </div>
@@ -770,7 +770,7 @@ export default function AddProjectPage({
               background:C.cardAlt, color:C.gray,
               fontSize:".72rem", fontWeight:700, cursor:"pointer",
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
             }}>
               <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Payment Plan</span>
             </button>
@@ -841,13 +841,13 @@ export default function AddProjectPage({
                     border: `1px solid ${C.border}`, background: C.cardAlt,
                     color: uploadingCover === "video" ? C.gray : C.silver,
                     fontSize: ".62rem", fontWeight: 700, cursor: "pointer",
-                    fontFamily: "Archivo,sans-serif",
+                    fontFamily: "Inter,sans-serif",
                   }}
                 >
                   {uploadingCover === "video" ? "⏳" : "📤 Upload"}
                 </button>
               </div>
-              <div style={{fontSize:".6rem",color:C.gray,marginTop:4,fontWeight:600,fontFamily:"Archivo,sans-serif"}}>
+              <div style={{fontSize:".6rem",color:C.gray,marginTop:4,fontWeight:600,fontFamily:"Inter,sans-serif"}}>
                 Direct mp4 link or upload (max 100MB)
               </div>
             </div>
@@ -869,21 +869,21 @@ export default function AddProjectPage({
                     border: `1px solid ${C.border}`, background: C.cardAlt,
                     color: uploadingProfile ? C.gray : C.silver,
                     fontSize: ".62rem", fontWeight: 700, cursor: "pointer",
-                    fontFamily: "Archivo,sans-serif",
+                    fontFamily: "Inter,sans-serif",
                   }}
                 >
                   {uploadingProfile ? "⏳" : "📤 Upload"}
                 </button>
               </div>
               {(uploadingProfile || uploadingCover === "image") && (
-                <div style={{fontSize:".62rem",color:C.amber,marginTop:4,fontWeight:600,fontFamily:"Archivo,sans-serif"}}>
+                <div style={{fontSize:".62rem",color:C.amber,marginTop:4,fontWeight:600,fontFamily:"Inter,sans-serif"}}>
                   ⏳ Uploading...
                 </div>
               )}
               {profilePic && !uploadingProfile && uploadingCover !== "image" && (
                 <div style={{marginTop:8,display:"flex",alignItems:"center",gap:10}}>
                   <img src={profilePic} alt="preview" style={{width:44,height:44,borderRadius:10,objectFit:"cover",border:`1px solid ${C.border}`}} onError={e=>{e.target.style.display="none";}}/>
-                  <div style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Archivo,sans-serif"}}>✓ Preview loaded</div>
+                  <div style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Inter,sans-serif"}}>✓ Preview loaded</div>
                 </div>
               )}
             </div>
@@ -944,7 +944,7 @@ export default function AddProjectPage({
               background:C.cardAlt, color:C.gray,
               fontSize:".72rem", fontWeight:700, cursor:"pointer",
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
             }}>
               <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Story Image</span>
             </button>
@@ -964,7 +964,7 @@ export default function AddProjectPage({
                   color: active ? C.white : C.gray,
                   fontSize:".63rem", fontWeight:700, cursor:"pointer",
                   display:"flex", alignItems:"center", gap:5,
-                  fontFamily:"Archivo,sans-serif",
+                  fontFamily:"Inter,sans-serif",
                 }}>
                   {active && <div style={{width:5,height:5,borderRadius:"50%",background:C.red,flexShrink:0}}/>}
                   {a}
@@ -973,7 +973,7 @@ export default function AddProjectPage({
             })}
           </div>
           {amenities.length > 0 && (
-            <div style={{marginTop:8,fontSize:".62rem",color:C.red,fontWeight:700,fontFamily:"Archivo,sans-serif"}}>
+            <div style={{marginTop:8,fontSize:".62rem",color:C.red,fontWeight:700,fontFamily:"Inter,sans-serif"}}>
               {amenities.length} amenit{amenities.length===1?"y":"ies"} selected
             </div>
           )}
@@ -990,7 +990,7 @@ export default function AddProjectPage({
               background:C.cardAlt, color:C.gray,
               fontSize:".72rem", fontWeight:700, cursor:"pointer",
               display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-              fontFamily:"Archivo,sans-serif",
+              fontFamily:"Inter,sans-serif",
             }}>
               <span style={{fontSize:"1rem",color:C.white}}>+</span> <span style={{color:C.white}}>Add Unit Type</span>
             </button>
@@ -1011,17 +1011,17 @@ export default function AddProjectPage({
                 : <div style={{width:44,height:44,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.1rem"}}>🏢</div>
               }
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:".92rem",fontWeight:800,color:C.white,fontFamily:"Archivo,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{name}</div>
-                {developer && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Archivo,sans-serif"}}>{developer}</div>}
-                {location  && <div style={{fontSize:".62rem",color:C.gray,fontWeight:600,marginTop:1,fontFamily:"Archivo,sans-serif"}}>📍 {location}</div>}
+                <div style={{fontSize:".92rem",fontWeight:800,color:C.white,fontFamily:"Inter,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{name}</div>
+                {developer && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Inter,sans-serif"}}>{developer}</div>}
+                {location  && <div style={{fontSize:".62rem",color:C.gray,fontWeight:600,marginTop:1,fontFamily:"Inter,sans-serif"}}>📍 {location}</div>}
               </div>
             </div>
             <div style={{display:"flex",gap:5,marginTop:10,flexWrap:"wrap"}}>
-              <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".6rem",fontWeight:700,padding:"3px 9px",borderRadius:6,fontFamily:"Archivo,sans-serif"}}>{category}</div>
+              <div style={{background:C.cardAlt,border:`1px solid ${C.border}`,color:C.silver,fontSize:".6rem",fontWeight:700,padding:"3px 9px",borderRadius:6,fontFamily:"Inter,sans-serif"}}>{category}</div>
               <div style={{
                 background:`${statusMeta.color}20`, border:`1px solid ${statusMeta.color}44`,
                 color:statusMeta.color, fontSize:".6rem", fontWeight:800, padding:"3px 9px", borderRadius:6,
-                display:"flex", alignItems:"center", gap:4, fontFamily:"Archivo,sans-serif",
+                display:"flex", alignItems:"center", gap:4, fontFamily:"Inter,sans-serif",
               }}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:statusMeta.color}}/>
                 {status}
@@ -1042,7 +1042,7 @@ export default function AddProjectPage({
             boxShadow: saved ? "0 6px 20px rgba(16,185,129,.35)" : `0 6px 20px ${C.red}44`,
             display:"flex", alignItems:"center", justifyContent:"center", gap:8,
             transition:"background .3s ease, box-shadow .3s ease",
-            fontFamily:"Archivo,sans-serif",
+            fontFamily:"Inter,sans-serif",
             opacity: saving ? 0.8 : 1,
           }}>
             {saved ? (
@@ -1062,7 +1062,7 @@ export default function AddProjectPage({
               </>
             )}
           </button>
-          <div style={{textAlign:"center",fontSize:".62rem",color:C.gray,fontWeight:600,paddingTop:4,fontFamily:"Archivo,sans-serif"}}>
+          <div style={{textAlign:"center",fontSize:".62rem",color:C.gray,fontWeight:600,paddingTop:4,fontFamily:"Inter,sans-serif"}}>
             {editProject ? "Changes will be reflected instantly for all sales agents" : "Project will appear in sales agents' Projects page immediately"}
           </div>
         </div>

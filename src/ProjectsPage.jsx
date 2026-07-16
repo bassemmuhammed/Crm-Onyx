@@ -17,15 +17,15 @@ function toWesternNums(str) {
 // ─── Global Styles ────────────────────────────────────────────
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
-  :root { color-scheme: light only; }
-  html,body { margin:0; padding:0; background:#F5F6FA; }
+  :root { color-scheme: dark only; }
+  html,body { margin:0; padding:0; background:#0B0D12; }
   *, *::before, *::after {
     -webkit-tap-highlight-color:transparent;
     box-sizing:border-box;
     color-scheme:light;
     -webkit-user-select:none;
     user-select:none;
-    font-family:'Archivo',sans-serif !important;
+    font-family:'Inter',sans-serif !important;
   }
   @keyframes fadeInUp    { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeInScale { from{opacity:0;transform:scale(.93)} to{opacity:1;transform:scale(1)} }
@@ -38,7 +38,7 @@ const STYLES = `
   .tap-scale:active { transform:scale(.96); transition:transform .1s ease; }
   ::-webkit-scrollbar { width:3px; height:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#E23A4E; border-radius:99px }
   .swipe-hint { animation: swipeHint 2.4s ease 0.6s both; }
 `;
 
@@ -48,9 +48,9 @@ function OnyxLogo({ size = 90, opacity = 0.13 }) {
     <div style={{ opacity, display:"flex", alignItems:"center", justifyContent:"center" }}>
       <svg width={size * 2.6} height={size} viewBox="0 0 260 100" fill="none">
         <text x="2" y="82" fontSize="88" fontWeight="900" fill="white"
-          fontFamily="Archivo,sans-serif" letterSpacing="-3">ONYX</text>
-        <line x1="196" y1="8"  x2="252" y2="88" stroke="#DC2626" strokeWidth="7" strokeLinecap="round"/>
-        <line x1="252" y1="8"  x2="196" y2="88" stroke="#DC2626" strokeWidth="7" strokeLinecap="round"/>
+          fontFamily="Inter,sans-serif" letterSpacing="-3">ONYX</text>
+        <line x1="196" y1="8"  x2="252" y2="88" stroke="#E23A4E" strokeWidth="7" strokeLinecap="round"/>
+        <line x1="252" y1="8"  x2="196" y2="88" stroke="#E23A4E" strokeWidth="7" strokeLinecap="round"/>
       </svg>
     </div>
   );

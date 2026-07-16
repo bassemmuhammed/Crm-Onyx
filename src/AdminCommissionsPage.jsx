@@ -104,10 +104,10 @@ export default function AdminCommissionsPage() {
   // ── UI ──
   return (
     <div style={{
-      fontFamily: "Archivo, sans-serif",
+      fontFamily: "Inter, sans-serif",
       background: "transparent",
       color: C.white,
-      colorScheme: "light",
+      colorScheme: "dark",
       userSelect: "none",
       WebkitUserSelect: "none",
       minHeight: "100%",

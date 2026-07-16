@@ -24,8 +24,8 @@ const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;
 
 const STYLES = `
   @import url('${FONT_URL}');
-  :root { color-scheme: light only; }
-  html, body { margin:0; padding:0; background:#F5F6FA; overflow-x:hidden; }
+  :root { color-scheme: dark only; }
+  html, body { margin:0; padding:0; background:#0B0D12; overflow-x:hidden; }
   *, *::before, *::after { -webkit-tap-highlight-color:transparent; box-sizing:border-box; color-scheme:light; -webkit-user-select:none; user-select:none; }
   @keyframes fadeInUp  { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   @keyframes countUp   { from{opacity:0;transform:translateY(6px)}  to{opacity:1;transform:translateY(0)} }
@@ -49,14 +49,14 @@ const STYLES = `
     position:absolute; right:0; top:0; bottom:0;
     display:flex; align-items:center; justify-content:flex-end;
     padding-right:18px;
-    background: linear-gradient(90deg, transparent 0%, #DC262688 30%, #DC2626 100%);
+    background: linear-gradient(90deg, transparent 0%, #E23A4E88 30%, #E23A4E 100%);
     border-radius:12px;
     min-width:80px;
     pointer-events:none;
   }
   ::-webkit-scrollbar { width:3px }
   ::-webkit-scrollbar-track { background:transparent }
-  ::-webkit-scrollbar-thumb { background:#DC2626; border-radius:99px }
+  ::-webkit-scrollbar-thumb { background:#E23A4E; border-radius:99px }
 `;
 
 // ─── Helpers ──────────────────────────────────────────────────────────
@@ -125,12 +125,12 @@ const STATS_TEMPLATE = [
   { label: "Call Back",       filterKey: "callback",         icon: "phoneCall",     color: "#f59e0b" },
   { label: "Pending Meeting", filterKey: "pendingMeeting",   icon: "calendarCheck", color: "#8b5cf6" },
   { label: "Meeting Done",    filterKey: "meetingDone",      icon: "calendarCheck", color: "#10b981" },
-  { label: "Deal",            filterKey: "deal",             icon: "handshake",     color: "#B91C1C" },
+  { label: "Deal",            filterKey: "deal",             icon: "handshake",     color: "#FF4C5E" },
   { label: "On Going",        filterKey: "onGoing",          icon: "hourglass",     color: "#ec4899" },
   { label: "Low Budget",      filterKey: "lowBudget",        icon: "bar",           color: "#f97316" },
   { label: "No Answer",       filterKey: "noAnswer",         icon: "phoneCall",     color: "#94a3b8" },
   { label: "Not Interested",  filterKey: "notInterested",    icon: "snowflake",     color: "#0ea5e9" },
-  { label: "Competitor",      filterKey: "chooseCompetitor", icon: "flag",          color: "#DC2626" },
+  { label: "Competitor",      filterKey: "chooseCompetitor", icon: "flag",          color: "#E23A4E" },
   { label: "Long Term",       filterKey: "longTerm",         icon: "hourglass",     color: "#7c3aed" },
   { label: "Closed",          filterKey: "closed",           icon: "checkSquare",   color: "#64748b" },
 ];
@@ -141,7 +141,7 @@ const TASKS_DEFAULT = [];
 const Divider = ({ label }) => (
   <div style={{ display:"flex", alignItems:"center", gap:8, margin:"4px 0 2px" }}>
     {label && (
-      <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>
+      <span style={{ fontSize:".55rem", fontWeight:700, color:C.gray, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.8, whiteSpace:"nowrap" }}>
         {label}
       </span>
     )}
@@ -155,7 +155,7 @@ function SectionHeader({ title, right }) {
     <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:10 }}>
       <div style={{ display:"flex", alignItems:"center", gap:7 }}>
         <div style={{ width:4, height:14, borderRadius:99, background:C.red }} />
-        <span style={{ fontSize:".78rem", fontWeight:800, color:C.silver, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>
+        <span style={{ fontSize:".78rem", fontWeight:800, color:C.silver, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>
           {title}
         </span>
       </div>
@@ -187,7 +187,7 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
         padding: "11px 11px 9px",
         cursor: "pointer",
         animationDelay: `${delay}ms`,
-        fontFamily: "Archivo,sans-serif",
+        fontFamily: "Inter,sans-serif",
         position: "relative",
         overflow: "hidden",
         boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
@@ -295,7 +295,7 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
           display: "flex", alignItems: "center", gap: 12,
           cursor: "pointer",
           opacity: t.done ? 0.55 : 1,
-          fontFamily: "Archivo,sans-serif",
+          fontFamily: "Inter,sans-serif",
           boxShadow: "0 1px 6px rgba(0,0,0,0.35)",
           position: "relative",
           overflow: "hidden",
@@ -346,7 +346,7 @@ function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
           {/* Due date فقط — بدون badge الـ MED/HIGH (تعديل 3) */}
           <div style={{ display:"flex", gap:5, marginTop:5, alignItems:"center" }}>
             <CalendarDays size={11} color={C.gray} />
-            <span style={{ fontSize:".6rem", color:C.gray, fontFamily:"Archivo,sans-serif" }}>
+            <span style={{ fontSize:".6rem", color:C.gray, fontFamily:"Inter,sans-serif" }}>
               {t.due}
             </span>
           </div>
@@ -454,7 +454,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
           display:"flex", flexDirection:"column",
           maxHeight:"calc(100dvh - 60px)",
           overflow:"hidden",
-          fontFamily:"Archivo,sans-serif",
+          fontFamily:"Inter,sans-serif",
           willChange:"transform",
         }}>
           {/* Handle */}
@@ -487,8 +487,8 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
 
               {/* Title + counter */}
               <div style={{ flex:1, minWidth:0, display:"flex", flexDirection:"column", alignItems:"center" }}>
-                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Archivo,sans-serif" }}>My Tasks</div>
-                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Archivo,sans-serif" }}>
+                <div style={{ fontSize:".95rem", fontWeight:800, color:C.white, fontFamily:"Inter,sans-serif" }}>My Tasks</div>
+                <div style={{ fontSize:".68rem", color:C.gray, marginTop:3, fontFamily:"Inter,sans-serif" }}>
                   {done} of {total} completed
                 </div>
               </div>
@@ -510,8 +510,8 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
             {/* Progress bar */}
             <div style={{ marginTop:12 }}>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-                <span style={{ fontSize:".6rem", color:C.gray, fontWeight:600, fontFamily:"Archivo,sans-serif" }}>Progress</span>
-                <span style={{ fontSize:".6rem", fontWeight:700, fontFamily:"Archivo,sans-serif", color: pct===100 ? "#10b981" : C.silver }}>{pct}%</span>
+                <span style={{ fontSize:".6rem", color:C.gray, fontWeight:600, fontFamily:"Inter,sans-serif" }}>Progress</span>
+                <span style={{ fontSize:".6rem", fontWeight:700, fontFamily:"Inter,sans-serif", color: pct===100 ? "#10b981" : C.silver }}>{pct}%</span>
               </div>
               <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
                 <div style={{
@@ -531,7 +531,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
                     border:`1px solid ${filter===f ? C.red+"66" : C.border}`,
                     background: filter===f ? `${C.red}18` : C.cardAlt,
                     color: filter===f ? C.white : C.gray,
-                    fontFamily:"Archivo,sans-serif", fontSize:".6rem", fontWeight:700, cursor:"pointer",
+                    fontFamily:"Inter,sans-serif", fontSize:".6rem", fontWeight:700, cursor:"pointer",
                   }}>
                     {f==="all" ? `All (${total})` : f==="done" ? `Done (${done})` : `Pending (${total-done})`}
                   </button>
@@ -544,7 +544,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
                   background:C.cardAlt, border:`1px solid ${C.border}`,
                   color:C.silver, borderRadius:6,
                   fontSize:".6rem", fontWeight:700, padding:"5px 8px",
-                  fontFamily:"Archivo,sans-serif", cursor:"pointer", outline:"none",
+                  fontFamily:"Inter,sans-serif", cursor:"pointer", outline:"none",
                 }}
               >
                 <option value="default">Default</option>
@@ -564,7 +564,7 @@ function AllTasksModal({ open, onClose, tasks, onToggle, onDelete, onOpenLead, l
             WebkitOverflowScrolling:"touch", overscrollBehavior:"contain",
           }}>
             {filtered.length === 0 && (
-              <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600, fontFamily:"Archivo,sans-serif" }}>
+              <div style={{ textAlign:"center", padding:"32px 0", color:C.gray, fontSize:".82rem", fontWeight:600, fontFamily:"Inter,sans-serif" }}>
                 No tasks here 🎉
               </div>
             )}
@@ -784,7 +784,7 @@ export default function HomePage({
 
   return (
     <div style={{
-      fontFamily: "Archivo,sans-serif",
+      fontFamily: "Inter,sans-serif",
       color: C.white,
       width: "100%",
       position: "relative",
@@ -856,14 +856,14 @@ export default function HomePage({
           }}>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
               <ClipboardList size={14} color={C.red} strokeWidth={2.5} />
-              <span style={{ fontSize:".72rem", fontWeight:800, color:C.silver, fontFamily:"Archivo,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>
+              <span style={{ fontSize:".72rem", fontWeight:800, color:C.silver, fontFamily:"Inter,sans-serif", textTransform:"uppercase", letterSpacing:.6 }}>
                 My Tasks
               </span>
               <div style={{
                 background:`${C.border}`, border:`1px solid ${C.border}`,
                 color:C.silver, fontSize:".58rem", fontWeight:800,
                 padding:"2px 7px", borderRadius:4,
-                fontFamily:"Archivo,sans-serif",
+                fontFamily:"Inter,sans-serif",
               }}>
                 {doneTasks}/{totalTasks}
               </div>
@@ -905,7 +905,7 @@ export default function HomePage({
                 textAlign:"center", padding:"28px 0",
                 color:C.gray, fontSize:".82rem", fontWeight:700,
                 display:"flex", flexDirection:"column", alignItems:"center", gap:8,
-                fontFamily:"Archivo,sans-serif",
+                fontFamily:"Inter,sans-serif",
               }}>
                 <CheckSquare size={22} color={C.gray} />
                 No tasks yet — you're all caught up!
