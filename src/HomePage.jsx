@@ -622,6 +622,9 @@ export default function HomePage({
 
   const salesName = currentUser?.name || currentUser?.email || "Sales";
 
+  // ✅ FIX: نقل تعريف `leads` قبل أي استخدام له (يمنع TDZ: "Cannot access 'leads' before initialization")
+  const leads = leadsFromProps || [];
+
   // ✅ P1-5: تهيئة doneLeadIds و deletedIds من DB عند الـ mount
   //   (مطابقة Flutter — task_done و task_dismissed يتم persistingها)
   useEffect(() => {
@@ -655,7 +658,7 @@ export default function HomePage({
     }
   }, []);
 
-  const leads = leadsFromProps || [];
+  // ✅ `leads` تم نقل تعريفه أعلاه (قبل الـ useEffect) لمنع TDZ
 
   const leadTasks = useMemo(() => {
     return leads
