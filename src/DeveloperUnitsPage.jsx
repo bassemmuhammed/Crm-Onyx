@@ -80,7 +80,7 @@ export default function DeveloperUnitsPage({ currentUser }) {
           borderRadius: 14, padding: "14px 16px",
         }}>
           <div style={{ fontSize: "1rem", fontWeight: 800, color: C.white }}>
-            🏢 {project.name}
+             {project.name}
           </div>
           <div style={{ fontSize: ".7rem", color: C.gray, marginTop: 4 }}>
             📍 {project.location} · {allUnits.length} units · {project.buildings.length} buildings
@@ -127,7 +127,7 @@ export default function DeveloperUnitsPage({ currentUser }) {
           color: C.green, fontSize: ".72rem", fontWeight: 600,
           animation: "fadeIn .3s ease",
         }}>
-          ✅ Booking submitted for unit {bookingSuccess.unitCode}! Admin will review it shortly.
+          Booking submitted for unit {bookingSuccess.unitCode}! Admin will review it shortly.
         </div>
       )}
 
@@ -191,7 +191,7 @@ export default function DeveloperUnitsPage({ currentUser }) {
                     cursor: "pointer", fontFamily: "inherit",
                   }}
                 >
-                  🏠 Book This Unit
+                  Book This Unit
                 </button>
               )}
             </div>
@@ -316,7 +316,7 @@ function BookingModal({ unit, project, onClose, onSubmit }) {
           border: `1px solid ${C.border}`, marginBottom: 14,
         }}>
           <div style={{ fontSize: ".7rem", fontWeight: 700, color: C.silver, marginBottom: 10, textTransform: "uppercase" }}>
-            💰 Payment Calculator
+            Payment Calculator
           </div>
 
           {/* Payment Mode */}

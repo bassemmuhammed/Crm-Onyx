@@ -200,7 +200,7 @@ export default function AdminCommissionsPage() {
       <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: 7 }}>
         {loading ? (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.gray, fontSize: ".82rem", animation: "pulse 1.5s ease infinite" }}>
-            ⏳ Loading commissions...
+            Loading commissions...
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.gray, fontSize: ".82rem" }}>
@@ -245,18 +245,18 @@ export default function AdminCommissionsPage() {
               <div style={{ display: "flex", gap: 5, marginTop: 8 }}>
                 {c.collection_status === "pending" ? (
                   <button onClick={() => handleMarkCollected(c.id)} style={btnStyle(C.green)}>
-                    ✓ Mark Collected
+                    Mark Collected
                   </button>
                 ) : (
                   <button onClick={() => handleMarkPending(c.id)} style={btnStyle(C.amber)}>
-                    ↺ Mark Pending
+                    Mark Pending
                   </button>
                 )}
                 <button onClick={() => setEditing(c)} style={btnStyle(C.blue)}>
-                  ✏ Edit
+                  Edit
                 </button>
                 <button onClick={() => setDeleteTarget(c)} style={btnStyle(C.red)}>
-                  🗑 Delete
+                  Delete
                 </button>
               </div>
             </div>
@@ -525,7 +525,7 @@ function DeleteConfirm({ commission, onConfirm, onCancel }) {
         borderRadius: 16, padding: 20, maxWidth: 320, width: "100%",
       }} onClick={e => e.stopPropagation()}>
         <div style={{ fontSize: ".92rem", fontWeight: 800, color: C.red, marginBottom: 8 }}>
-          ⚠️ Delete Commission?
+          Delete Commission?
         </div>
         <div style={{ fontSize: ".72rem", color: C.silver, marginBottom: 16 }}>
           Are you sure you want to delete the commission for "{commission.client_name}"? This cannot be undone.

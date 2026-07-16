@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import ErrorBoundary from './ErrorBoundary.jsx'  // ✅ P3-1: منع انهيار التطبيق
+import ErrorBoundary from './ErrorBoundary.jsx'  // P3-1: منع انهيار التطبيق
 
 // ── OneSignal Init ──────────────────────────────────────────────
 window.OneSignalDeferred = window.OneSignalDeferred || [];

@@ -12,7 +12,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Icons             from "./Icons";
-import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList, X } from "lucide-react";
+import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList, X, Zap, CalendarCheck, Handshake, Timer, BarChart3, Ban, Flag, Clock, DollarSign, Users, TrendingUp } from "lucide-react";
 import { LeadDetailModal } from "./LeadsPage";
 import { updateLead as dbUpdateLead, supabase } from "./sharedLeadsData";
 import { C } from "./theme";
@@ -119,20 +119,21 @@ function scheduleTaskNotifications(tasks) {
 }
 
 // ─── Stats Definition ─────────────────────────────────────────────────
+// مطابقة الموك أب: أيقونات حقيقية (lucide-react) + ألوان status + فئات أيقونات
 const STATS_TEMPLATE = [
-  { label: "All Leads",       filterKey: "all",              icon: "sparkle",       color: "#4f46e5" },
-  { label: "New Leads",       filterKey: "new",              icon: "sparkle",       color: "#10b981" },
-  { label: "Call Back",       filterKey: "callback",         icon: "phoneCall",     color: "#f59e0b" },
-  { label: "Pending Meeting", filterKey: "pendingMeeting",   icon: "calendarCheck", color: "#8b5cf6" },
-  { label: "Meeting Done",    filterKey: "meetingDone",      icon: "calendarCheck", color: "#10b981" },
-  { label: "Deal",            filterKey: "deal",             icon: "handshake",     color: "#FF4C5E" },
-  { label: "On Going",        filterKey: "onGoing",          icon: "hourglass",     color: "#ec4899" },
-  { label: "Low Budget",      filterKey: "lowBudget",        icon: "bar",           color: "#f97316" },
-  { label: "No Answer",       filterKey: "noAnswer",         icon: "phoneCall",     color: "#94a3b8" },
-  { label: "Not Interested",  filterKey: "notInterested",    icon: "snowflake",     color: "#0ea5e9" },
-  { label: "Competitor",      filterKey: "chooseCompetitor", icon: "flag",          color: "#E23A4E" },
-  { label: "Long Term",       filterKey: "longTerm",         icon: "hourglass",     color: "#7c3aed" },
-  { label: "Closed",          filterKey: "closed",           icon: "checkSquare",   color: "#64748b" },
+  { label: "All Leads",       filterKey: "all",              icon: Users,       iconClass: "accent",  featured: true },
+  { label: "New Leads",       filterKey: "new",              icon: Zap,         iconClass: "success" },
+  { label: "Call Back",       filterKey: "callback",         icon: Phone,       iconClass: "warning" },
+  { label: "Pending Meeting", filterKey: "pendingMeeting",   icon: CalendarCheck, iconClass: "info" },
+  { label: "Meeting Done",    filterKey: "meetingDone",      icon: CheckSquare, iconClass: "violet" },
+  { label: "Deal",            filterKey: "deal",             icon: Handshake,   iconClass: "accent" },
+  { label: "On Going",        filterKey: "onGoing",          icon: TrendingUp,  iconClass: "info" },
+  { label: "Low Budget",      filterKey: "lowBudget",        icon: DollarSign,  iconClass: "warning" },
+  { label: "No Answer",       filterKey: "noAnswer",         icon: Ban,         iconClass: "neutral" },
+  { label: "Not Interested",  filterKey: "notInterested",    icon: X,           iconClass: "neutral" },
+  { label: "Competitor",      filterKey: "chooseCompetitor", icon: Flag,        iconClass: "accent" },
+  { label: "Long Term",       filterKey: "longTerm",         icon: Clock,       iconClass: "violet" },
+  { label: "Closed",          filterKey: "closed",           icon: CheckCheck,  iconClass: "neutral" },
 ];
 
 const TASKS_DEFAULT = [];
@@ -164,67 +165,125 @@ function SectionHeader({ title, right }) {
   );
 }
 
-// ─── Stat Card ────────────────────────────────────────────────────────
+// ─── Stat Card (مطابقة الموك أب بالظبط) ─────────────────────────────
+const ICON_CLASS_STYLES = {
+  accent:  { bg: "rgba(226,58,78,0.12)",   color: "#FF4C5E" },
+  success: { bg: "rgba(43,217,124,0.12)",  color: "#2BD97C" },
+  warning: { bg: "rgba(242,169,59,0.12)",  color: "#F2A93B" },
+  info:    { bg: "rgba(76,141,255,0.12)",  color: "#4C8DFF" },
+  violet:  { bg: "rgba(155,124,255,0.12)", color: "#9B7CFF" },
+  neutral: { bg: "#1D2230",                color: "#8B93A7" },
+};
+
+const BAR_COLORS = {
+  accent:  "#E23A4E",
+  success: "#2BD97C",
+  warning: "#F2A93B",
+  info:    "#4C8DFF",
+  violet:  "#9B7CFF",
+  neutral: "#8B93A7",
+};
+
 function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay = 0, index = 0 }) {
   const val = useCounter(count, animate);
-  const pct  = totalLeads > 0 && s.filterKey !== "all" ? Math.round((count / totalLeads) * 100) : 0;
+  const pct  = totalLeads > 0 && s.filterKey !== "all" ? Math.round((count / totalLeads) * 100) : (s.filterKey === "all" ? 100 : 0);
   const [barW, setBarW] = useState("0%");
 
   useEffect(() => {
     if (animate) setTimeout(() => setBarW(pct + "%"), 500);
   }, [animate, pct]);
 
-  const cardBg = index % 2 === 0 ? C.cardGrad1 : C.cardGrad2;
+  const Icon = s.icon;
+  const iconStyle = ICON_CLASS_STYLES[s.iconClass] || ICON_CLASS_STYLES.neutral;
+  const barColor = BAR_COLORS[s.iconClass] || BAR_COLORS.neutral;
+  const isFeatured = s.featured;
+
+  // sub text
+  let subText = "";
+  if (s.filterKey === "all") subText = `${count} total leads`;
+  else if (count === 0) {
+    const noCountLabels = {
+      callback: "No callbacks pending",
+      pendingMeeting: "No meetings scheduled",
+      meetingDone: "No meetings done",
+      deal: "No deals closed yet",
+    };
+    subText = noCountLabels[s.filterKey] || `No ${s.label.toLowerCase()}`;
+  } else {
+    subText = `${count} ${s.label.toLowerCase()}`;
+  }
 
   return (
     <div
       className="stat-card fade-up"
       onClick={() => onLeadsFilter && onLeadsFilter(s.filterKey)}
       style={{
-        background: cardBg,
-        border: `1px solid ${C.border}`,
+        background: isFeatured
+          ? "linear-gradient(160deg, rgba(226,58,78,0.10), #171B24 55%)"
+          : "#171B24",
+        border: `1px solid ${isFeatured ? "rgba(226,58,78,0.25)" : "#1B1F2A"}`,
         borderRadius: 14,
-        padding: "11px 11px 9px",
+        padding: "20px 20px 18px",
         cursor: "pointer",
         animationDelay: `${delay}ms`,
-        fontFamily: "Inter,sans-serif",
+        fontFamily: "'Inter', sans-serif",
         position: "relative",
         overflow: "hidden",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)",
+        transition: "border-color .15s ease, transform .15s ease, background .15s ease",
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#242938"; e.currentTarget.style.background = isFeatured ? "linear-gradient(160deg, rgba(226,58,78,0.15), #1D2230 55%)" : "#1D2230"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = isFeatured ? "rgba(226,58,78,0.25)" : "#1B1F2A"; e.currentTarget.style.background = isFeatured ? "linear-gradient(160deg, rgba(226,58,78,0.10), #171B24 55%)" : "#171B24"; e.currentTarget.style.transform = "translateY(0)"; }}
     >
-      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:8 }}>
+      {/* Top row: icon */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-          background: C.black,
-          border: `1.5px solid ${C.border}`,
+          width: 36, height: 36, borderRadius: 9,
+          background: iconStyle.bg, color: iconStyle.color,
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: s.color,
-          fontSize: "1.1rem",
         }}>
-          {Icons[s.icon]}
-        </div>
-        <div style={{ fontSize:"1.6rem", fontWeight:900, color:C.white, lineHeight:1, letterSpacing:-1 }}>
-          {val}
+          {Icon && <Icon size={18} strokeWidth={2} />}
         </div>
       </div>
-      <div style={{ fontSize:".62rem", fontWeight:700, color:C.gray, textTransform:"uppercase", letterSpacing:.7 }}>
+
+      {/* Value */}
+      <div style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: 30, fontWeight: 700, color: "#F2F3F7",
+        letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 6,
+      }}>
+        {val}
+      </div>
+
+      {/* Label */}
+      <div style={{
+        fontSize: 13, fontWeight: 600, color: "#8B93A7",
+        textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 12,
+      }}>
         {s.label}
       </div>
-      <div style={{ marginTop:10, height:2, borderRadius:99, background:C.border, overflow:"hidden" }}>
+
+      {/* Progress bar */}
+      <div style={{ height: 3, borderRadius: 3, background: "#1B1F2A", overflow: "hidden" }}>
         <div style={{
-          height:"100%", borderRadius:99, background:s.color,
-          width: barW, transition:"width 1.2s cubic-bezier(.4,0,.2,1)",
+          display: "block", height: "100%", borderRadius: 3,
+          background: barColor, width: barW,
+          transition: "width 1.2s cubic-bezier(.4,0,.2,1)",
         }} />
+      </div>
+
+      {/* Sub text */}
+      <div style={{ marginTop: 10, fontSize: 12.5, color: "#5B6478" }}>
+        {count > 0 ? <b style={{ color: "#8B93A7", fontWeight: 600 }}>{count}</b> : null}{" "}
+        {count > 0 ? subText.replace(`${count} `, "") : subText}
       </div>
     </div>
   );
 }
 
 // ─── Swipeable Task Card ───────────────────────────────────────────────
-// ✅ تعديل 1: Swipe to delete
-// ✅ تعديل 3: إخفاء badge الـ MED/HIGH
-// ✅ تعديل 4: أيقونات Lucide بدل الإيموجي
+// تعديل 1: Swipe to delete
+// تعديل 3: إخفاء badge الـ MED/HIGH
+// تعديل 4: أيقونات Lucide بدل الإيموجي
 function SwipeableTaskCard({ t, onToggle, onDelete, onOpenLead }) {
   const [offsetX, setOffsetX]   = useState(0);
   const [swiping, setSwiping]   = useState(false);
@@ -622,10 +681,10 @@ export default function HomePage({
 
   const salesName = currentUser?.name || currentUser?.email || "Sales";
 
-  // ✅ FIX: نقل تعريف `leads` قبل أي استخدام له (يمنع TDZ: "Cannot access 'leads' before initialization")
+  // FIX: نقل تعريف `leads` قبل أي استخدام له (يمنع TDZ: "Cannot access 'leads' before initialization")
   const leads = leadsFromProps || [];
 
-  // ✅ P1-5: تهيئة doneLeadIds و deletedIds من DB عند الـ mount
+  // P1-5: تهيئة doneLeadIds و deletedIds من DB عند الـ mount
   //   (مطابقة Flutter — task_done و task_dismissed يتم persistingها)
   useEffect(() => {
     if (!leads || leads.length === 0) return;
@@ -658,7 +717,7 @@ export default function HomePage({
     }
   }, []);
 
-  // ✅ `leads` تم نقل تعريفه أعلاه (قبل الـ useEffect) لمنع TDZ
+  // `leads` تم نقل تعريفه أعلاه (قبل الـ useEffect) لمنع TDZ
 
   const leadTasks = useMemo(() => {
     return leads
@@ -689,13 +748,13 @@ export default function HomePage({
     if (id.startsWith("lead-")) {
       const leadId = id.replace("lead-", "");
       const wasDone = doneLeadIds.has(leadId);
-      // ✅ P1-5: optimistic UI update
+      // P1-5: optimistic UI update
       setDoneLeadIds(prev => {
         const next = new Set(prev);
         next.has(leadId) ? next.delete(leadId) : next.add(leadId);
         return next;
       });
-      // ✅ P1-5: حفظ task_done في DB (مطابقة Flutter — LeadsRepository)
+      // P1-5: حفظ task_done في DB (مطابقة Flutter — LeadsRepository)
       supabase
         .from("leads")
         .update({ task_done: !wasDone })
@@ -717,7 +776,7 @@ export default function HomePage({
   };
 
   // ── Delete handler (swipe to delete) ──
-  // ✅ P1-5: حفظ task_dismissed في DB (مطابقة Flutter)
+  // P1-5: حفظ task_dismissed في DB (مطابقة Flutter)
   const deleteTask = id => {
     if (id.startsWith("lead-")) {
       const leadId = id.replace("lead-", "");
@@ -815,10 +874,14 @@ export default function HomePage({
       {/* ── Scroll Content ── */}
       <div style={{ padding:"16px 14px 110px", display:"flex", flexDirection:"column", gap:20 }}>
 
-        {/* ── Stats Section ── */}
+        {/* ── Stats Section (مطابقة الموك أب: 3 columns desktop, 2 tablet, 1 mobile) ── */}
         <div>
           <SectionHeader title="Lead Overview" />
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+          <div style={{
+            display:"grid",
+            gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",
+            gap:16,
+          }}>
             {STATS_TEMPLATE.map((s, i) => (
               <StatCard
                 key={i}

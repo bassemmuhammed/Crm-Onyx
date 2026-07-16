@@ -61,7 +61,7 @@ function resizeImage(file, maxSize = 256, quality = 0.7) {
   });
 }
 
-// ✅ P1-2: مثل resizeImage لكن يرجع Blob بدلاً من base64 (للرفع للـ Storage)
+// P1-2: مثل resizeImage لكن يرجع Blob بدلاً من base64 (للرفع للـ Storage)
 function resizeImageToBlob(file, maxSize = 256, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -149,7 +149,7 @@ export default function ProfileModal({ open, onClose, onSignOut }) {
   };
 
   // ── Upload: resize → upload to Supabase Storage 'avatars' bucket ──
-  // ✅ P1-2: مطابقة Flutter — استبدال base64 في DB بـ Storage bucket
+  // P1-2: مطابقة Flutter — استبدال base64 في DB بـ Storage bucket
   //   - الـ bucket 'avatars' يجب أن يكون موجوداً (migration 01_avatar_storage.sql)
   //   - RLS policy: path pattern "{user_id}.jpg" يطابق auth.uid()
   const handlePhotoChange = async (e) => {

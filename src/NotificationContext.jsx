@@ -15,7 +15,7 @@ async function insertNotif(text, color = "#E23A4E", userId = null, type = "gener
 }
 
 // ── Schedule Reminders في جدول scheduled_notifications ───────────
-// ✅ P0-5: استخدم PushNotificationService الجديد (3 تذكيرات مطابق Flutter، schema مطابق)
+// P0-5: استخدم PushNotificationService الجديد (3 تذكيرات مطابق Flutter، schema مطابق)
 // الـ scheduledNotifications ref يُستخدم فقط لـ deduplication محلي (للـ real-time updates)
 async function scheduleLeadReminder(lead, scheduledIds, userId) {
   const dateStr = lead.callbackDate || lead.meetingDate || lead.callback_date || lead.meeting_date;
@@ -110,7 +110,7 @@ export function NotificationProvider({ children, currentUser }) {
   }, [currentUser?.id]);
 
   // ── On login: schedule existing leads ─────────────────────────
-  // ✅ P0-5: استخدم scheduleExistingLeadReminders الجديد (يطبق 3 تذكيرات مطابق Flutter)
+  // P0-5: استخدم scheduleExistingLeadReminders الجديد (يطبق 3 تذكيرات مطابق Flutter)
   useEffect(() => {
     if (!currentUser?.id) return;
     scheduleExistingLeadReminders(currentUser.id);

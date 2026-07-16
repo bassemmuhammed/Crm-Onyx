@@ -54,21 +54,21 @@ const STATUS_META = {
   closed:          { label: "Closed",          color: "#374151", bg: "#37415130" },
 };
 
-// ─── Lead Overview Cards Meta ──────────────────────────────────
+// ─── Lead Overview Cards Meta (مطابقة الموك أب) ──────────────────
 const LEAD_OVERVIEW_CARDS = [
-  { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#10b981", accentLine: "#10b981" },
-  { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#10b981", accentLine: "#10b981", accent: true },
-  { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#f59e0b", accentLine: "#f59e0b" },
-  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#4C8DFF", accentLine: "#4C8DFF" },
-  { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#a855f7", accentLine: "#a855f7" },
-  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#E23A4E", accentLine: "#E23A4E" },
-  { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#06b6d4", accentLine: "#06b6d4" },
-  { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#f97316", accentLine: "#f97316" },
-  { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8b949e", accentLine: "#8b949e" },
-  { key: "notInterested",   label: "NOT INTERESTED",   iconKey: "prohibit",      color: "#6b7280", accentLine: "#6b7280" },
-  { key: "chooseCompetitor",label: "COMPETITOR",       iconKey: "flag",          color: "#ec4899", accentLine: "#ec4899" },
-  { key: "longTerm",        label: "LONG TERM",        iconKey: "hourglass",     color: "#8b5cf6", accentLine: "#8b5cf6" },
-  { key: "closed",          label: "CLOSED",           iconKey: "checkSquare",   color: "#374151", accentLine: "#374151" },
+  { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent",  featured: true },
+  { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#2BD97C", accentLine: "#2BD97C", iconClass: "success" },
+  { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#F2A93B", accentLine: "#F2A93B", iconClass: "warning" },
+  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#4C8DFF", accentLine: "#4C8DFF", iconClass: "info" },
+  { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#9B7CFF", accentLine: "#9B7CFF", iconClass: "violet" },
+  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent" },
+  { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#4C8DFF", accentLine: "#4C8DFF", iconClass: "info" },
+  { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#F2A93B", accentLine: "#F2A93B", iconClass: "warning" },
+  { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
+  { key: "notInterested",   label: "NOT INTERESTED",   iconKey: "prohibit",      color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
+  { key: "chooseCompetitor",label: "COMPETITOR",       iconKey: "flag",          color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent" },
+  { key: "longTerm",        label: "LONG TERM",        iconKey: "hourglass",     color: "#9B7CFF", accentLine: "#9B7CFF", iconClass: "violet" },
+  { key: "closed",          label: "CLOSED",           iconKey: "checkSquare",   color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
 ];
 
 // ─── Icon renderer — wraps Icons[key] with a color tint via CSS filter ───
@@ -429,7 +429,7 @@ export default function AdminHomePage({ onTabChange }) {
             </div>
 
             {/* Cards Grid — 2 columns */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
               {LEAD_OVERVIEW_CARDS.map((card, i) => {
                 const value = card.key === "all"
                   ? leads.length

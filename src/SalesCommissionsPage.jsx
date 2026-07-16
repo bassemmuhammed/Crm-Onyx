@@ -101,7 +101,7 @@ export default function SalesCommissionsPage({ currentUser }) {
       <div style={{ padding: "0 14px", display: "flex", flexDirection: "column", gap: 7 }}>
         {loading ? (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.gray, fontSize: ".82rem", animation: "pulse 1.5s ease infinite" }}>
-            ⏳ Loading your commissions...
+            Loading your commissions...
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 0", color: C.gray, fontSize: ".82rem" }}>

@@ -169,7 +169,7 @@ export function BulkActionBar({
               display: "flex", alignItems: "center", gap: 5,
             }}
           >
-            📊 Export CSV
+             Export CSV
           </button>
 
           {/* Bulk Delete */}
@@ -185,7 +185,7 @@ export function BulkActionBar({
               display: "flex", alignItems: "center", gap: 5,
             }}
           >
-            🗑 Delete
+            Delete
           </button>
         </div>
 
@@ -257,7 +257,7 @@ export function BulkActionBar({
             display: "flex", flexDirection: "column", gap: 8,
           }}>
             <div style={{ color: C.red, fontSize: ".72rem", fontWeight: 700 }}>
-              ⚠️ Delete {selectedCount} leads permanently?
+              Delete {selectedCount} leads permanently?
             </div>
             <div style={{ display: "flex", gap: 6 }}>
               <button

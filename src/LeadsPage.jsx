@@ -80,7 +80,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
   const [saving, setSaving]   = useState(false);
   const prevId                = useRef(null);
   const inputRef              = useRef(null);
-  // ✅ P1-1: Lead Sharing state
+  // P1-1: Lead Sharing state
   const [shareOpen, setShareOpen] = useState(false);
   const [shareTeam, setShareTeam] = useState([]);
   const [sharing, setSharing]     = useState(false);
@@ -136,7 +136,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
     onClose();
   }, [local, onUpdate, onClose]);
 
-  // ✅ P1-1: Lead Sharing handler (مطابق LeadSharingRepository في Flutter)
+  // P1-1: Lead Sharing handler (مطابق LeadSharingRepository في Flutter)
   const handleOpenShare = useCallback(async () => {
     setShareOpen(true);
     // جيب قائمة المندوبين (يستثني المستخدم الحالي)
@@ -335,7 +335,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
               <input
                 value={local.clientInfo?.budget || ""}
                 onChange={e => set("clientInfo", { ...local.clientInfo, budget: e.target.value })}
-                placeholder="💰 Budget e.g. 2,500,000 EGP"
+                placeholder="Budget e.g. 2,500,000 EGP"
                 style={{ ...inputBase }}
               />
             </div>
@@ -398,7 +398,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
         </div>
       </div>
 
-      {/* ✅ P1-1: Share Lead Modal */}
+      {/* P1-1: Share Lead Modal */}
       {shareOpen && (
         <div
           onClick={() => !sharing && setShareOpen(false)}
@@ -438,7 +438,7 @@ export function LeadDetailModal({ lead, open, onClose, onUpdate, salesName = "Sa
             </div>
             {sharing ? (
               <div style={{ textAlign: "center", padding: "20px 0", color: C.gray, fontSize: ".78rem" }}>
-                ⏳ Sharing...
+                Sharing...
               </div>
             ) : shareTeam.length === 0 ? (
               <div style={{ textAlign: "center", padding: "20px 0", color: C.gray, fontSize: ".78rem" }}>
@@ -592,7 +592,7 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
               fontSize:".6rem", fontWeight:600, color:C.silver,
               background:C.cardAlt, padding:"4px 10px", borderRadius:6,
               border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
-            }}>💰 {lead.clientInfo.budget}</div>
+            }}>{lead.clientInfo.budget}</div>
           )}
 
           {/* NEW badge — بيظهر للليدز اللي status = new */}
@@ -793,9 +793,9 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         {/* Lead list */}
         <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"fadeInUp .3s ease" }}>⏳ Loading your leads...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"fadeInUp .3s ease" }}>Loading your leads...</div>
             : filtered.length === 0
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found 🔍</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found </div>
             : filtered.map((lead, i) => (
                 <div key={lead.id} className="lead-item" style={{ animationDelay:`${i * 22}ms` }}>
                   <LeadCard lead={lead} onClick={() => openDetail(lead)} />
@@ -812,7 +812,7 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
         onClose={closeDetail}
         onUpdate={updateLead}
         salesName={salesName}
-        currentUserId={currentUser?.id}  // ✅ P1-1: for lead sharing (exclude self)
+        currentUserId={currentUser?.id}  // P1-1: for lead sharing (exclude self)
       />
 
     </div>

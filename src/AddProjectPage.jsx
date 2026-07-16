@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { C } from "./theme";
-// ✅ P1-3: Project Media Storage — رفع ملفات لـ project-media bucket
+// P1-3: Project Media Storage — رفع ملفات لـ project-media bucket
 import {  uploadCoverImage,
   uploadProfileImage,
   uploadStoryImage,
@@ -218,7 +218,7 @@ export default function AddProjectPage({
   // ── Media ──
   const [coverVideo,  setCoverVideo]  = useState(init.coverVideo  || "");
   const [profilePic,  setProfilePic]  = useState(init.profilePic  || "");
-  // ✅ P1-3: uploading state for media files
+  // P1-3: uploading state for media files
   const [uploadingCover, setUploadingCover]       = useState(null); // null | 'image' | 'video'
   const [uploadingProfile, setUploadingProfile]   = useState(false);
   const [uploadingStory, setUploadingStory]       = useState(null); // null | index
@@ -307,7 +307,7 @@ export default function AddProjectPage({
   const removeStory = (i) => setStories(s=>s.filter((_,idx)=>idx!==i));
 
   // ════════════════════════════════════════════════════════════════
-  // ✅ P1-3: Project Media Upload Handlers (مطابقة Flutter — project-media bucket)
+  // P1-3: Project Media Upload Handlers (مطابقة Flutter — project-media bucket)
   // ════════════════════════════════════════════════════════════════
   const projectId = editProject?.id || "new";
 
@@ -431,7 +431,7 @@ export default function AddProjectPage({
                   <div style={{ padding:"12px 14px", display:"flex", alignItems:"center", gap:12 }}>
                     {proj.profilePic
                       ? <img src={proj.profilePic} alt={proj.name} style={{width:48,height:48,borderRadius:10,objectFit:"cover",border:`1px solid ${C.border}`,flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
-                      : <div style={{width:48,height:48,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0}}>🏢</div>
+                      : <div style={{width:48,height:48,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem",flexShrink:0}}></div>
                     }
                     <div style={{flex:1,minWidth:0}}>
                       <div style={{fontSize:".88rem",fontWeight:800,color:C.white,fontFamily:"Inter,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proj.name}</div>
@@ -480,13 +480,13 @@ export default function AddProjectPage({
             <div style={{ padding:"16px 14px", display:"flex", alignItems:"center", gap:14 }}>
               {proj.profilePic
                 ? <img src={proj.profilePic} alt={proj.name} style={{width:60,height:60,borderRadius:12,objectFit:"cover",border:`1px solid ${C.border}`,flexShrink:0}} onError={e=>{e.target.style.display="none";}}/>
-                : <div style={{width:60,height:60,borderRadius:12,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.6rem",flexShrink:0}}>🏢</div>
+                : <div style={{width:60,height:60,borderRadius:12,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.6rem",flexShrink:0}}></div>
               }
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:"1rem",fontWeight:900,color:C.white,fontFamily:"Inter,sans-serif"}}>{proj.name}</div>
                 {proj.developer && <div style={{fontSize:".68rem",color:C.gray,fontWeight:600,marginTop:3,fontFamily:"Inter,sans-serif"}}>{proj.developer}</div>}
                 {proj.location && <div style={{fontSize:".65rem",color:C.gray,fontWeight:600,marginTop:2,fontFamily:"Inter,sans-serif"}}>📍 {proj.location}</div>}
-                {proj.locationLink && <a href={proj.locationLink} target="_blank" rel="noopener noreferrer" style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Inter,sans-serif",textDecoration:"none",display:"block",marginTop:2}}>🗺️ View on Google Maps</a>}
+                {proj.locationLink && <a href={proj.locationLink} target="_blank" rel="noopener noreferrer" style={{fontSize:".62rem",color:"#10b981",fontWeight:700,fontFamily:"Inter,sans-serif",textDecoration:"none",display:"block",marginTop:2}}>View on Google Maps</a>}
               </div>
             </div>
             <div style={{ padding:"8px 14px 14px", borderTop:`1px solid ${C.border}`, display:"flex", gap:6, flexWrap:"wrap" }}>
@@ -786,7 +786,7 @@ export default function AddProjectPage({
         </Section>
 
         {/* ── 6. Media & Branding ── */}
-        {/* ✅ P1-3: Added upload buttons alongside URL inputs */}
+        {/* P1-3: Added upload buttons alongside URL inputs */}
         <Section title="Media & Branding" delay={200}>
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {/* Media error */}
@@ -796,7 +796,7 @@ export default function AddProjectPage({
                 background: `${C.red}11`, padding: "6px 8px", borderRadius: 6,
                 border: `1px solid ${C.red}33`,
               }}>
-                ⚠️ {mediaError}
+                {mediaError}
               </div>
             )}
 
@@ -844,7 +844,7 @@ export default function AddProjectPage({
                     fontFamily: "Inter,sans-serif",
                   }}
                 >
-                  {uploadingCover === "video" ? "⏳" : "📤 Upload"}
+                  {uploadingCover === "video" ? "..." : "Upload"}
                 </button>
               </div>
               <div style={{fontSize:".6rem",color:C.gray,marginTop:4,fontWeight:600,fontFamily:"Inter,sans-serif"}}>
@@ -872,12 +872,12 @@ export default function AddProjectPage({
                     fontFamily: "Inter,sans-serif",
                   }}
                 >
-                  {uploadingProfile ? "⏳" : "📤 Upload"}
+                  {uploadingProfile ? "..." : "Upload"}
                 </button>
               </div>
               {(uploadingProfile || uploadingCover === "image") && (
                 <div style={{fontSize:".62rem",color:C.amber,marginTop:4,fontWeight:600,fontFamily:"Inter,sans-serif"}}>
-                  ⏳ Uploading...
+                  Uploading...
                 </div>
               )}
               {profilePic && !uploadingProfile && uploadingCover !== "image" && (
@@ -891,7 +891,7 @@ export default function AddProjectPage({
         </Section>
 
         {/* ── 7. Story Images ── */}
-        {/* ✅ P1-3: Added upload buttons for story images */}
+        {/* P1-3: Added upload buttons for story images */}
         <Section title="Story Images" delay={220}>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {stories.map((url,i) => (
@@ -922,7 +922,7 @@ export default function AddProjectPage({
                     fontSize: ".8rem",
                   }}
                 >
-                  {uploadingStory === i ? "⏳" : "📤"}
+                  {uploadingStory === i ? "..." : ""}
                 </button>
                 <button
                   type="button"
@@ -1008,7 +1008,7 @@ export default function AddProjectPage({
             <div style={{display:"flex",alignItems:"center",gap:12,marginTop:8}}>
               {profilePic
                 ? <img src={profilePic} alt="logo" style={{width:44,height:44,borderRadius:10,objectFit:"cover",border:`1px solid ${C.border}`}}/>
-                : <div style={{width:44,height:44,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.1rem"}}>🏢</div>
+                : <div style={{width:44,height:44,borderRadius:10,background:C.cardAlt,border:`1px solid ${C.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.1rem"}}></div>
               }
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:".92rem",fontWeight:800,color:C.white,fontFamily:"Inter,sans-serif",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{name}</div>

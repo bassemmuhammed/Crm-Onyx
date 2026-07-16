@@ -126,7 +126,7 @@ function PendingBookingsTab({ pending, confirmed, rejected, onApprove, onReject 
       {/* Pending */}
       <div>
         <div style={{ fontSize: ".72rem", fontWeight: 800, color: C.amber, marginBottom: 8, textTransform: "uppercase" }}>
-          ⏳ Pending ({pending.length})
+          ... Pending ({pending.length})
         </div>
         {pending.length === 0 ? (
           <div style={{ textAlign: "center", padding: "20px 0", color: C.gray, fontSize: ".78rem" }}>
@@ -150,7 +150,7 @@ function PendingBookingsTab({ pending, confirmed, rejected, onApprove, onReject 
       {confirmed.length > 0 && (
         <div>
           <div style={{ fontSize: ".72rem", fontWeight: 800, color: C.green, marginBottom: 8, marginTop: 14, textTransform: "uppercase" }}>
-            ✅ Confirmed ({confirmed.length})
+            Confirmed ({confirmed.length})
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {confirmed.map(b => (
@@ -164,7 +164,7 @@ function PendingBookingsTab({ pending, confirmed, rejected, onApprove, onReject 
       {rejected.length > 0 && (
         <div>
           <div style={{ fontSize: ".72rem", fontWeight: 800, color: C.red, marginBottom: 8, marginTop: 14, textTransform: "uppercase" }}>
-            ❌ Rejected ({rejected.length})
+            Rejected ({rejected.length})
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {rejected.map(b => (
@@ -356,7 +356,7 @@ function StatsTab({ stats }) {
       {/* Unit stats */}
       <div style={{ marginBottom: 16 }}>
         <div style={{ fontSize: ".72rem", fontWeight: 800, color: C.silver, marginBottom: 8, textTransform: "uppercase" }}>
-          🏢 Units (Total: {totalUnits})
+           Units (Total: {totalUnits})
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
           <StatCard label="Available" value={unitCounts.available} color={C.green} />

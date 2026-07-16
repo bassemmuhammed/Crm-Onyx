@@ -17,18 +17,18 @@ import { multiFieldSearch, isWithinDateRange } from "./searchUtils";
 
 // ─── STATUS_META (مأخوذ من theme.js — Light Theme backgrounds) ────
 const STATUS_META = {
-  new:             { label: "New",              color: LEAD_STATUS_META.new.color,             bg: LEAD_STATUS_META.new.bg,             icon: "✦"  },
-  callback:        { label: "Call Back",        color: LEAD_STATUS_META.callback.color,        bg: LEAD_STATUS_META.callback.bg,        icon: "🔄" },
-  pendingMeeting:  { label: "Pending Meeting",  color: LEAD_STATUS_META.pendingMeeting.color,  bg: LEAD_STATUS_META.pendingMeeting.bg,  icon: "📅" },
-  meetingDone:     { label: "Meeting Done",     color: LEAD_STATUS_META.meetingDone.color,     bg: LEAD_STATUS_META.meetingDone.bg,     icon: "🤝" },
-  deal:            { label: "Deal",             color: LEAD_STATUS_META.deal.color,            bg: LEAD_STATUS_META.deal.bg,            icon: "💰" },
-  onGoing:         { label: "On Going",         color: LEAD_STATUS_META.onGoing.color,         bg: LEAD_STATUS_META.onGoing.bg,         icon: "🔁" },
-  lowBudget:       { label: "Low Budget",       color: LEAD_STATUS_META.lowBudget.color,       bg: LEAD_STATUS_META.lowBudget.bg,       icon: "💸" },
-  noAnswer:        { label: "No Answer",        color: LEAD_STATUS_META.noAnswer.color,        bg: LEAD_STATUS_META.noAnswer.bg,        icon: "📵" },
-  notInterested:   { label: "Not Interested",   color: LEAD_STATUS_META.notInterested.color,   bg: LEAD_STATUS_META.notInterested.bg,   icon: "⊘"  },
-  chooseCompetitor:{ label: "Competitor",       color: LEAD_STATUS_META.chooseCompetitor.color,bg: LEAD_STATUS_META.chooseCompetitor.bg,icon: "⚔️" },
-  longTerm:        { label: "Long Term",        color: LEAD_STATUS_META.longTerm.color,        bg: LEAD_STATUS_META.longTerm.bg,        icon: "⏳" },
-  closed:          { label: "Closed",           color: LEAD_STATUS_META.closed.color,          bg: LEAD_STATUS_META.closed.bg,          icon: "🔒" },
+  new:             { label: "New",              color: LEAD_STATUS_META.new.color,             bg: LEAD_STATUS_META.new.bg,               },
+  callback:        { label: "Call Back",        color: LEAD_STATUS_META.callback.color,        bg: LEAD_STATUS_META.callback.bg,         },
+  pendingMeeting:  { label: "Pending Meeting",  color: LEAD_STATUS_META.pendingMeeting.color,  bg: LEAD_STATUS_META.pendingMeeting.bg,   },
+  meetingDone:     { label: "Meeting Done",     color: LEAD_STATUS_META.meetingDone.color,     bg: LEAD_STATUS_META.meetingDone.bg,      },
+  deal:            { label: "Deal",             color: LEAD_STATUS_META.deal.color,            bg: LEAD_STATUS_META.deal.bg,             },
+  onGoing:         { label: "On Going",         color: LEAD_STATUS_META.onGoing.color,         bg: LEAD_STATUS_META.onGoing.bg,          },
+  lowBudget:       { label: "Low Budget",       color: LEAD_STATUS_META.lowBudget.color,       bg: LEAD_STATUS_META.lowBudget.bg,        },
+  noAnswer:        { label: "No Answer",        color: LEAD_STATUS_META.noAnswer.color,        bg: LEAD_STATUS_META.noAnswer.bg,         },
+  notInterested:   { label: "Not Interested",   color: LEAD_STATUS_META.notInterested.color,   bg: LEAD_STATUS_META.notInterested.bg,     },
+  chooseCompetitor:{ label: "Competitor",       color: LEAD_STATUS_META.chooseCompetitor.color,bg: LEAD_STATUS_META.chooseCompetitor.bg, },
+  longTerm:        { label: "Long Term",        color: LEAD_STATUS_META.longTerm.color,        bg: LEAD_STATUS_META.longTerm.bg,         },
+  closed:          { label: "Closed",           color: LEAD_STATUS_META.closed.color,          bg: LEAD_STATUS_META.closed.bg,           },
 };
 
 const STATUS_ORDER = ["new","callback","pendingMeeting","meetingDone","deal","onGoing","lowBudget","noAnswer","notInterested","chooseCompetitor","longTerm","closed"];
@@ -610,7 +610,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
       boxShadow: shadows.sm,
       position: "relative",
       padding: `${layout.cardPadding}px`,
-      marginBottom: `${layout.cardGap}px`,
+      // grid gap handles spacing
       transition: "all 0.2s ease",
     }}>
       {/* Left accent border — thick at top, fades down */}
@@ -638,7 +638,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
             <div style={{ fontFamily:"Inter,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2 }}>{lead.phone}</div>
           </div>
 
-          {/* Call button — ✅ Light theme: gray bg, darker on hover */}
+          {/* Call button — Light theme: gray bg, darker on hover */}
           <a href={`tel:${lead.phone}`} onClick={e=>e.stopPropagation()} style={{
             width:34, height:34, borderRadius:9, flexShrink:0,
             background: C.cardAlt, border:`1px solid ${C.border}`,
@@ -668,7 +668,7 @@ const AdminLeadCard = ({ lead, onClick, onDelete, team }) => {
         {/* Divider */}
         <div style={{ height:1, background: C.divider }} />
 
-        {/* Row 2: Status + Callback + Agent — ✅ Pill badges */}
+        {/* Row 2: Status + Callback + Agent — Pill badges */}
         <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
 
           {/* Status badge — pill shape */}
@@ -983,12 +983,12 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
   const touchStartY = useRef(0);
   const bodyRef = useRef(null);
 
-  // ✅ P0-3: Bulk Operations State (مطابق AdminLeadsController في Flutter)
+  // P0-3: Bulk Operations State (مطابق AdminLeadsController في Flutter)
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [longPressTimer, setLongPressTimer] = useState(null);
 
-  // ✅ P2-4: Fuzzy Search + P2-5: Date Range Filter
+  // P2-4: Fuzzy Search + P2-5: Date Range Filter
   const [fuzzySearch, setFuzzySearch] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -1002,7 +1002,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // ✅ Realtime: أي تغيير في DB يظهر فورًا (INSERT / UPDATE / DELETE)
+  // Realtime: أي تغيير في DB يظهر فورًا (INSERT / UPDATE / DELETE)
   useEffect(() => {
     const unsub = subscribeToLeads(({ type, lead, id }) => {
       if (type === "INSERT") {
@@ -1079,10 +1079,10 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     if (lead) setDeleteTarget(lead);
   }, [leads]);
 
-  // ✅ Move filtered/counts here (before bulk handlers that depend on `filtered`)
+  // Move filtered/counts here (before bulk handlers that depend on `filtered`)
   const filtered = useMemo(() => {
     return leads.filter(l => {
-      // ✅ P2-4: Fuzzy search (multi-field: name, phone, project)
+      // P2-4: Fuzzy search (multi-field: name, phone, project)
       const ms = multiFieldSearch(
         [l.name, l.phone, l.project],
         search,
@@ -1090,7 +1090,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
       );
       const mst = statusFilter==="all" || l.status===statusFilter;
       const ma  = filterAgent==="all" || (filterAgent==="unassigned" ? !l.assignedTo : String(l.assignedTo)===String(filterAgent));
-      // ✅ P2-5: Date range filter (على created_at)
+      // P2-5: Date range filter (على created_at)
       const md = isWithinDateRange(l.createdAt || l.created_at, dateFrom, dateTo);
       return ms && mst && ma && md;
     });
@@ -1103,7 +1103,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     }, {}), [leads]);
 
   // ════════════════════════════════════════════════════════════════
-  // ✅ P0-3: BULK OPERATIONS (مطابق AdminLeadsController في Flutter)
+  // P0-3: BULK OPERATIONS (مطابق AdminLeadsController في Flutter)
   // ════════════════════════════════════════════════════════════════
 
   // تفعيل/إلغاء وضع التحديد
@@ -1212,7 +1212,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     <div style={{
       fontFamily:"Inter, sans-serif",
       background:"transparent",
-      color:C.silver,  // ✅ Light theme: text primary
+      color:C.silver,  // Light theme: text primary
       colorScheme:"dark",
       userSelect:"none", WebkitUserSelect:"none",
       display:"flex", flexDirection:"column",
@@ -1355,7 +1355,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
               </div>
             )}
 
-            {/* ✅ P2-4: Fuzzy Search toggle + P2-5: Date Range Filter */}
+            {/* P2-4: Fuzzy Search toggle + P2-5: Date Range Filter */}
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
               {/* Fuzzy search toggle */}
               <button
@@ -1370,7 +1370,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                   fontFamily: "inherit",
                 }}
               >
-                {fuzzySearch ? "🔍 Fuzzy: ON" : "🔍 Fuzzy: OFF"}
+                {fuzzySearch ? " Fuzzy: ON" : " Fuzzy: OFF"}
               </button>
 
               {/* Date range filter toggle */}
@@ -1449,12 +1449,17 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
           </div>
         )}
 
-        {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom: selectionMode ? 180 : 100 }}>
+        {/* Lead list — صفين في السطر (2 cards per row) */}
+        <div style={{
+          display:"grid",
+          gridTemplateColumns:"repeat(auto-fill, minmax(340px, 1fr))",
+          gap: 12,
+          paddingBottom: selectionMode ? 180 : 100,
+        }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"pulse 1.5s ease infinite" }}>⏳ Loading...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"pulse 1.5s ease infinite", gridColumn: "1 / -1" }}>Loading...</div>
             : filtered.length===0
-              ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found 🔍</div>
+              ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", gridColumn: "1 / -1" }}>No leads found</div>
               : filtered.map((lead,i) => (
                   <div
                     key={lead.id}
@@ -1467,7 +1472,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                       outlineOffset: -1,
                       borderRadius: 12,
                     }}
-                    // ✅ P0-3: long-press لتفعيل وضع التحديد (مطابق Flutter)
+                    // P0-3: long-press لتفعيل وضع التحديد (مطابق Flutter)
                     onTouchStart={(e) => {
                       if (selectionMode) return;
                       const timer = setTimeout(() => {
@@ -1484,7 +1489,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
                       if (longPressTimer) { clearTimeout(longPressTimer); setLongPressTimer(null); }
                     }}
                   >
-                    {/* ✅ P0-3: checkbox overlay في وضع التحديد */}
+                    {/* P0-3: checkbox overlay في وضع التحديد */}
                     {selectionMode && (
                       <SelectionCheckbox
                         checked={selectedIds.has(lead.id)}
@@ -1503,7 +1508,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
         </div>
       </div>
 
-      {/* ✅ P0-3: BulkActionBar — يظهر فقط في وضع التحديد */}
+      {/* P0-3: BulkActionBar — يظهر فقط في وضع التحديد */}
       {selectionMode && selectedIds.size > 0 && (
         <BulkActionBar
           selectedCount={selectedIds.size}
@@ -1525,7 +1530,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
     <>
       {page}
       {/* FAB — fixed so it always floats above BottomNav regardless of scroll container */}
-      {/* ✅ P0-3: إخفاء الـ FAB في وضع التحديد */}
+      {/* P0-3: إخفاء الـ FAB في وضع التحديد */}
       {!anyModalOpen && !selectionMode && (
         <div
           onClick={() => setModal("fab")}

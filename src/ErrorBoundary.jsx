@@ -48,7 +48,7 @@ export default class ErrorBoundary extends Component {
       errorCount: prev.errorCount + 1,
     }));
 
-    // ✅ إرسال الخطأ لـ Supabase (اختياري — يمكن تفعيله لاحقاً)
+    // إرسال الخطأ لـ Supabase (اختياري — يمكن تفعيله لاحقاً)
     // try {
     //   await supabase.from("error_logs").insert({
     //     message: error.message,

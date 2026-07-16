@@ -11,21 +11,21 @@ import AdminLeadsPage       from "./AdminLeadsPage";
 import AdminSettings        from "./AdminSettings";
 import AddProjectPage       from "./AddProjectPage";
 import ResetPassword        from "./ResetPassword";
-import SetPassword          from "./SetPassword";   // ✅ P0-4: Set Password flow (مطابق Flutter)
+import SetPassword          from "./SetPassword";   // P0-4: Set Password flow (مطابق Flutter)
 import AppHeader            from "./AppHeader";
 import BottomNav            from "./BottomNav";
 import NotificationPanel    from "./NotificationPanel";
 import ProfileModal         from "./ProfileModal";
 import { NotificationProvider, useNotifications } from "./NotificationContext";
-import { isSetPasswordUrl, isResetPasswordUrl } from "./DeepLinkService";  // ✅ P0-4
-import { notifyAdminsOnSalesPresence } from "./AdminPushHelpers";  // ✅ P0-5
-import AdminCommissionsPage     from "./AdminCommissionsPage";   // ✅ P0-6
-import SalesCommissionsPage     from "./SalesCommissionsPage";   // ✅ P0-6
-import DeveloperUnitsPage       from "./DeveloperUnitsPage";     // ✅ P0-7
-import DeveloperAdminPage       from "./DeveloperAdminPage";     // ✅ P0-7
-import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar";  // ✅ Sidebar navigation
-import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // ✅ Sidebar icons
-import { bg, text, border, primary, shadow, radius, CSS_VARS } from "./theme";  // ✅ Centralized theme
+import { isSetPasswordUrl, isResetPasswordUrl } from "./DeepLinkService";  // P0-4
+import { notifyAdminsOnSalesPresence } from "./AdminPushHelpers";  // P0-5
+import AdminCommissionsPage     from "./AdminCommissionsPage";   // P0-6
+import SalesCommissionsPage     from "./SalesCommissionsPage";   // P0-6
+import DeveloperUnitsPage       from "./DeveloperUnitsPage";     // P0-7
+import DeveloperAdminPage       from "./DeveloperAdminPage";     // P0-7
+import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar";  // Sidebar navigation
+import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // Sidebar icons
+import { bg, text, border, primary, shadow, radius, CSS_VARS } from "./theme";  // Centralized theme
 
 // ─── ONYX Design (Dark Theme — مطابقة الموك أب) ───────────────────
 const OnyxGlobalStyles = () => (
@@ -83,7 +83,7 @@ function NotifConnectedHeader({ onBellClick, onProfileClick, logo, avatarUrl }) 
   );
 }
 
-// ✅ Sidebar wrapper يأخذ unreadCount من NotificationContext
+// Sidebar wrapper يأخذ unreadCount من NotificationContext
 function SidebarConnected(props) {
   const { unreadCount } = useNotifications();
   return <Sidebar {...props} unreadCount={unreadCount} />;
@@ -118,7 +118,7 @@ const TAB_PROJECTS = 3;
 
 const TAB_ADDPROJECT   = 2;
 const TAB_SETTINGS     = 3;
-// ✅ صفحات إضافية ضمن الـ layout (وليست modals منفصلة)
+// صفحات إضافية ضمن الـ layout (وليست modals منفصلة)
 const TAB_COMMISSIONS  = 10;
 const TAB_INVENTORY    = 11;
 
@@ -137,7 +137,7 @@ const INIT_NOTIFS = [
 
 // ─── App ──────────────────────────────────────────────────────────
 export default function App() {
-  // ✅ P0-4: Use DeepLinkService for set-password (invite) vs reset-password (recovery)
+  // P0-4: Use DeepLinkService for set-password (invite) vs reset-password (recovery)
   //   - invite type → SetPassword screen (full set-password flow مطابق Flutter)
   //   - recovery type → ResetPassword screen (legacy simple reset)
   const isSetPassword = isSetPasswordUrl();
@@ -171,9 +171,9 @@ export default function App() {
   });
   const [notifOpen,   setNotifOpen]   = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  // ✅ P0-6: Commissions modal state
+  // P0-6: Commissions modal state
   const [showCommissions, setShowCommissions] = useState(false);
-  // ✅ P0-7: Developer module modal state
+  // P0-7: Developer module modal state
   const [showDeveloper, setShowDeveloper] = useState(null); // null | "units" | "admin"
 
   const [activeSalesTab, setActiveSalesTab] = useState(() => {
@@ -225,7 +225,7 @@ export default function App() {
   const resolveRole = async (userId) => {
     const { data } = await supabase
       .from("users")
-      .select("id, full_name, email, role, active, account_type")  // ✅ full_name + active + account_type
+      .select("id, full_name, email, role, active, account_type")  // full_name + active + account_type
       .eq("id", userId)
       .single();
 
@@ -237,7 +237,7 @@ export default function App() {
       name:  salesName,
       email: data?.email || "",
       role,
-      accountType: data?.account_type || "broker",  // ✅ P0-7 preparation
+      accountType: data?.account_type || "broker",  // P0-7 preparation
     });
     setLoggedIn(true);
     setTopLoading(false);
@@ -247,14 +247,14 @@ export default function App() {
     const { data: av } = await supabase.from("users").select("avatar_url").eq("id", userId).single();
     if (av?.avatar_url) setHeaderAvatarUrl(av.avatar_url);
 
-    // ✅ P1-4: تحديث last_seen عند كل login (مطابقة Flutter)
+    // P1-4: تحديث last_seen عند كل login (مطابقة Flutter)
     try {
       await supabase.from("users").update({ last_seen: new Date().toISOString() }).eq("id", userId);
     } catch (e) {
       console.warn("Failed to update last_seen:", e);
     }
 
-    // ✅ P0-5: Notify admins on sales presence (مطابق Flutter MainShell.didChangeAppLifecycleState)
+    // P0-5: Notify admins on sales presence (مطابق Flutter MainShell.didChangeAppLifecycleState)
     // فقط للـ sales/agent (ليس admin/owner) — الأدمن لا يستلم إشعارات لنفسه
     if (role !== "admin" && role !== "owner") {
       try {
@@ -267,7 +267,7 @@ export default function App() {
 
   const [leads, setLeads] = useState([]);
 
-  // ✅ P0-5: App lifecycle observer — notify admins on sales resume (مطابق Flutter)
+  // P0-5: App lifecycle observer — notify admins on sales resume (مطابق Flutter)
   useEffect(() => {
     if (!currentUser?.id) return;
     if (userRole === "admin" || userRole === "owner") return; // only sales
@@ -324,7 +324,7 @@ export default function App() {
         name:         r.name,
         developer:    r.developer,
         location:     r.location,
-        locationLink: r.location_link || r.location_url || "",  // ✅ P2-3: دعم location_url (Flutter)
+        locationLink: r.location_link || r.location_url || "",  // P2-3: دعم location_url (Flutter)
         category:     r.category,
         status:       r.status,
         statusColor:  r.status_color,
@@ -336,7 +336,7 @@ export default function App() {
         prevWork:     r.prev_work,
         maintenance:  r.maintenance,
         parking:      r.parking,
-        // ✅ P2-3: حقول إضافية (مطابقة Flutter)
+        // P2-3: حقول إضافية (مطابقة Flutter)
         consultant:         r.consultant || "",
         loadingPercentage:  r.loading_percentage || null,
         pricePerMeterFrom:  r.price_per_meter_from || null,
@@ -435,7 +435,7 @@ export default function App() {
       prev_work:     project.prevWork,
       maintenance:   project.maintenance,
       parking:       project.parking,
-      // ✅ P2-3: حقول إضافية (مطابقة Flutter)
+      // P2-3: حقول إضافية (مطابقة Flutter)
       consultant:           project.consultant || null,
       loading_percentage:   project.loadingPercentage || null,
       price_per_meter_from: project.pricePerMeterFrom || null,
@@ -481,7 +481,7 @@ export default function App() {
     handleAdminTabChange(TAB_HOME);
   };
 
-  // ✅ P0-4: Set Password screen (invite flow) — مطابق SetPasswordScreen في Flutter
+  // P0-4: Set Password screen (invite flow) — مطابق SetPasswordScreen في Flutter
   if (isSetPassword) {
     return (
       <SetPassword
@@ -569,7 +569,7 @@ export default function App() {
           );
         case TAB_SETTINGS:
           return <AdminSettings onTabChange={handleAdminTabChange} onSignOut={handleSignOut} />;
-        // ✅ Commission و Inventory كصفحات عادية ضمن الـ layout (وليست modals)
+        // Commission و Inventory كصفحات عادية ضمن الـ layout (وليست modals)
         case TAB_COMMISSIONS:
           return <AdminCommissionsPage />;
         case TAB_INVENTORY:
@@ -596,16 +596,16 @@ export default function App() {
         <OnyxGlobalStyles />
         <TopLoadingBar />
 
-        {/* ✅ Sidebar navigation — كل الروابط (بما فيها Commission/Inventory) ضمن نفس الـ layout */}
+        {/* Sidebar navigation — كل الروابط (بما فيها Commission/Inventory) ضمن نفس الـ layout */}
         <SidebarConnected
           items={[
             { key: "home",         label: "Home",         icon: <Home size={18} />,        onClick: () => handleAdminTabChange(TAB_HOME) },
             { key: "leads",        label: "Leads",        icon: <Users size={18} />,       onClick: () => handleAdminTabChange(TAB_LEADS) },
             { key: "add-project",  label: "Add Project",  icon: <FileText size={18} />,    onClick: () => handleAdminTabChange(TAB_ADDPROJECT) },
             { key: "settings",     label: "Settings",     icon: <Settings size={18} />,    onClick: () => handleAdminTabChange(TAB_SETTINGS) },
-            // ✅ Commission — صفحة عادية ضمن الـ layout
+            // Commission — صفحة عادية ضمن الـ layout
             { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />,  onClick: () => handleAdminTabChange(TAB_COMMISSIONS) },
-            // ✅ Inventory — صفحة عادية ضمن الـ layout (فقط لـ accountType=developer)
+            // Inventory — صفحة عادية ضمن الـ layout (فقط لـ accountType=developer)
             ...(currentUser?.accountType === "developer" ? [{
               key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => handleAdminTabChange(TAB_INVENTORY),
             }] : []),
@@ -627,7 +627,7 @@ export default function App() {
           logo={<OnyxLogo size={28} />}
         />
 
-        {/* Main content area — ✅ Light theme: padding 24px + max-width 1200px + centered */}
+        {/* Main content area — Light theme: padding 24px + max-width 1200px + centered */}
         <div style={{
           flex: 1,
           marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,
@@ -636,9 +636,9 @@ export default function App() {
           marginTop: typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT ? 62 : 0,
           minHeight: "100dvh",
           transition: "margin-left 0.2s ease",
-          // ✅ Container padding
+          // Container padding
           padding: "32px 40px 60px",
-          // ✅ max-width + centered على الشاشات العريضة
+          // max-width + centered على الشاشات العريضة
           overflowY: "auto",
         }}>
           <div
@@ -721,7 +721,7 @@ export default function App() {
             onAddProject={() => { setEditProject(null); setShowAddProject(true); }}
           />
         );
-      // ✅ Commission و Inventory كصفحات عادية ضمن الـ layout
+      // Commission و Inventory كصفحات عادية ضمن الـ layout
       case TAB_COMMISSIONS:
         return <SalesCommissionsPage currentUser={currentUser} />;
       case TAB_INVENTORY:
@@ -748,16 +748,16 @@ export default function App() {
       <OnyxGlobalStyles />
       <TopLoadingBar />
 
-      {/* ✅ Sidebar navigation للمندوب — كل الروابط ضمن نفس الـ layout */}
+      {/* Sidebar navigation للمندوب — كل الروابط ضمن نفس الـ layout */}
       <SidebarConnected
         items={[
           { key: "home",         label: "Home",         icon: <Home size={18} />,        onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_HOME); } },
           { key: "leads",        label: "Leads",        icon: <Users size={18} />,       onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_LEADS); } },
           { key: "schedule",     label: "Schedule",     icon: <FileText size={18} />,    onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_SCHEDULE); } },
           { key: "projects",     label: "Projects",     icon: <Building2 size={18} />,   onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_PROJECTS); } },
-          // ✅ Commission — صفحة عادية
+          // Commission — صفحة عادية
           { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />,  onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_COMMISSIONS); } },
-          // ✅ Inventory (Developer Units) — صفحة عادية (فقط لـ accountType=developer)
+          // Inventory (Developer Units) — صفحة عادية (فقط لـ accountType=developer)
           ...(currentUser?.accountType === "developer" ? [{
             key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_INVENTORY); },
           }] : []),
@@ -780,7 +780,7 @@ export default function App() {
         logo={<OnyxLogo size={28} />}
       />
 
-      {/* Main content area — ✅ Light theme: padding 24px + max-width 1200px + centered */}
+      {/* Main content area — Light theme: padding 24px + max-width 1200px + centered */}
       <div style={{
         flex: 1,
         marginLeft: typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAKPOINT ? SIDEBAR_WIDTH : 0,

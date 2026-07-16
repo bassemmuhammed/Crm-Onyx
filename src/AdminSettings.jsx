@@ -168,7 +168,7 @@ function AddMemberModal({ onClose, onAdd, loading }) {
           fontSize: ".65rem", color: C.silver, fontWeight: 600,
           fontFamily: "Inter,sans-serif",
         }}>
-          ✉️ An invite email will be sent so they can set their own password.
+          ️ An invite email will be sent so they can set their own password.
         </div>
 
         {/* Submit */}
@@ -348,14 +348,14 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   }, []);
 
   // ── Toggle member active ──
-  // ✅ P1-4: مطابقة Flutter — استدعاء revoke-user-session عند الـ deactivation
+  // P1-4: مطابقة Flutter — استدعاء revoke-user-session عند الـ deactivation
   const toggleMember = async (id) => {
     const member = team.find(m => m.id === id);
     const newActive = !member.active;
     setTeam(t => t.map(m => m.id === id ? { ...m, active: newActive } : m));
     await supabase.from("users").update({ active: newActive }).eq("id", id);
 
-    // ✅ P1-4: لو الـ member تم إلغاء تفعيله، استدعي revoke-user-session
+    // P1-4: لو الـ member تم إلغاء تفعيله، استدعي revoke-user-session
     //   لإجباره على تسجيل الخروج من جميع الأجهزة (مطابقة Flutter)
     if (!newActive) {
       try {
@@ -371,7 +371,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   };
 
   // ── Delete member ──
-  // ✅ P1-4: مطابقة Flutter — استدعاء delete-user Edge Function لحذف auth user
+  // P1-4: مطابقة Flutter — استدعاء delete-user Edge Function لحذف auth user
   const deleteMember = (id) => {
     setConfirm({
       message: "This will permanently delete this team member and their auth account. This cannot be undone.",
@@ -401,7 +401,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   };
 
   // ── Add member via invite ──
-  // ✅ P1-4: مطابقة Flutter — تتبع added_by + استخدام full_name
+  // P1-4: مطابقة Flutter — تتبع added_by + استخدام full_name
   const addMember = async (form) => {
     setAddingMember(true);
     try {
@@ -416,21 +416,21 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
       const colors = [C.red, C.green, "#f97316", "#ec4899", C.blue, "#0ea5e9"];
       const color = colors[team.length % colors.length];
 
-      // ✅ P1-4: تتبع added_by (أي أدمن أضاف العضو) + استخدام full_name
+      // P1-4: تتبع added_by (أي أدمن أضاف العضو) + استخدام full_name
       //   نحتاج الحصول على currentUserId من auth
       const { data: { user } } = await supabase.auth.getUser();
       const addedBy = user?.id || null;
 
       const { error: dbError } = await supabase.from("users").insert({
-        full_name: form.name,  // ✅ full_name بدلاً من name (مطابقة Flutter)
+        full_name: form.name,  // full_name بدلاً من name (مطابقة Flutter)
         name: form.name,       // alias للموافقة مع الكود القديم
         email: form.email,
         phone: form.phone,
         role: form.role,
         color,
         active: true,
-        added_by: addedBy,     // ✅ P1-4: تتبع من أضاف العضو
-        last_seen: null,       // ✅ P1-4: سيتم تحديثها عند أول login
+        added_by: addedBy,     // P1-4: تتبع من أضاف العضو
+        last_seen: null,       // P1-4: سيتم تحديثها عند أول login
       });
 
       if (dbError) {
@@ -451,7 +451,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   };
 
   // ── Resend invite ──
-  // ✅ P1-4: مطابقة Flutter — استدعاء resend-invite Edge Function
+  // P1-4: مطابقة Flutter — استدعاء resend-invite Edge Function
   const resendInvite = async (email) => {
     try {
       const { error } = await invokeEdgeFunction("resend-invite", { email });
@@ -708,13 +708,13 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
                 {m.active ? "Active" : "Off"}
               </div>
               <Toggle value={m.active} onChange={() => toggleMember(m.id)} />
-              {/* ✅ P1-4: Resend Invite button */}
+              {/* P1-4: Resend Invite button */}
               <div
                 onClick={() => resendInvite(m.email)}
                 title="Resend Invite"
                 className="tap-btn"
                 style={{ cursor: "pointer", color: C.silver, fontSize: ".8rem", fontWeight: 700, padding: "4px 6px" }}
-              >✉</div>
+              ></div>
               <div
                 onClick={() => deleteMember(m.id)}
                 className="tap-btn"
