@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import ErrorBoundary from './ErrorBoundary.jsx'  // ✅ P3-1: منع انهيار التطبيق
 
 // ── OneSignal Init ──────────────────────────────────────────────
 window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -16,6 +17,8 @@ window.OneSignalDeferred.push(async function(OneSignal) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 )

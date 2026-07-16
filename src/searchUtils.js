@@ -11,7 +11,8 @@
 // مثال: fuzzyMatch("bso", "Bassem") = true (b-a-s-s-e-m → b-s-o? لا، لكن "baso" = true)
 // يدعم Arabic و English
 export function fuzzyMatch(query, target) {
-  if (!query || !target) return false;
+  if (!query || !query.trim()) return true;  // empty query matches everything
+  if (!target) return false;
   const q = String(query).toLowerCase().trim();
   const t = String(target).toLowerCase();
   if (q.length === 0) return true;
