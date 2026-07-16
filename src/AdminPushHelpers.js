@@ -10,6 +10,7 @@
 // الأدمن لا يستلم إشعارات للتغييرات التي يبدأها هو بنفسه (مطابق Flutter).
 
 import { supabase } from "./lib/supabase";
+import { invokeEdgeFunction } from "./lib/edgeFunction";
 
 // ── Arabic status labels (مطابقة _statusLabelAr في Flutter) ─────────
 const STATUS_LABELS_AR = {
@@ -46,9 +47,8 @@ async function invokeSendPushForAllAdmins({ title, body, data }) {
   const promises = adminIds
     .filter(id => id !== currentUserId) // skip self
     .map(adminId =>
-      supabase.functions.invoke("send-push", {
-        body: { user_id: adminId, title, body, data },
-      }).catch(err => console.warn(`send-push failed for admin ${adminId}:`, err))
+      invokeEdgeFunction("send-push", { user_id: adminId, title, body, data })
+        .catch(err => console.warn(`send-push failed for admin ${adminId}:`, err))
     );
 
   await Promise.allSettled(promises);

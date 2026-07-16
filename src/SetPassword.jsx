@@ -20,6 +20,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Lock, Eye, EyeOff, AlertCircle, ArrowRight, Building2, CheckCircle2, Mail, RefreshCw } from "lucide-react";
 import { supabase } from "./lib/supabase";
+import { invokeEdgeFunction } from "./lib/edgeFunction";
 import { C } from "./theme";
 
 export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
@@ -244,9 +245,7 @@ export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
     setError("");
 
     try {
-      const { data, error } = await supabase.functions.invoke("resend-invite", {
-        body: { email },
-      });
+      const { data, error } = await invokeEdgeFunction("resend-invite", { email });
 
       if (error) {
         setError(error.message || "Failed to resend invite");

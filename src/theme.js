@@ -187,5 +187,3 @@ export const C = {
 
 // Aliases للظلال (للتوافق)
 export const shadows = shadow;
-
-export default C;

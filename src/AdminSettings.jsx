@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Icons from "./Icons";
 import { supabase } from "./lib/supabase";
 import { C } from "./theme";
+import { invokeEdgeFunction } from "./lib/edgeFunction";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────
 
@@ -358,9 +359,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
     //   لإجباره على تسجيل الخروج من جميع الأجهزة (مطابقة Flutter)
     if (!newActive) {
       try {
-        await supabase.functions.invoke("revoke-user-session", {
-          body: { user_id: id },
-        });
+        await invokeEdgeFunction("revoke-user-session", { user_id: id });
         flash("✓ Member deactivated & session revoked");
       } catch (err) {
         console.warn("revoke-user-session failed:", err);
@@ -380,17 +379,13 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
         setConfirm(null);
         // 1) استدعي revoke-user-session أولاً (لإنهاء أي session نشطة)
         try {
-          await supabase.functions.invoke("revoke-user-session", {
-            body: { user_id: id },
-          });
+          await invokeEdgeFunction("revoke-user-session", { user_id: id });
         } catch (err) {
           console.warn("revoke-user-session failed:", err);
         }
         // 2) استدعي delete-user Edge Function لحذف auth user
         try {
-          const { error: deleteAuthError } = await supabase.functions.invoke("delete-user", {
-            body: { user_id: id },
-          });
+          const { error: deleteAuthError } = await invokeEdgeFunction("delete-user", { user_id: id });
           if (deleteAuthError) {
             console.warn("delete-user Edge Function error:", deleteAuthError);
           }
@@ -410,9 +405,7 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   const addMember = async (form) => {
     setAddingMember(true);
     try {
-      const { error: inviteError } = await supabase.functions.invoke("invite-user", {
-        body: { email: form.email },
-      });
+      const { error: inviteError } = await invokeEdgeFunction("invite-user", { email: form.email });
 
       if (inviteError) {
         flash("✗ " + inviteError.message);
@@ -461,9 +454,8 @@ export default function AdminSettings({ onTabChange, onSignOut }) {
   // ✅ P1-4: مطابقة Flutter — استدعاء resend-invite Edge Function
   const resendInvite = async (email) => {
     try {
-      const { error } = await supabase.functions.invoke("resend-invite", {
-        body: { email },
-      });
+      const { error } = await invokeEdgeFunction("resend-invite", { email });
+
       if (error) {
         flash("✗ " + error.message);
       } else {
