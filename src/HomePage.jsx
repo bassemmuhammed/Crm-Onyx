@@ -223,7 +223,7 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
           : "#171B24",
         border: `1px solid ${isFeatured ? "rgba(226,58,78,0.25)" : "#1B1F2A"}`,
         borderRadius: 14,
-        padding: "20px 20px 18px",
+        padding: "14px 14px 12px",
         cursor: "pointer",
         animationDelay: `${delay}ms`,
         fontFamily: "'Inter', sans-serif",
@@ -237,27 +237,27 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
       {/* Top row: icon */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{
-          width: 36, height: 36, borderRadius: 9,
+          width: 30, height: 30, borderRadius: 8,
           background: iconStyle.bg, color: iconStyle.color,
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
-          {Icon && <Icon size={18} strokeWidth={2} />}
+          {Icon && <Icon size={15} strokeWidth={2} />}
         </div>
       </div>
 
       {/* Value */}
       <div style={{
         fontFamily: "'JetBrains Mono', monospace",
-        fontSize: 30, fontWeight: 700, color: "#F2F3F7",
-        letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 6,
+        fontSize: 24, fontWeight: 700, color: "#F2F3F7",
+        letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 4,
       }}>
         {val}
       </div>
 
       {/* Label */}
       <div style={{
-        fontSize: 13, fontWeight: 600, color: "#8B93A7",
-        textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 12,
+        fontSize: 11, fontWeight: 600, color: "#8B93A7",
+        textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8,
       }}>
         {s.label}
       </div>
@@ -272,7 +272,7 @@ function StatCard({ s, count = 0, totalLeads = 0, animate, onLeadsFilter, delay 
       </div>
 
       {/* Sub text */}
-      <div style={{ marginTop: 10, fontSize: 12.5, color: "#5B6478" }}>
+      <div style={{ marginTop: 8, fontSize: 11, color: "#5B6478" }}>
         {count > 0 ? <b style={{ color: "#8B93A7", fontWeight: 600 }}>{count}</b> : null}{" "}
         {count > 0 ? subText.replace(`${count} `, "") : subText}
       </div>
@@ -879,8 +879,8 @@ export default function HomePage({
           <SectionHeader title="Lead Overview" />
           <div style={{
             display:"grid",
-            gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",
-            gap:16,
+            gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))",
+            gap:12,
           }}>
             {STATS_TEMPLATE.map((s, i) => (
               <StatCard

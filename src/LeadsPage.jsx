@@ -490,87 +490,95 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
 
   return (
     <div className="lead-card" onClick={onClick} style={{
-      background: C.cardGrad1,
-      border: `1px solid ${C.border}`,
-      borderRadius: 14,
+      background: "#171B24",
+      border: `1px solid #1B1F2A`,
+      borderRadius: 12,
       cursor: "pointer",
       overflow: "hidden",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.45)",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
       position: "relative",
-    }}>
-      {/* Left gradient border — thick at top, fades down */}
+      padding: "18px",
+      transition: "all 0.2s ease",
+    }}
+    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)"; e.currentTarget.style.borderColor = "#242938"; }}
+    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.3)"; e.currentTarget.style.borderColor = "#1B1F2A"; }}
+    >
+      {/* Left accent border */}
       <div style={{
         position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
-        background: `linear-gradient(180deg, ${C.red} 0%, transparent 100%)`,
-        borderRadius: "14px 0 0 14px",
+        background: `linear-gradient(180deg, ${meta.color} 0%, transparent 100%)`,
+        borderRadius: "12px 0 0 12px",
       }} />
 
-      <div style={{ padding:"13px 14px 13px 17px", display:"flex", flexDirection:"column", gap:10 }}>
+      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
 
         {/* Row 1: Avatar + Name/Phone + Call + WA + Share */}
-        <div style={{ display:"flex", alignItems:"center", gap:10, position:"relative" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
 
           {/* Avatar */}
           <div style={{
             width:40, height:40, borderRadius:10, flexShrink:0,
-            background: C.black, border:`1px solid ${C.border}`,
+            background: "#1D2230", border:`1px solid #242938`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:".95rem", fontWeight:900, color:C.white, fontFamily:"Inter,sans-serif",
+            fontSize:".95rem", fontWeight:700, color: meta.color, fontFamily:"'Space Grotesk', sans-serif",
           }}>{initial}</div>
 
-          {/* Name + phone — absolutely centered in the whole row */}
-          <div style={{
-            position:"absolute", left:50, right:120,
-            display:"flex", flexDirection:"column", alignItems:"center",
-            pointerEvents:"none",
-          }}>
-            <div style={{ fontFamily:"Inter,sans-serif", fontWeight:800, fontSize:".88rem", color:C.white, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.name}</div>
-            <div style={{ fontFamily:"Inter,sans-serif", fontSize:".65rem", color:C.gray, marginTop:2, width:"100%", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textAlign:"center" }}>{lead.phone}</div>
+          {/* Name + phone */}
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontFamily:"'Inter', sans-serif", fontWeight:600, fontSize:".88rem", color:"#F2F3F7", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{lead.name}</div>
+            <div style={{ fontFamily:"'Inter', sans-serif", fontSize:".65rem", color:"#8B93A7", marginTop:2 }}>{lead.phone}</div>
           </div>
-
-          {/* Spacer */}
-          <div style={{ flex:1 }} />
 
           {/* Call */}
           <a href={`tel:${lead.phone}`} onClick={e => e.stopPropagation()} style={{
-            width:36, height:36, borderRadius:9, flexShrink:0,
-            background:C.cardAlt, border:`1px solid ${C.border}`,
+            width:34, height:34, borderRadius:9, flexShrink:0,
+            background:"#1D2230", border:`1px solid #242938`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            textDecoration:"none",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 256 256" fill={C.silver}><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
+            textDecoration:"none", transition: "background 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#242938"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#1D2230"; }}
+          >
+            <svg width="15" height="15" viewBox="0 0 256 256" fill="#8B93A7"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l-21.1-47.2a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46Z"/></svg>
           </a>
 
           {/* WhatsApp */}
           <a href={`https://wa.me/${(lead.phone||"").replace(/\D/g,"")}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{
-            width:36, height:36, borderRadius:9, flexShrink:0,
-            background:C.cardAlt, border:`1px solid ${C.border}`,
+            width:34, height:34, borderRadius:9, flexShrink:0,
+            background:"#1D2230", border:`1px solid #242938`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            textDecoration:"none",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 256 256" fill={C.silver}><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
+            textDecoration:"none", transition: "background 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#242938"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#1D2230"; }}
+          >
+            <svg width="15" height="15" viewBox="0 0 256 256" fill="#8B93A7"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72,24,24,0,0,1,19.29-23.54l11.48,22.94L101,117.11a8,8,0,0,0-.73,7.65,56.58,56.58,0,0,0,30.15,30.23,8,8,0,0,0,7.64-.87l14.24-9.5,22.87,11.43A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a88,88,0,0,1-43.06-11.27,8,8,0,0,0-6.54-.67L40,216l12.94-38.4a8,8,0,0,0-.67-6.54A88,88,0,1,1,128,216Z"/></svg>
           </a>
 
           {/* Share */}
           <div onClick={e => e.stopPropagation()} style={{
-            width:36, height:36, borderRadius:9, flexShrink:0,
-            background:C.cardAlt, border:`1px solid ${C.border}`,
+            width:34, height:34, borderRadius:9, flexShrink:0,
+            background:"#1D2230", border:`1px solid #242938`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            cursor:"pointer",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 256 256" fill={C.silver}><path d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88.21,88.21,0,0,0-85.23,65.31,8,8,0,0,1-15.5-4A104.06,104.06,0,0,1,165,96h39.71L170.34,62.34a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM88,208H72a40,40,0,0,1,0-80H88a8,8,0,0,0,0-16H72a56,56,0,0,0,0,112H88a8,8,0,0,0,0-16Z"/></svg>
+            cursor:"pointer", transition: "background 0.15s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = "#242938"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "#1D2230"; }}
+          >
+            <svg width="15" height="15" viewBox="0 0 256 256" fill="#8B93A7"><path d="M229.66,109.66l-48,48a8,8,0,0,1-11.32-11.32L204.69,112H165a88.21,88.21,0,0,0-85.23,65.31,8,8,0,0,1-15.5-4A104.06,104.06,0,0,1,165,96h39.71L170.34,62.34a8,8,0,0,1,11.32-11.32l48,48A8,8,0,0,1,229.66,109.66ZM88,208H72a40,40,0,0,1,0-80H88a8,8,0,0,0,0-16H72a56,56,0,0,0,0,112H88a8,8,0,0,0,0-16Z"/></svg>
           </div>
         </div>
 
         {/* Divider */}
-        <div style={{ height:1, background:C.border }} />
+        <div style={{ height:1, background:"#1B1F2A" }} />
 
-        {/* Row 2: Status badge (bigger) + Callback */}
+        {/* Row 2: Status badge (pill) + Callback + Budget */}
         <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+          {/* Status badge — pill */}
           <div style={{
-            fontSize:".68rem", fontWeight:700, color:C.white,
-            background:C.cardAlt, padding:"6px 12px", borderRadius:7,
-            border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
+            fontSize:".68rem", fontWeight:700, color: meta.color,
+            background: meta.bg, padding:"4px 12px", borderRadius: 9999,
+            fontFamily:"'Inter', sans-serif",
             display:"flex", alignItems:"center", gap:6,
           }}>
             <div style={{ width:7, height:7, borderRadius:"50%", background:meta.color, flexShrink:0 }} />
@@ -579,9 +587,9 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
 
           {hasCallback && (
             <div style={{
-              fontSize:".6rem", fontWeight:600, color:C.silver,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
+              fontSize:".6rem", fontWeight:600, color:"#8B93A7",
+              background:"#1D2230", padding:"4px 12px", borderRadius: 9999,
+              fontFamily:"'Inter', sans-serif",
             }}>
               {new Date(`${lead.callbackDate}T${lead.callbackTime}`).toLocaleString("en-GB", { dateStyle:"short", timeStyle:"short" })}
             </div>
@@ -589,23 +597,16 @@ const LeadCard = ({ lead, onClick, isNew = false }) => {
 
           {lead.clientInfo?.budget && (
             <div style={{
-              fontSize:".6rem", fontWeight:600, color:C.silver,
-              background:C.cardAlt, padding:"4px 10px", borderRadius:6,
-              border:`1px solid ${C.border}`, fontFamily:"Inter,sans-serif",
-            }}>{lead.clientInfo.budget}</div>
-          )}
-
-          {/* NEW badge — بيظهر للليدز اللي status = new */}
-          {lead.status === "new" && (
-            <div style={{
-              fontSize:".58rem", fontWeight:800, color:"#10b981",
-              background:"#10b98118", padding:"3px 8px", borderRadius:5,
-              border:"1px solid #10b98144", fontFamily:"Inter,sans-serif",
-              letterSpacing:.4, animation:"pulse2 2s ease infinite",
-            }}>✦ NEW</div>
+              fontSize:".6rem", fontWeight:600, color:"#8B93A7",
+              background:"#1D2230", padding:"4px 12px", borderRadius: 9999,
+              fontFamily:"'Inter', sans-serif",
+              display:"flex", alignItems:"center", gap:5,
+            }}>
+              <svg width="9" height="9" viewBox="0 0 256 256" fill="#5B6478"><path d="M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48H136V24a8,8,0,0,0-16,0V40H104A48.05,48.05,0,0,0,56,88c0,30.88,26.28,48,48,48h16v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-48,0c-16.36,0-32-10.28-32-32a32,32,0,0,1,32-32h16v64Zm48,80H136V136h16a32,32,0,0,1,0,64Z"/></svg>
+              {lead.clientInfo.budget}
+            </div>
           )}
         </div>
-
       </div>
     </div>
   );
@@ -790,12 +791,16 @@ export default function LeadsPage({ activeTab = 1, onTabChange, onSignOut, curre
           </div>
         )}
 
-        {/* Lead list */}
-        <div style={{ display:"flex", flexDirection:"column", gap:7, paddingBottom:140 }}>
+        {/* Lead list — صفين في السطر */}
+        <div style={{
+          display:"grid",
+          gridTemplateColumns:"repeat(auto-fill, minmax(340px, 1fr))",
+          gap: 12, paddingBottom:140,
+        }}>
           {loading
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"fadeInUp .3s ease" }}>Loading your leads...</div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:"#8B93A7", fontSize:".82rem", gridColumn: "1 / -1" }}>Loading your leads...</div>
             : filtered.length === 0
-            ? <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif" }}>No leads found </div>
+            ? <div style={{ textAlign:"center", padding:"40px 0", color:"#8B93A7", fontSize:".82rem", gridColumn: "1 / -1" }}>No leads found</div>
             : filtered.map((lead, i) => (
                 <div key={lead.id} className="lead-item" style={{ animationDelay:`${i * 22}ms` }}>
                   <LeadCard lead={lead} onClick={() => openDetail(lead)} />

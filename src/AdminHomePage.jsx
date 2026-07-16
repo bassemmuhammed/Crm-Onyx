@@ -1,363 +1,68 @@
-// ── AdminHomePage.jsx ─────────────────────────────────────────
+// ── AdminHomePage.jsx — مطابقة الموك أب بالظبط ────────────────────
 import { useState, useEffect } from "react";
-import Icons from "./Icons";
-import { supabase } from "./sharedLeadsData";
+import { supabase } from "./lib/supabase";
 import { C } from "./theme";
+import {
+  Users, Zap, Phone, CalendarCheck, CheckSquare, Handshake,
+  TrendingUp, DollarSign, Ban, X, Flag, Clock, CheckCheck,
+} from "lucide-react";
 
-const NoSelect = () => <style>{`
-  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800;900&display=swap');
-  * { -webkit-user-select: none !important; user-select: none !important; font-family: 'Inter', sans-serif !important; }
-  @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:.35} }
-  @keyframes countUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes slideInLeft { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes arrowBounce { 0%{transform:translateX(0)} 50%{transform:translateX(4px)} 100%{transform:translateX(0)} }
-  @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-`}</style>;
-
-// ─── Animated Number Hook ──────────────────────────────────────
-function useAnimatedNumber(target, duration = 800, delay = 0) {
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    let start = null;
-    let frame;
-    const timeout = setTimeout(() => {
-      const step = (timestamp) => {
-        if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setCurrent(Math.round(eased * target));
-        if (progress < 1) frame = requestAnimationFrame(step);
-      };
-      frame = requestAnimationFrame(step);
-    }, delay);
-    return () => { clearTimeout(timeout); cancelAnimationFrame(frame); };
-  }, [target, duration, delay]);
-  return current;
-}
-
-// ─── ONYX Design Tokens (same as AdminLeadsPage) ──────────────
-
-// ─── نفس STATUS_META بالظبط زي AdminLeadsPage ────────────────
 const STATUS_META = {
-  new:             { label: "New",             color: "#10b981", bg: "#10b98120" },
-  callback:        { label: "Call Back",       color: "#f59e0b", bg: "#f59e0b20" },
-  pendingMeeting:  { label: "Pending Meeting", color: "#4C8DFF", bg: "#4C8DFF20" },
-  meetingDone:     { label: "Meeting Done",    color: "#a855f7", bg: "#a855f720" },
-  deal:            { label: "Deal",            color: "#E23A4E", bg: "#E23A4E20" },
-  onGoing:         { label: "On Going",        color: "#06b6d4", bg: "#06b6d420" },
-  lowBudget:       { label: "Low Budget",      color: "#f97316", bg: "#f9731620" },
-  noAnswer:        { label: "No Answer",       color: "#8b949e", bg: "#8b949e20" },
-  notInterested:   { label: "Not Interested",  color: "#6b7280", bg: "#6b728020" },
-  chooseCompetitor:{ label: "Competitor",      color: "#ec4899", bg: "#ec489920" },
-  longTerm:        { label: "Long Term",       color: "#8b5cf6", bg: "#8b5cf620" },
-  closed:          { label: "Closed",          color: "#374151", bg: "#37415130" },
+  new:             { label: "New",              color: "#2BD97C", bg: "rgba(43,217,124,0.12)" },
+  callback:        { label: "Call Back",        color: "#F2A93B", bg: "rgba(242,169,59,0.12)" },
+  pendingMeeting:  { label: "Pending Meeting",  color: "#F2A93B", bg: "rgba(242,169,59,0.12)" },
+  meetingDone:     { label: "Meeting Done",     color: "#9B7CFF", bg: "rgba(155,124,255,0.12)" },
+  deal:            { label: "Deal",             color: "#E23A4E", bg: "rgba(226,58,78,0.12)" },
+  onGoing:         { label: "On Going",         color: "#4C8DFF", bg: "rgba(76,141,255,0.12)" },
+  lowBudget:       { label: "Low Budget",       color: "#F2A93B", bg: "rgba(242,169,59,0.12)" },
+  noAnswer:        { label: "No Answer",        color: "#8B93A7", bg: "#1D2230" },
+  notInterested:   { label: "Not Interested",   color: "#8B93A7", bg: "#1D2230" },
+  chooseCompetitor:{ label: "Competitor",       color: "#E23A4E", bg: "rgba(226,58,78,0.12)" },
+  longTerm:        { label: "Long Term",        color: "#9B7CFF", bg: "rgba(155,124,255,0.12)" },
+  closed:          { label: "Closed",           color: "#8B93A7", bg: "#1D2230" },
 };
 
-// ─── Lead Overview Cards Meta (مطابقة الموك أب) ──────────────────
+const ICON_CLASS_STYLES = {
+  accent:  { bg: "rgba(226,58,78,0.12)",   color: "#FF4C5E" },
+  success: { bg: "rgba(43,217,124,0.12)",  color: "#2BD97C" },
+  warning: { bg: "rgba(242,169,59,0.12)",  color: "#F2A93B" },
+  info:    { bg: "rgba(76,141,255,0.12)",  color: "#4C8DFF" },
+  violet:  { bg: "rgba(155,124,255,0.12)", color: "#9B7CFF" },
+  neutral: { bg: "#1D2230",                color: "#8B93A7" },
+};
+
+const BAR_COLORS = {
+  accent: "#E23A4E", success: "#2BD97C", warning: "#F2A93B",
+  info: "#4C8DFF", violet: "#9B7CFF", neutral: "#8B93A7",
+};
+
+// ✅ كروت أصغر من السيلز (padding مختصر)
 const LEAD_OVERVIEW_CARDS = [
-  { key: "all",             label: "ALL LEADS",        iconKey: "users",         color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent",  featured: true },
-  { key: "new",             label: "NEW LEADS",        iconKey: "sparkle",       color: "#2BD97C", accentLine: "#2BD97C", iconClass: "success" },
-  { key: "callback",        label: "CALL BACK",        iconKey: "callback",      color: "#F2A93B", accentLine: "#F2A93B", iconClass: "warning" },
-  { key: "pendingMeeting",  label: "PENDING MEETING",  iconKey: "calendar",      color: "#4C8DFF", accentLine: "#4C8DFF", iconClass: "info" },
-  { key: "meetingDone",     label: "MEETING DONE",     iconKey: "calendarCheck", color: "#9B7CFF", accentLine: "#9B7CFF", iconClass: "violet" },
-  { key: "deal",            label: "DEAL",             iconKey: "handshake",     color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent" },
-  { key: "onGoing",         label: "ON GOING",         iconKey: "hourglass",     color: "#4C8DFF", accentLine: "#4C8DFF", iconClass: "info" },
-  { key: "lowBudget",       label: "LOW BUDGET",       iconKey: "chart",         color: "#F2A93B", accentLine: "#F2A93B", iconClass: "warning" },
-  { key: "noAnswer",        label: "NO ANSWER",        iconKey: "phoneCall",     color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
-  { key: "notInterested",   label: "NOT INTERESTED",   iconKey: "prohibit",      color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
-  { key: "chooseCompetitor",label: "COMPETITOR",       iconKey: "flag",          color: "#E23A4E", accentLine: "#E23A4E", iconClass: "accent" },
-  { key: "longTerm",        label: "LONG TERM",        iconKey: "hourglass",     color: "#9B7CFF", accentLine: "#9B7CFF", iconClass: "violet" },
-  { key: "closed",          label: "CLOSED",           iconKey: "checkSquare",   color: "#8B93A7", accentLine: "#8B93A7", iconClass: "neutral" },
+  { key: "all",             label: "All Leads",        Icon: Users,       iconClass: "accent",  featured: true },
+  { key: "new",             label: "New Leads",        Icon: Zap,         iconClass: "success" },
+  { key: "callback",        label: "Call Back",        Icon: Phone,       iconClass: "warning" },
+  { key: "pendingMeeting",  label: "Pending Meeting",  Icon: CalendarCheck, iconClass: "info" },
+  { key: "meetingDone",     label: "Meeting Done",     Icon: CheckSquare, iconClass: "violet" },
+  { key: "deal",            label: "Deal",             Icon: Handshake,   iconClass: "accent" },
+  { key: "onGoing",         label: "On Going",         Icon: TrendingUp,  iconClass: "info" },
+  { key: "lowBudget",       label: "Low Budget",       Icon: DollarSign,  iconClass: "warning" },
+  { key: "noAnswer",        label: "No Answer",        Icon: Ban,         iconClass: "neutral" },
+  { key: "notInterested",   label: "Not Interested",   Icon: X,           iconClass: "neutral" },
+  { key: "chooseCompetitor",label: "Competitor",       Icon: Flag,        iconClass: "accent" },
+  { key: "longTerm",        label: "Long Term",        Icon: Clock,       iconClass: "violet" },
+  { key: "closed",          label: "Closed",           Icon: CheckCheck,  iconClass: "neutral" },
 ];
 
-// ─── Icon renderer — wraps Icons[key] with a color tint via CSS filter ───
-// Icons من الملف المشترك بيكون عادةً SVG بلون ثابت،
-// بنحطه جوه wrapper بـ opacity مناسب
-function OvIcon({ iconKey, color }) {
-  // clone the icon element with the right color applied via a wrapper
-  return (
-    <span style={{
-      display: "flex", alignItems: "center", justifyContent: "center",
-      color: color,
-      // force svg children to inherit currentColor where possible
-    }}>
-      {Icons[iconKey] ?? Icons["sparkle"]}
-    </span>
-  );
-}
+const F = {
+  display: "'Space Grotesk', sans-serif",
+  body: "'Inter', sans-serif",
+  mono: "'JetBrains Mono', monospace",
+};
 
-// ─── Lead Overview Animated Card ──────────────────────────────
-function LeadOverviewCard({ card, value, index, accentColor, onClick }) {
-  const animated = useAnimatedNumber(value, 700, index * 60);
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? "#1D2230" : C.card,
-        borderRadius: 14,
-        padding: "14px 12px",
-        border: `1px solid ${hovered ? card.color + "55" : C.border}`,
-        display: "flex",
-        alignItems: "center",
-        gap: 11,
-        cursor: "pointer",
-        position: "relative",
-        overflow: "hidden",
-        transition: "all .22s ease",
-        boxShadow: hovered ? `0 4px 20px ${card.color}22` : "0 2px 8px rgba(0,0,0,.3)",
-        animation: `slideInLeft .35s ease both`,
-        animationDelay: `${index * 55}ms`,
-      }}
-    >
-      {/* Bottom accent line (like screenshot green line under NEW LEADS) */}
-      {card.accent && (
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
-          background: card.accentLine, borderRadius: "0 0 14px 14px",
-          animation: `slideInLeft .5s ease both`,
-          animationDelay: `${index * 55 + 200}ms`,
-        }} />
-      )}
-
-      {/* Icon with black background */}
-      <div style={{
-        width: 44, height: 44, borderRadius: 10,
-        background: "#0B0D12",
-        border: `1px solid #222226`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        flexShrink: 0,
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,.05)`,
-        transition: "transform .2s ease",
-        transform: hovered ? "scale(1.05)" : "scale(1)",
-      }}>
-        <OvIcon iconKey={card.iconKey} color={card.color} />
-      </div>
-
-      {/* Number + Label */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontSize: "1.6rem", fontWeight: 900, color: C.white,
-          lineHeight: 1, letterSpacing: "-0.03em",
-          fontVariantNumeric: "tabular-nums",
-          animation: `countUp .4s ease both`,
-          animationDelay: `${index * 60 + 100}ms`,
-        }}>
-          {animated}
-        </div>
-        <div style={{
-          fontSize: ".55rem", fontWeight: 700, color: C.gray,
-          marginTop: 4, textTransform: "uppercase", letterSpacing: "1.2px",
-          lineHeight: 1.2,
-        }}>
-          {card.label}
-        </div>
-      </div>
-
-      {/* Arrow → with bounce animation */}
-      <div style={{
-        color: hovered ? card.color : C.gray,
-        transition: "color .2s ease",
-        flexShrink: 0,
-        animation: hovered ? "arrowBounce .6s ease infinite" : "none",
-        fontSize: "1rem",
-        fontWeight: 900,
-      }}>
-        ›
-      </div>
-
-      {/* Divider line at bottom */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 12, right: 12, height: "1px",
-        background: C.border,
-      }} />
-    </div>
-  );
-}
-
-// ─── Rank badge styles ────────────────────────────────────────
-const RANK_STYLES = [
-  { bg:"linear-gradient(135deg,#FFD700 0%,#B8860B 100%)", label:"#000", border:"#FFD70066", glow:"#FFD70033" },
-  { bg:"linear-gradient(135deg,#C0C0C0 0%,#808080 100%)", label:"#000", border:"#C0C0C066", glow:"#C0C0C022" },
-  { bg:"linear-gradient(135deg,#CD7F32 0%,#8B4513 100%)", label:"#fff", border:"#CD7F3266", glow:"#CD7F3222" },
-];
-
-// ─── Leaderboard Cards (Option 1 from TeamPerformanceOptions) ─
-function LeaderboardCards({ teamData, totalLeads, onTabChange }) {
-  const [expanded, setExpanded] = useState(null);
-
-  return (
-    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-      {teamData.map((agent, i) => {
-        const rank      = i + 1;
-        const pct       = totalLeads > 0 ? Math.round((agent.total / totalLeads) * 100) : 0;
-        const rankStyle = RANK_STYLES[i] || null;
-        const isExp     = expanded === agent.id;
-        const initial   = (agent.name || agent.full_name || "?").charAt(0).toUpperCase();
-
-        const topStatuses = Object.entries(STATUS_META)
-          .map(([key, m]) => ({ key, ...m, count: agent[key] || 0 }))
-          .filter(s => s.count > 0)
-          .sort((a,b) => b.count - a.count)
-          .slice(0, 4);
-
-        return (
-          <div
-            key={agent.id}
-            style={{
-              background: i === 0 ? "linear-gradient(135deg,#1D2230 0%,#171B24 100%)" : "#F2F3F7",
-              borderRadius: 16,
-              border: `1px solid ${rankStyle ? rankStyle.border : C.border}`,
-              boxShadow: rankStyle ? `0 0 20px ${rankStyle.glow}` : "0 2px 8px rgba(0,0,0,.4)",
-              cursor: "pointer",
-              transition: "all .2s ease",
-              position: "relative",
-              overflow: "hidden",
-              animation: `slideUp .4s ease both`,
-              animationDelay: `${i * 80}ms`,
-            }}
-          >
-            {/* top accent line for #1 */}
-            {i === 0 && (
-              <div style={{
-                position:"absolute", top:0, left:0, right:0, height:2,
-                background:"linear-gradient(90deg,#FFD700,transparent)",
-              }} />
-            )}
-
-            {/* Main row — click navigates to leads filtered by agent */}
-            <div
-              onClick={() => onTabChange && onTabChange("leads", { agent_id: agent.id })}
-              style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 14px" }}
-            >
-              {/* Rank badge */}
-              <div style={{
-                width:28, height:28, borderRadius:8, flexShrink:0,
-                background: rankStyle ? rankStyle.bg : C.cardAlt,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:".7rem", fontWeight:900,
-                color: rankStyle ? rankStyle.label : C.gray,
-              }}>
-                {rank <= 3 ? `#${rank}` : rank}
-              </div>
-
-              {/* Avatar */}
-              <div style={{
-                width:38, height:38, borderRadius:"50%", flexShrink:0,
-                background: agent.color || C.cardAlt,
-                border:`2px solid ${agent.color || C.border}`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:".78rem", fontWeight:900, color:"#fff",
-                boxShadow: i === 0 ? `0 0 12px ${agent.color}55` : "none",
-              }}>
-                {agent.avatar_url
-                  ? <img src={agent.avatar_url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }} />
-                  : initial}
-              </div>
-
-              {/* Name + segmented bar */}
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{
-                  fontSize:".75rem", fontWeight:800, color:C.white,
-                  marginBottom:5, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis",
-                }}>
-                  {agent.name}
-                </div>
-                <div style={{ height:5, background:C.border, borderRadius:99, overflow:"hidden", display:"flex", gap:1 }}>
-                  {topStatuses.map(s => (
-                    <div key={s.key} style={{
-                      height:"100%",
-                      width:`${agent.total > 0 ? (s.count / agent.total) * pct : 0}%`,
-                      background:s.color,
-                      transition:"width .6s ease",
-                      borderRadius:99,
-                    }} />
-                  ))}
-                </div>
-              </div>
-
-              {/* Total + pct */}
-              <div style={{ textAlign:"right", flexShrink:0 }}>
-                <div style={{
-                  fontSize:"1.1rem", fontWeight:900, color: rankStyle ? "#FFD700" : C.white,
-                  lineHeight:1,
-                }}>
-                  {agent.total}
-                </div>
-                <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700, marginTop:2 }}>
-                  {pct}% share
-                </div>
-              </div>
-
-              {/* Expand toggle chevron */}
-              <div
-                onClick={(e) => { e.stopPropagation(); setExpanded(isExp ? null : agent.id); }}
-                style={{
-                  marginLeft:4, flexShrink:0,
-                  color: isExp ? C.white : C.gray,
-                  fontSize:".75rem", fontWeight:900,
-                  transform: isExp ? "rotate(90deg)" : "rotate(0deg)",
-                  transition:"transform .2s ease",
-                  padding:"4px 2px",
-                }}
-              >
-                ›
-              </div>
-            </div>
-
-            {/* Expanded status pills */}
-            {isExp && (
-              <div style={{
-                marginTop:0, paddingTop:10, padding:"0 14px 13px",
-                borderTop:`1px solid ${C.border}`,
-                display:"flex", flexWrap:"wrap", gap:5,
-              }}>
-                {Object.entries(STATUS_META)
-                  .map(([key, m]) => ({ key, ...m, count: agent[key] || 0 }))
-                  .filter(s => s.count > 0)
-                  .sort((a,b) => b.count - a.count)
-                  .map(s => (
-                    <div
-                      key={s.key}
-                      onClick={() => onTabChange && onTabChange("leads", { status: s.key, agent_id: agent.id })}
-                      style={{
-                        display:"flex", alignItems:"center", gap:4,
-                        background:`${s.color}15`, border:`1px solid ${s.color}44`,
-                        borderRadius:6, padding:"3px 8px", cursor:"pointer",
-                      }}
-                    >
-                      <div style={{ width:5, height:5, borderRadius:"50%", background:s.color }} />
-                      <span style={{ fontSize:".52rem", fontWeight:700, color:s.color }}>{s.label}</span>
-                      <span style={{ fontSize:".58rem", fontWeight:900, color:C.white }}>{s.count}</span>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── Main ─────────────────────────────────────────────────────
-export default function AdminHomePage({ onTabChange }) {
-  // ── Cache: invalidate old team cache that doesn't have avatar_url field ──
-  const rawCachedTeam = JSON.parse(localStorage.getItem("cache_team") || "[]");
-  const cachedTeamValid = rawCachedTeam.length > 0 && "avatar_url" in rawCachedTeam[0];
-  if (!cachedTeamValid && rawCachedTeam.length > 0) {
-    localStorage.removeItem("cache_team");
-  }
-  const cachedLeads = JSON.parse(localStorage.getItem("cache_leads") || "[]");
-  const cachedTeam  = cachedTeamValid ? rawCachedTeam : [];
-
-  const [leads,   setLeads]   = useState(cachedLeads);
-  const [team,    setTeam]    = useState(cachedTeam);
-  const [loading, setLoading] = useState(true); // always load fresh on mount
+export default function AdminHomePage({ onTabChange, projects, onAddProject, onEditProject }) {
+  const [leads, setLeads] = useState([]);
+  const [team, setTeam] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
@@ -366,16 +71,12 @@ export default function AdminHomePage({ onTabChange }) {
         const [leadsRes, teamRes] = await Promise.all([
           supabase.from("leads").select("status, assigned_to"),
           supabase.from("users")
-            .select("id, name, color, avatar_url")
+            .select("id, name, full_name, color, avatar_url")
             .neq("role", "admin")
             .neq("role", "owner"),
         ]);
-        const newLeads = leadsRes.data || [];
-        const newTeam  = teamRes.data  || [];
-        localStorage.setItem("cache_leads", JSON.stringify(newLeads));
-        localStorage.setItem("cache_team",  JSON.stringify(newTeam));
-        setLeads(newLeads);
-        setTeam(newTeam);
+        setLeads(leadsRes.data || []);
+        setTeam(teamRes.data || []);
       } catch (err) {
         console.error("AdminHomePage load error:", err);
       } finally {
@@ -391,139 +92,152 @@ export default function AdminHomePage({ onTabChange }) {
     return () => supabase.removeChannel(channel);
   }, []);
 
-  // ── Team data ──
   const teamData = team.map((agent) => {
     const agentLeads = leads.filter(l => l.assigned_to === agent.id);
-    const byStatus = {};
-    Object.keys(STATUS_META).forEach(key => { byStatus[key] = agentLeads.filter(l => l.status === key).length; });
-    return { ...agent, total: agentLeads.length, ...byStatus };
+    return { ...agent, name: agent.full_name || agent.name, total: agentLeads.length };
   }).sort((a, b) => b.total - a.total);
 
-  return (
-    <div style={{ padding:"16px 16px 0", background:C.surface, minHeight:"100vh", paddingBottom:90 }}>
-      <NoSelect />
+  const unassigned = leads.filter(l => !l.assigned_to).length;
 
-      {loading && (
-        <div style={{ textAlign:"center", padding:"40px 0", color:C.gray, fontSize:".82rem", fontFamily:"Inter,sans-serif", animation:"pulse2 1.5s ease infinite" }}>
+  return (
+    <div style={{ fontFamily: F.body, color: "#F2F3F7" }}>
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "40px 0", color: "#8B93A7", fontSize: 14 }}>
           Loading...
         </div>
-      )}
-
-      {!loading && (
+      ) : (
         <>
-          {/* ── Lead Overview Section ── */}
-          <div style={{ marginBottom: 20 }}>
-            {/* Section Header */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: 8,
-              marginBottom: 14,
-              animation: "fadeInUp .3s ease both",
-            }}>
-              <div style={{ width: 3, height: 18, background: C.red, borderRadius: 99 }} />
-              <span style={{
-                fontSize: ".72rem", fontWeight: 900, color: C.white,
-                textTransform: "uppercase", letterSpacing: "2px",
-              }}>
-                LEAD OVERVIEW
-              </span>
-            </div>
-
-            {/* Cards Grid — 2 columns */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-              {LEAD_OVERVIEW_CARDS.map((card, i) => {
-                const value = card.key === "all"
-                  ? leads.length
-                  : leads.filter(l => l.status === card.key).length;
-                return (
-                  <LeadOverviewCard
-                    key={card.key}
-                    card={card}
-                    value={value}
-                    index={i}
-                    onClick={() => onTabChange && onTabChange("leads", { status: card.key === "all" ? null : card.key })}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── Team Leaderboard ── */}
+          {/* ── Stat Grid (مطابقة الموك أب — 3 columns) ── */}
           <div style={{
-            background: C.cardGrad2, borderRadius:20,
-            padding:"18px 16px 16px",
-            boxShadow:"0 4px 32px rgba(0,0,0,.5)",
-            marginBottom:16,
-            border:`1px solid ${C.border}`,
-            position:"relative", overflow:"hidden",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+            gap: 12, marginBottom: 28,
           }}>
-            {/* Red top accent */}
-            <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:`linear-gradient(90deg, ${C.red} 0%, transparent 100%)` }} />
+            {LEAD_OVERVIEW_CARDS.map((card, i) => {
+              const count = card.key === "all"
+                ? leads.length
+                : leads.filter(l => l.status === card.key).length;
+              const total = leads.length;
+              const pct = card.key === "all" ? 100 : (total > 0 ? Math.round((count / total) * 100) : 0);
+              const iconStyle = ICON_CLASS_STYLES[card.iconClass];
+              const barColor = BAR_COLORS[card.iconClass];
+              const isFeatured = card.featured;
+              const Icon = card.Icon;
 
-            {/* Header */}
-            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16 }}>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <div style={{ width:3, height:18, background:C.red, borderRadius:99 }} />
-                <div>
-                  <div style={{ fontSize:".82rem", fontWeight:900, color:C.white, letterSpacing:"-0.01em" }}>Team Leaderboard</div>
-                  <div style={{ fontSize:".5rem", color:C.gray, fontWeight:600, marginTop:1, textTransform:"uppercase", letterSpacing:"1px" }}>
-                    Tap a card to see details
+              return (
+                <div
+                  key={card.key}
+                  onClick={() => onTabChange && onTabChange("leads", { status: card.key === "all" ? null : card.key })}
+                  style={{
+                    background: isFeatured
+                      ? "linear-gradient(160deg, rgba(226,58,78,0.10), #171B24 55%)"
+                      : "#171B24",
+                    border: `1px solid ${isFeatured ? "rgba(226,58,78,0.25)" : "#1B1F2A"}`,
+                    borderRadius: 14, padding: "14px 14px 12px",
+                    cursor: "pointer", position: "relative", overflow: "hidden",
+                    transition: "border-color .15s ease, transform .15s ease, background .15s ease",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#242938"; e.currentTarget.style.background = isFeatured ? "linear-gradient(160deg, rgba(226,58,78,0.15), #1D2230 55%)" : "#1D2230"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = isFeatured ? "rgba(226,58,78,0.25)" : "#1B1F2A"; e.currentTarget.style.background = isFeatured ? "linear-gradient(160deg, rgba(226,58,78,0.10), #171B24 55%)" : "#171B24"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  {/* Icon */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                    <div style={{
+                      width: 28, height: 28, borderRadius: 7,
+                      background: iconStyle.bg, color: iconStyle.color,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <Icon size={14} strokeWidth={2} />
+                    </div>
+                  </div>
+                  {/* Value */}
+                  <div style={{
+                    fontFamily: F.mono, fontSize: 22, fontWeight: 700,
+                    color: "#F2F3F7", letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 4,
+                  }}>{count}</div>
+                  {/* Label */}
+                  <div style={{
+                    fontSize: 11, fontWeight: 600, color: "#8B93A7",
+                    textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8,
+                  }}>{card.label}</div>
+                  {/* Progress bar */}
+                  <div style={{ height: 3, borderRadius: 3, background: "#1B1F2A", overflow: "hidden" }}>
+                    <div style={{ height: "100%", borderRadius: 3, background: barColor, width: `${pct}%`, transition: "width 1s ease" }} />
                   </div>
                 </div>
-              </div>
+              );
+            })}
+          </div>
+
+          {/* ── Team Leaderboard (مطابقة الموك أب) ── */}
+          <div style={{
+            background: "#171B24", border: "1px solid #1B1F2A",
+            borderRadius: 14, padding: "22px 22px 8px",
+          }}>
+            {/* Panel header */}
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 18 }}>
               <div style={{
-                fontSize:".58rem", fontWeight:800, color:C.gray,
+                fontFamily: F.display, fontSize: 16, fontWeight: 600,
+                display: "flex", alignItems: "center", gap: 8, color: "#F2F3F7",
               }}>
-                {leads.length} leads
+                <span style={{ width: 3, height: 16, background: "#E23A4E", borderRadius: 2, display: "inline-block" }} />
+                Team Leaderboard
               </div>
+              <div style={{ fontSize: 12.5, color: "#5B6478" }}>{leads.length} leads total</div>
             </div>
 
-            {/* Cards */}
+            {/* Leaderboard rows */}
             {teamData.length === 0 ? (
-              <div style={{ textAlign:"center", padding:"20px 0", color:C.gray, fontSize:".78rem", fontWeight:700, textTransform:"uppercase", letterSpacing:"1px" }}>
+              <div style={{ textAlign: "center", padding: "20px 0", color: "#5B6478", fontSize: 13 }}>
                 No team yet
               </div>
             ) : (
-              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                <LeaderboardCards teamData={teamData} totalLeads={leads.length} onTabChange={onTabChange} />
+              <>
+                {teamData.map((agent, i) => (
+                  <div key={agent.id} style={{
+                    display: "flex", alignItems: "center", gap: 14,
+                    padding: "14px 4px", borderBottom: "1px solid #1B1F2A",
+                  }}>
+                    <div style={{
+                      fontFamily: F.mono, fontSize: 13, fontWeight: 700,
+                      color: i < 3 ? (i === 0 ? "#F2A93B" : i === 1 ? "#8B93A7" : "#9B7CFF") : "#5B6478",
+                      width: 20,
+                    }}>{String(i + 1).padStart(2, "0")}</div>
+                    <div style={{
+                      width: 34, height: 34, borderRadius: 9,
+                      background: agent.color || "#1D2230",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontFamily: F.display, fontWeight: 600, fontSize: 13, color: "#fff",
+                    }}>
+                      {(agent.name || "?").charAt(0).toUpperCase()}
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 600, flex: 1, color: "#F2F3F7" }}>
+                      {agent.name || "Unknown"}
+                    </div>
+                    <div style={{ fontFamily: F.mono, fontSize: 13.5, fontWeight: 600, color: "#8B93A7" }}>
+                      {agent.total} leads
+                    </div>
+                  </div>
+                ))}
 
                 {/* Unassigned */}
-                {(() => {
-                  const unassigned = leads.filter(l => !l.assigned_to).length;
-                  if (!unassigned) return null;
-                  const pct = leads.length > 0 ? Math.round((unassigned / leads.length) * 100) : 0;
-                  return (
+                {unassigned > 0 && (
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 14,
+                    padding: "14px 4px", borderBottom: "none",
+                  }}>
+                    <div style={{ fontFamily: F.mono, fontSize: 13, fontWeight: 700, color: "#5B6478", width: 20 }}>—</div>
                     <div style={{
-                      display:"flex", alignItems:"center", gap:11,
-                      padding:"11px 14px",
-                      background: C.card,
-                      borderRadius:14, border:`1px solid ${C.border}`,
-                    }}>
-                      <div style={{
-                        width:28, height:28, borderRadius:8, flexShrink:0,
-                        background:C.cardAlt, border:`1px dashed ${C.border}`,
-                        display:"flex", alignItems:"center", justifyContent:"center",
-                        fontSize:".6rem", fontWeight:900, color:C.gray,
-                      }}>?</div>
-                      <div style={{
-                        width:40, height:40, borderRadius:"50%", flexShrink:0,
-                        background:C.cardAlt, border:`2px dashed ${C.border}`,
-                        display:"flex", alignItems:"center", justifyContent:"center",
-                        fontSize:".65rem", fontWeight:900, color:C.gray,
-                      }}>–</div>
-                      <div style={{ flex:1, minWidth:0 }}>
-                        <div style={{ fontSize:".7rem", fontWeight:700, color:C.gray, marginBottom:5, textTransform:"uppercase", letterSpacing:".5px" }}>Unassigned</div>
-                        <div style={{ height:4, background:C.border, borderRadius:99, overflow:"hidden" }}>
-                          <div style={{ height:"100%", width:`${pct}%`, background:C.cardAlt, borderRadius:99, transition:"width .5s ease" }} />
-                        </div>
-                      </div>
-                      <div style={{ textAlign:"right", flexShrink:0 }}>
-                        <div style={{ fontSize:"1.1rem", fontWeight:900, color:C.gray }}>{unassigned}</div>
-                        <div style={{ fontSize:".48rem", color:C.gray, fontWeight:700 }}>{pct}%</div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
+                      width: 34, height: 34, borderRadius: 9,
+                      background: "#1D2230", border: "1px dashed #242938",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 13, fontWeight: 600, color: "#5B6478",
+                    }}>?</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, flex: 1, color: "#8B93A7" }}>Unassigned</div>
+                    <div style={{ fontFamily: F.mono, fontSize: 13.5, fontWeight: 600, color: "#5B6478" }}>{unassigned} leads</div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </>

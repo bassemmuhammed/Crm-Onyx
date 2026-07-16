@@ -4,7 +4,7 @@ import { supabase }         from "./lib/supabase";
 import Login                from "./Login";
 import HomePage             from "./HomePage";
 import LeadsPage            from "./LeadsPage";
-import TimelinePage         from "./TimelinePage";
+// import TimelinePage         from "./TimelinePage";  // ✅ Removed: Schedule screen deleted
 import ProjectsPage         from "./ProjectsPage";
 import AdminHomePage        from "./AdminHomePage";
 import AdminLeadsPage       from "./AdminLeadsPage";
@@ -113,7 +113,6 @@ function NotifConnectedPanels({ open, onClose, onProfileClick, profileOpen, onPr
 // ─── Tab constants ────────────────────────────────────────────────
 const TAB_HOME     = 0;
 const TAB_LEADS    = 1;
-const TAB_SCHEDULE = 2;
 const TAB_PROJECTS = 3;
 
 const TAB_ADDPROJECT   = 2;
@@ -178,7 +177,7 @@ export default function App() {
 
   const [activeSalesTab, setActiveSalesTab] = useState(() => {
     const saved = parseInt(sessionStorage.getItem("salesTab") ?? "-1");
-    return [TAB_HOME, TAB_LEADS, TAB_SCHEDULE, TAB_PROJECTS].includes(saved) ? saved : TAB_HOME;
+    return [TAB_HOME, TAB_LEADS, TAB_PROJECTS].includes(saved) ? saved : TAB_HOME;
   });
 
   useEffect(() => {
@@ -708,8 +707,6 @@ export default function App() {
             initialFilter={leadsFilter}
           />
         );
-      case TAB_SCHEDULE:
-        return <TimelinePage activeTab={activeSalesTab} onTabChange={setActiveSalesTab} onSignOut={handleSignOut} />;
       case TAB_PROJECTS:
         return (
           <ProjectsPage
@@ -753,7 +750,6 @@ export default function App() {
         items={[
           { key: "home",         label: "Home",         icon: <Home size={18} />,        onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_HOME); } },
           { key: "leads",        label: "Leads",        icon: <Users size={18} />,       onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_LEADS); } },
-          { key: "schedule",     label: "Schedule",     icon: <FileText size={18} />,    onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_SCHEDULE); } },
           { key: "projects",     label: "Projects",     icon: <Building2 size={18} />,   onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_PROJECTS); } },
           // Commission — صفحة عادية
           { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />,  onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_COMMISSIONS); } },
@@ -766,7 +762,6 @@ export default function App() {
           showAddProject ? "projects"
           : activeSalesTab === TAB_HOME ? "home"
           : activeSalesTab === TAB_LEADS ? "leads"
-          : activeSalesTab === TAB_SCHEDULE ? "schedule"
           : activeSalesTab === TAB_PROJECTS ? "projects"
           : activeSalesTab === TAB_COMMISSIONS ? "commissions"
           : activeSalesTab === TAB_INVENTORY ? "inventory"
