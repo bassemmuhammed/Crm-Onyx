@@ -19,24 +19,7 @@
 //   />
 
 import { useState, useEffect } from "react";
-
-const C = {
-  black:    "#000",
-  surface:  "#F5F6FA",
-  card:     "#111",
-  cardAlt:  "#F9FAFB",
-  border:   "#E5E7EB",
-  borderLt: "#E5E7EB",
-  gray:     "#6B7280",
-  silver:   "#1A1A2E",
-  white:    "#fff",
-  red:      "#DC2626",
-  redLight: "#B91C1C",
-  blue:     "#2563EB",
-  green:    "#10b981",
-  amber:    "#f59e0b",
-  orange:   "#f97316",
-};
+import { C } from "./theme";
 
 const STATUS_OPTIONS = [
   { value: "new",            label: "New",            color: C.blue   },

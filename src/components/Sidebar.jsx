@@ -11,11 +11,11 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Bell } from "lucide-react";
 import {
-  backgrounds,
-  borders,
+  bg as backgrounds,
+  border as borders,
   text,
   primary,
-  shadows,
+  shadow as shadows,
   layout,
 } from "../theme";
 

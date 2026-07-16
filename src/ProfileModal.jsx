@@ -2,21 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./lib/supabase";
 import Icons from "./Icons";
+import { C } from "./theme";
 
 // ─── Design Tokens ────────────────────────────────────────────
-const C = {
-  black:    "#F5F6FA",
-  surface:  "#F5F6FA",
-  card:     "#1A1A2E",
-  border:   "#E5E7EB",
-  cardAlt:  "#F9FAFB",
-  cardHover:"#252528",
-  gray:     "#6B7280",
-  silver:   "#1A1A2E",
-  white:    "#1A1A2E",
-  red:      "#DC2626",
-  blue:     "#2563EB",
-};
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap');

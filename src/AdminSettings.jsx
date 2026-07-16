@@ -2,23 +2,9 @@
 import { useState, useEffect } from "react";
 import Icons from "./Icons";
 import { supabase } from "./lib/supabase";
+import { C } from "./theme";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────
-const C = {
-  black:     "#F5F6FA",
-  surface:   "#F5F6FA",
-  card:      "#1A1A2E",
-  border:    "#E5E7EB",
-  cardAlt:   "#F9FAFB",
-  cardHover: "#E5E7EB",
-  gray:      "#6B7280",
-  silver:    "#1A1A2E",
-  white:     "#1A1A2E",
-  red:       "#DC2626",
-  redLight:  "#B91C1C",
-  blue:      "#2563EB",
-  green:     "#10b981",
-};
 
 // ─── Global Styles ────────────────────────────────────────────────
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";

@@ -9,8 +9,7 @@
 
 import { useState, useEffect, useRef } from "react";
 // ✅ P1-3: Project Media Storage — رفع ملفات لـ project-media bucket
-import {
-  uploadCoverImage,
+import {  uploadCoverImage,
   uploadProfileImage,
   uploadStoryImage,
   uploadCoverVideo,
@@ -19,21 +18,6 @@ import {
 } from "./projectMediaService";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
-const C = {
-  black:     "#F5F6FA",
-  surface:   "#F5F6FA",
-  card:      "#1A1A2E",
-  border:    "#E5E7EB",
-  cardAlt:   "#F9FAFB",
-  cardHover: "#E5E7EB",
-  gray:      "#6B7280",
-  silver:    "#1A1A2E",
-  white:     "#1A1A2E",
-  red:       "#DC2626",
-  redLight:  "#B91C1C",
-  blue:      "#2563EB",
-  launch:    "#f59e0b",   // amber — Launch status color
-};
 
 // ─── Static Options ───────────────────────────────────────────────────
 const STATUS_OPTIONS = [

@@ -8,8 +8,7 @@
 //   3. Project Stats — إحصائيات الوحدات والحجوزات
 
 import { useState, useMemo } from "react";
-import {
-  getDeveloperBookings,
+import {  getDeveloperBookings,
   getAllUnits,
   approveBooking,
   rejectBooking,
@@ -19,22 +18,6 @@ import {
   UnitStatus,
   BookingStatus,
 } from "./developerData";
-
-const C = {
-  black:   "#000",
-  surface: "#F5F6FA",
-  card:    "#111",
-  cardAlt: "#F9FAFB",
-  border:  "#E5E7EB",
-  gray:    "#6B7280",
-  silver:  "#1A1A2E",
-  white:   "#fff",
-  red:     "#DC2626",
-  blue:    "#2563EB",
-  green:   "#10b981",
-  amber:   "#f59e0b",
-  orange:  "#f97316",
-};
 
 const TAB_PENDING    = 0;
 const TAB_INVENTORY  = 1;

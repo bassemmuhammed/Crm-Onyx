@@ -15,24 +15,9 @@ import Icons             from "./Icons";
 import { Phone, CalendarDays, Trash2, CheckSquare, Circle, ChevronRight, CheckCheck, ClipboardList, X } from "lucide-react";
 import { LeadDetailModal } from "./LeadsPage";
 import { updateLead as dbUpdateLead, supabase } from "./sharedLeadsData";
+import { C } from "./theme";
 
 // ─── ONYX Design Tokens ───────────────────────────────────────────────
-const C = {
-  black:     "#F5F6FA",
-  surface:   "#F5F6FA",
-  card:      "#1A1A2E",
-  border:    "#E5E7EB",
-  cardAlt:   "#F9FAFB",
-  cardHover: "#2E2E34",
-  gray:      "#6B7280",
-  silver:    "#1A1A2E",
-  white:     "#1A1A2E",
-  red:       "#DC2626",
-  redLight:  "#B91C1C",
-  blue:      "#2563EB",
-  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
-  cardGrad2: "linear-gradient(145deg,#1C1C22 0%,#141418 100%)",
-};
 
 // ─── Global Styles ────────────────────────────────────────────────────
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";

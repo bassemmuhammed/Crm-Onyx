@@ -258,7 +258,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                 borderRadius:"12px 0 0 12px",
                 pointerEvents:"none",
               }} />
-              <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              <div style={{ width:30, height:30, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 <svg width="15" height="15" viewBox="0 0 256 256" fill={C.white}><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"/></svg>
               </div>
               <span style={{ fontSize:".75rem", fontWeight:700, color: agent ? C.silver : C.gray, fontFamily:"Archivo,sans-serif", flex:1 }}>
@@ -362,7 +362,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <button className="tap-btn" onClick={handleAddComment} style={{
                 width:42, height:42, borderRadius:10, border:"none", flexShrink:0,
                 background: comment.trim() ? C.red : C.cardAlt,
-                color: comment.trim() ? "#fff" : C.gray,
+                color: comment.trim() ? C.white : C.gray,
                 cursor: comment.trim() ? "pointer" : "default",
                 display:"flex", alignItems:"center", justifyContent:"center", fontSize:".9rem",
                 boxShadow: comment.trim() ? `0 3px 12px ${C.red}44` : "none",
@@ -401,8 +401,8 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                       }}>
                         {/* Header: من + امتى */}
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: hasChanges || entry.comment ? 7 : 0 }}>
-                          <span style={{ fontSize:".63rem", fontWeight:800, color:"#f59e0b", display:"flex", alignItems:"center", gap:4 }}>
-                            <svg width="10" height="10" viewBox="0 0 256 256" fill="#f59e0b"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
+                          <span style={{ fontSize:".63rem", fontWeight:800, color:C.amber, display:"flex", alignItems:"center", gap:4 }}>
+                            <svg width="10" height="10" viewBox="0 0 256 256" fill={C.amber}><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>
                             {entry.by || "Unknown"}
                           </span>
                           <span style={{ fontSize:".58rem", color: C.gray, fontFamily:"Archivo,sans-serif" }}>
@@ -419,14 +419,14 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
                           }}>
                             <span style={{ color: C.gray, minWidth:60 }}>{c.field}:</span>
                             <span style={{
-                              background:"#ef444420", border:"1px solid #ef444440",
-                              color:"#ef4444", padding:"1px 7px", borderRadius:4, fontWeight:700,
+                              background:C.redBg, border:`1px solid ${C.red}40`,
+                              color:C.red, padding:"1px 7px", borderRadius:4, fontWeight:700,
                               maxWidth:90, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
                             }}>{String(c.from || "—")}</span>
                             <span style={{ color: C.gray, fontSize:".6rem" }}>→</span>
                             <span style={{
-                              background:"#10b98120", border:"1px solid #10b98140",
-                              color:"#10b981", padding:"1px 7px", borderRadius:4, fontWeight:700,
+                              background:C.greenBg, border:`1px solid ${C.green}40`,
+                              color:C.green, padding:"1px 7px", borderRadius:4, fontWeight:700,
                               maxWidth:90, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap",
                             }}>{String(c.to || "—")}</span>
                           </div>
@@ -458,7 +458,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
           </div>
 
           {/* Footer */}
-          <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:"#141418" }}>
+          <div style={{ padding:"8px 16px 10px", flexShrink:0, borderTop:`1px solid ${C.border}`, background:C.cardAlt }}>
             {confirmDel && (
               <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}33`, borderLeft:`3px solid ${C.red}`, borderRadius:10, padding:"9px 12px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <span style={{ fontSize:".7rem", fontWeight:700, color:C.red, fontFamily:"Archivo,sans-serif" }}>Confirm permanent delete?</span>
@@ -488,7 +488,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <button className="tap-btn" onClick={handleSave} disabled={saving} style={{
                 flex:2, padding:"9px 0", borderRadius:9, border:"none",
                 background: saving ? C.gray : C.red,
-                color:"#fff", boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
+                color:C.white, boxShadow: saving ? "none" : `0 4px 14px ${C.red}44`,
                 fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer",
               }}>{saving ? "Saving..." : "Save Changes"}</button>
             </div>
@@ -534,7 +534,7 @@ function AdminLeadDetailModal({ lead, open, onClose, onUpdate, onDelete, team, c
               <button className="tap-btn" onClick={handleAddComment} disabled={!comment.trim()} style={{
                 flex:2, padding:"10px 0", borderRadius:10, border:"none",
                 background: comment.trim() ? C.red : C.cardAlt,
-                color: comment.trim() ? "#fff" : C.gray,
+                color: comment.trim() ? C.white : C.gray,
                 fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor: comment.trim() ? "pointer" : "default",
                 boxShadow: comment.trim() ? `0 4px 14px ${C.red}44` : "none",
               }}>Add Comment</button>
@@ -770,7 +770,7 @@ function PrimaryBtn({ label, onClick, disabled }) {
   return (
     <div onClick={disabled ? undefined : onClick} style={{
       background: disabled ? C.cardAlt : C.red,
-      color: disabled ? C.gray : "#fff",
+      color: disabled ? C.gray : C.white,
       border: disabled ? `1px solid ${C.border}` : "none",
       borderRadius:10, padding:"11px 0", textAlign:"center",
       fontSize:".75rem", fontWeight:800, cursor: disabled ? "default" : "pointer",
@@ -861,7 +861,7 @@ function FacebookModal({ onClose }) {
     <ModalWrap onClose={onClose} title="Facebook Leads">
       <div style={{ background:C.cardAlt, border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`, borderRadius:12, padding:"18px 16px", textAlign:"center", marginBottom:16 }}>
         <div style={{ display:"flex", justifyContent:"center", marginBottom:10 }}>
-          <div style={{ width:44, height:44, borderRadius:12, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div style={{ width:44, height:44, borderRadius:12, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
             <svg width="22" height="22" viewBox="0 0 256 256" fill={C.white}><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"/></svg>
           </div>
         </div>
@@ -893,7 +893,7 @@ function DeletePopup({ lead, onConfirm, onCancel }) {
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={onCancel} style={{ flex:1, padding:"10px 0", borderRadius:10, border:`1px solid ${C.border}`, background:C.cardAlt, color:C.gray, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:700, cursor:"pointer" }}>إلغاء</button>
-          <button onClick={onConfirm} style={{ flex:1, padding:"10px 0", borderRadius:10, border:"none", background:C.red, color:"#fff", fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer", boxShadow:`0 4px 12px ${C.red}44` }}>حذف نهائياً</button>
+          <button onClick={onConfirm} style={{ flex:1, padding:"10px 0", borderRadius:10, border:"none", background:C.red, color:C.white, fontFamily:"Archivo,sans-serif", fontSize:".75rem", fontWeight:800, cursor:"pointer", boxShadow:`0 4px 12px ${C.red}44` }}>حذف نهائياً</button>
         </div>
       </div>
     </div>
@@ -949,7 +949,7 @@ function FabChooserModal({ onClose, onChoose }) {
               border:`1px solid ${C.border}`, borderLeft:`3px solid ${C.red}`,
               cursor:"pointer",
             }}>
-              <div style={{ width:30, height:30, borderRadius:8, background:"#1a1a1a", border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              <div style={{ width:30, height:30, borderRadius:8, background:C.cardAlt, border:`1px solid ${C.border}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                 {b.icon}
               </div>
               <span style={{ fontSize:".75rem", fontWeight:700, color:C.silver, fontFamily:"Archivo,sans-serif", flex:1 }}>{b.label}</span>
@@ -1436,7 +1436,7 @@ export default function AdminLeadsPage({ onModalChange, externalModalOpen = fals
             touchAction:"none",
           }}
         >
-          <svg width="22" height="22" viewBox="0 0 256 256" fill="#fff"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 256 256" fill="#FFFFFF"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>
         </div>
       )}
     </>

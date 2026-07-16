@@ -25,41 +25,31 @@ import DeveloperUnitsPage       from "./DeveloperUnitsPage";     // ✅ P0-7
 import DeveloperAdminPage       from "./DeveloperAdminPage";     // ✅ P0-7
 import Sidebar, { SIDEBAR_WIDTH, MOBILE_BREAKPOINT } from "./components/Sidebar";  // ✅ Sidebar navigation
 import { Home, Users, FileText, Settings, Building2, DollarSign } from "lucide-react";  // ✅ Sidebar icons
+import { bg, text, border, primary, shadow, radius, CSS_VARS } from "./theme";  // ✅ Centralized theme
 
 // ─── ONYX Design (Light Theme) ────────────────────────────────────
 const OnyxGlobalStyles = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&display=swap');
-    * { -webkit-user-select: none !important; user-select: none !important; box-sizing: border-box; }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     :root {
-      /* ✅ Light Theme — مطابقة theme.js */
-      --onyx-page: #F5F6FA;
-      --onyx-card: #FFFFFF;
-      --onyx-sidebar: #FFFFFF;
-      --onyx-border: #E5E7EB;
-      --onyx-divider: #EDEEF2;
-      --onyx-text-primary: #1A1A2E;
-      --onyx-text-secondary: #6B7280;
-      --onyx-text-muted: #9CA3AF;
-      --onyx-red: #DC2626;
-      --onyx-red-hover: #B91C1C;
-      --onyx-red-light: #FEE2E2;
-      --onyx-hover: #F9FAFB;
+      ${CSS_VARS}
     }
     body, html {
-      background: var(--onyx-page) !important;
-      color: var(--onyx-text-primary) !important;
+      background: var(--bg-page) !important;
+      color: var(--text-primary) !important;
       font-family: 'Archivo', sans-serif !important;
       color-scheme: light !important;
     }
+    /* السماح بتحديد النص في حقول الإدخال فقط */
+    * { -webkit-user-select: none; user-select: none; }
+    input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
     @keyframes onyx-fade-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .onyx-animate { animation: onyx-fade-up 0.35s ease both; }
-    /* ✅ السماح بتحديد النص في حقول الإدخال */
-    input, textarea, select { -webkit-user-select: text !important; user-select: text !important; }
   `}</style>
 );
 
@@ -120,8 +110,11 @@ const TAB_LEADS    = 1;
 const TAB_SCHEDULE = 2;
 const TAB_PROJECTS = 3;
 
-const TAB_ADDPROJECT = 2;
-const TAB_SETTINGS   = 3;
+const TAB_ADDPROJECT   = 2;
+const TAB_SETTINGS     = 3;
+// ✅ صفحات إضافية ضمن الـ layout (وليست modals منفصلة)
+const TAB_COMMISSIONS  = 10;
+const TAB_INVENTORY    = 11;
 
 const ADMIN_NAV = [
   { icon: "house", label: "Home"        },
@@ -560,6 +553,11 @@ export default function App() {
           );
         case TAB_SETTINGS:
           return <AdminSettings onTabChange={handleAdminTabChange} onSignOut={handleSignOut} />;
+        // ✅ Commission و Inventory كصفحات عادية ضمن الـ layout (وليست modals)
+        case TAB_COMMISSIONS:
+          return <AdminCommissionsPage />;
+        case TAB_INVENTORY:
+          return <DeveloperAdminPage />;
         default:
           return null;
       }
@@ -569,9 +567,9 @@ export default function App() {
       <NotificationProvider currentUser={currentUser}>
       <div style={{
         height: "100dvh",
-        background: "#F5F6FA",  // ✅ Light theme page background
+        background: bg.page,
         fontFamily: "'Archivo', sans-serif",
-        color: "#1A1A2E",  // ✅ Light theme text primary
+        color: text.primary,
         display: "flex",
         flexDirection: "row",
         backgroundImage: `
@@ -582,27 +580,27 @@ export default function App() {
         <OnyxGlobalStyles />
         <TopLoadingBar />
 
-        {/* ✅ Sidebar navigation (يحل محل الـ header العائم + BottomNav + الأزرار العائمة) */}
+        {/* ✅ Sidebar navigation — كل الروابط (بما فيها Commission/Inventory) ضمن نفس الـ layout */}
         <SidebarConnected
           items={[
-            { key: "home",         label: "Home",         icon: <Home size={18} />,     onClick: () => handleAdminTabChange(TAB_HOME) },
-            { key: "leads",        label: "Leads",        icon: <Users size={18} />,    onClick: () => handleAdminTabChange(TAB_LEADS) },
-            { key: "add-project",  label: "Add Project",  icon: <FileText size={18} />, onClick: () => handleAdminTabChange(TAB_ADDPROJECT) },
-            { key: "settings",     label: "Settings",     icon: <Settings size={18} />, onClick: () => handleAdminTabChange(TAB_SETTINGS) },
-            // ✅ Role-based: Commissions متاح للجميع (لكل role شاشته)
-            { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />, onClick: () => setShowCommissions(true) },
-            // ✅ Role-based: Inventory (Developer Admin) فقط لـ accountType=developer
+            { key: "home",         label: "Home",         icon: <Home size={18} />,        onClick: () => handleAdminTabChange(TAB_HOME) },
+            { key: "leads",        label: "Leads",        icon: <Users size={18} />,       onClick: () => handleAdminTabChange(TAB_LEADS) },
+            { key: "add-project",  label: "Add Project",  icon: <FileText size={18} />,    onClick: () => handleAdminTabChange(TAB_ADDPROJECT) },
+            { key: "settings",     label: "Settings",     icon: <Settings size={18} />,    onClick: () => handleAdminTabChange(TAB_SETTINGS) },
+            // ✅ Commission — صفحة عادية ضمن الـ layout
+            { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />,  onClick: () => handleAdminTabChange(TAB_COMMISSIONS) },
+            // ✅ Inventory — صفحة عادية ضمن الـ layout (فقط لـ accountType=developer)
             ...(currentUser?.accountType === "developer" ? [{
-              key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => setShowDeveloper("admin"),
+              key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => handleAdminTabChange(TAB_INVENTORY),
             }] : []),
           ]}
           activeKey={
-            showCommissions ? "commissions"
-            : showDeveloper === "admin" ? "inventory"
-            : activeAdminTab === TAB_HOME ? "home"
+            activeAdminTab === TAB_HOME ? "home"
             : activeAdminTab === TAB_LEADS ? "leads"
             : activeAdminTab === TAB_ADDPROJECT ? "add-project"
             : activeAdminTab === TAB_SETTINGS ? "settings"
+            : activeAdminTab === TAB_COMMISSIONS ? "commissions"
+            : activeAdminTab === TAB_INVENTORY ? "inventory"
             : "home"
           }
           onItemClick={(item) => item.onClick && item.onClick()}
@@ -649,23 +647,6 @@ export default function App() {
           onSignOut={handleSignOut}
           refreshAvatar={refreshAvatar}
         />
-
-        {/* ✅ P0-6: Commissions Modal (admin) */}
-        {showCommissions && (
-          <CommissionsModal
-            role="admin"
-            currentUser={currentUser}
-            onClose={() => setShowCommissions(false)}
-          />
-        )}
-
-        {/* ✅ P0-7: Developer Admin Modal (admin only — developer account type) */}
-        {showDeveloper === "admin" && (
-          <DeveloperModal
-            mode="admin"
-            onClose={() => setShowDeveloper(null)}
-          />
-        )}
       </div>
       </NotificationProvider>
     );
@@ -724,6 +705,11 @@ export default function App() {
             onAddProject={() => { setEditProject(null); setShowAddProject(true); }}
           />
         );
+      // ✅ Commission و Inventory كصفحات عادية ضمن الـ layout
+      case TAB_COMMISSIONS:
+        return <SalesCommissionsPage currentUser={currentUser} />;
+      case TAB_INVENTORY:
+        return <DeveloperUnitsPage currentUser={currentUser} />;
       default:
         return null;
     }
@@ -733,9 +719,9 @@ export default function App() {
     <NotificationProvider currentUser={currentUser}>
     <div style={{
       height: "100dvh",
-      background: "#F5F6FA",  // ✅ Light theme page background
+      background: bg.page,
       fontFamily: "'Archivo', sans-serif",
-      color: "#1A1A2E",  // ✅ Light theme text primary
+      color: text.primary,
       display: "flex",
       flexDirection: "row",
       backgroundImage: `
@@ -746,28 +732,28 @@ export default function App() {
       <OnyxGlobalStyles />
       <TopLoadingBar />
 
-      {/* ✅ Sidebar navigation للمندوب (يحل محل الـ header + BottomNav + الأزرار العائمة) */}
+      {/* ✅ Sidebar navigation للمندوب — كل الروابط ضمن نفس الـ layout */}
       <SidebarConnected
         items={[
-          { key: "home",         label: "Home",         icon: <Home size={18} />,     onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_HOME); } },
-          { key: "leads",        label: "Leads",        icon: <Users size={18} />,    onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_LEADS); } },
-          { key: "schedule",     label: "Schedule",     icon: <FileText size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_SCHEDULE); } },
-          { key: "projects",     label: "Projects",     icon: <Building2 size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_PROJECTS); } },
-          // ✅ Role-based: Commissions متاح للجميع
-          { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />, onClick: () => setShowCommissions(true) },
-          // ✅ Role-based: Inventory (Developer Units) فقط لـ accountType=developer
+          { key: "home",         label: "Home",         icon: <Home size={18} />,        onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_HOME); } },
+          { key: "leads",        label: "Leads",        icon: <Users size={18} />,       onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_LEADS); } },
+          { key: "schedule",     label: "Schedule",     icon: <FileText size={18} />,    onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_SCHEDULE); } },
+          { key: "projects",     label: "Projects",     icon: <Building2 size={18} />,   onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_PROJECTS); } },
+          // ✅ Commission — صفحة عادية
+          { key: "commissions",  label: "Commission",   icon: <DollarSign size={18} />,  onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_COMMISSIONS); } },
+          // ✅ Inventory (Developer Units) — صفحة عادية (فقط لـ accountType=developer)
           ...(currentUser?.accountType === "developer" ? [{
-            key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => setShowDeveloper("units"),
+            key: "inventory", label: "Inventory", icon: <Building2 size={18} />, onClick: () => { setShowAddProject(false); setActiveSalesTab(TAB_INVENTORY); },
           }] : []),
         ]}
         activeKey={
-          showCommissions ? "commissions"
-          : showDeveloper === "units" ? "inventory"
-          : showAddProject ? "projects"
+          showAddProject ? "projects"
           : activeSalesTab === TAB_HOME ? "home"
           : activeSalesTab === TAB_LEADS ? "leads"
           : activeSalesTab === TAB_SCHEDULE ? "schedule"
           : activeSalesTab === TAB_PROJECTS ? "projects"
+          : activeSalesTab === TAB_COMMISSIONS ? "commissions"
+          : activeSalesTab === TAB_INVENTORY ? "inventory"
           : "home"
         }
         onItemClick={(item) => item.onClick && item.onClick()}
@@ -812,109 +798,9 @@ export default function App() {
         onSignOut={handleSignOut}
         refreshAvatar={refreshAvatar}
       />
-
-      {/* ✅ P0-6: Commissions Modal (sales) */}
-      {showCommissions && (
-        <CommissionsModal
-          role="sales"
-          currentUser={currentUser}
-          onClose={() => setShowCommissions(false)}
-        />
-      )}
-
-      {/* ✅ P0-7: Developer Units Modal (sales with developer account type) */}
-      {showDeveloper === "units" && (
-        <DeveloperModal
-          mode="units"
-          currentUser={currentUser}
-          onClose={() => setShowDeveloper(null)}
-        />
-      )}
     </div>
     </NotificationProvider>
   );
 }
 
-// ─── CommissionsModal (مكون مساعد لعرض شاشة العمولات في overlay) ───
-function CommissionsModal({ role, currentUser, onClose }) {
-  return (
-    <div
-      style={{
-        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-        background: "rgba(0,0,0,.5)", backdropFilter: "blur(8px)",
-        zIndex: 500, display: "flex", flexDirection: "column",
-      }}
-    >
-      {/* Header */}
-      <div style={{
-        padding: "12px 16px", display: "flex", justifyContent: "space-between",
-        alignItems: "center", borderBottom: "1px solid #E5E7EB",
-        background: "#FFFFFF",
-      }}>
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A2E" }}>
-          {role === "admin" ? "💰 Commissions Management" : "💰 My Commissions"}
-        </div>
-        <div
-          onClick={onClose}
-          style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: "#F9FAFB", border: "1px solid #E5E7EB",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#6B7280", fontSize: 14,
-          }}
-        >
-          ✕
-        </div>
-      </div>
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: "auto", background: "#F5F6FA" }}>
-        {role === "admin"
-          ? <AdminCommissionsPage />
-          : <SalesCommissionsPage currentUser={currentUser} />
-        }
-      </div>
-    </div>
-  );
-}
-
-// ─── DeveloperModal (مكون مساعد لعرض وحدة المطورين في overlay) ────
-function DeveloperModal({ mode, currentUser, onClose }) {
-  return (
-    <div
-      style={{
-        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-        background: "rgba(0,0,0,.5)", backdropFilter: "blur(8px)",
-        zIndex: 500, display: "flex", flexDirection: "column",
-      }}
-    >
-      {/* Header */}
-      <div style={{
-        padding: "12px 16px", display: "flex", justifyContent: "space-between",
-        alignItems: "center", borderBottom: "1px solid #E5E7EB",
-        background: "#FFFFFF",
-      }}>
-        <div style={{ fontSize: 16, fontWeight: 800, color: "#1A1A2E" }}>
-          {mode === "admin" ? "🏢 Developer Admin" : "🏢 Available Units"}
-        </div>
-        <div
-          onClick={onClose}
-          style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: "#F9FAFB", border: "1px solid #E5E7EB",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", color: "#6B7280", fontSize: 14,
-          }}
-        >
-          ✕
-        </div>
-      </div>
-      {/* Body */}
-      <div style={{ flex: 1, overflowY: "auto", background: "#F5F6FA" }}>
-        {mode === "admin"
-          ? <DeveloperAdminPage />
-          : <DeveloperUnitsPage currentUser={currentUser} />
-        }
-      </div>
-    </div>
-  );
-}
+// (CommissionsModal و DeveloperModal تم حذفهما — Commission و Inventory أصبحتا صفحات عادية ضمن الـ layout)

@@ -2,25 +2,9 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import Icons from "./Icons";
+import { C } from "./theme";
 
 // ─── ONYX Tokens ──────────────────────────────────────────────
-const C = {
-  black:    "#F5F6FA",
-  surface:  "#F5F6FA",
-  card:     "#1A1A2E",
-  border:   "#E5E7EB",
-  cardAlt:  "#F9FAFB",
-  gray:     "#6B7280",
-  silver:   "#1A1A2E",
-  white:    "#1A1A2E",
-  red:      "#DC2626",
-  redLight: "#B91C1C",
-  blue:     "#2563EB",
-  green:    "#10b981",
-  orange:   "#f97316",
-  amber:    "#f59e0b",
-  cardGrad1: "linear-gradient(145deg,#1A1A1E 0%,#141416 100%)",
-};
 
 // ─── Convert Arabic/Eastern Arabic numerals to Western ────────
 function toWesternNums(str) {

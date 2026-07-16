@@ -11,8 +11,7 @@
 
 import { useState, useMemo } from "react";
 import { createPortal } from "react-dom";
-import {
-  getDeveloperProject,
+import {  getDeveloperProject,
   getAllUnits,
   submitBooking,
   calculatePayment,
@@ -21,22 +20,6 @@ import {
   UnitStatus,
   PROJECT_SETTINGS,
 } from "./developerData";
-
-const C = {
-  black:   "#000",
-  surface: "#F5F6FA",
-  card:    "#111",
-  cardAlt: "#F9FAFB",
-  border:  "#E5E7EB",
-  gray:    "#6B7280",
-  silver:  "#1A1A2E",
-  white:   "#fff",
-  red:     "#DC2626",
-  blue:    "#2563EB",
-  green:   "#10b981",
-  amber:   "#f59e0b",
-  orange:  "#f97316",
-};
 
 const STATUS_META = {
   [UnitStatus.AVAILABLE]: { label: "Available", color: C.green  },

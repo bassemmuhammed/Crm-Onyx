@@ -20,21 +20,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Lock, Eye, EyeOff, AlertCircle, ArrowRight, Building2, CheckCircle2, Mail, RefreshCw } from "lucide-react";
 import { supabase } from "./lib/supabase";
-
-const C = {
-  black:    "#F5F6FA",
-  surface:  "#0f172a",
-  card:     "#1A1A2E",
-  border:   "#E5E7EB",
-  gray:     "#6B7280",
-  silver:   "#1A1A2E",
-  white:    "#1A1A2E",
-  red:      "#DC2626",
-  redLight: "#B91C1C",
-  blue:     "#2563EB",
-  green:    "#10b981",
-  amber:    "#f59e0b",
-};
+import { C } from "./theme";
 
 export default function SetPassword({ initialUrl, onSuccess, onBackToLogin }) {
   const [loading, setLoading]       = useState(true);

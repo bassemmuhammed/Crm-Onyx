@@ -12,8 +12,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "./lib/supabase";
-import {
-  fetchAllCommissions,
+import {  fetchAllCommissions,
   insertCommission,
   updateCommission,
   markCommissionCollected,
@@ -26,23 +25,6 @@ import {
   formatNumber,
   getCollectionCountdown,
 } from "./commissionsData";
-
-const C = {
-  black:   "#000",
-  surface: "#F5F6FA",
-  card:    "#111",
-  cardAlt: "#F9FAFB",
-  border:  "#E5E7EB",
-  gray:    "#6B7280",
-  silver:  "#1A1A2E",
-  white:   "#fff",
-  red:     "#DC2626",
-  redLight:"#B91C1C",
-  blue:    "#2563EB",
-  green:   "#10b981",
-  amber:   "#f59e0b",
-  orange:  "#f97316",
-};
 
 export default function AdminCommissionsPage() {
   const [commissions, setCommissions] = useState([]);

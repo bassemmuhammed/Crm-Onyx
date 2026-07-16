@@ -1,162 +1,191 @@
 // ── theme.js ───────────────────────────────────────────────────────
-// نظام الألوان المركزي — Light Theme (ONYX CRM)
+// نظام الألوان المركزي الموحّد — Light Theme (ONYX CRM)
 //
-// كل مكونات التطبيق تستورد القيم من هنا لضمان الاتساق.
-// لتغيير لون في كل التطبيق: عدّله هنا فقط.
+// هذا هو المصدر الوحيد للحقيقة (single source of truth) لكل الألوان في التطبيق.
+// ممنوع استخدام أي hardcoded hex value في أي component — استورد من هنا فقط.
+//
+// لتحديث لون في كل التطبيق: عدّله هنا فقط.
 
 // ══════════════════════════════════════════════════════════════════
-// BACKGROUNDS — الخلفيات
+// CSS VARIABLES — تُحقن في :root عبر OnyxGlobalStyles في App.jsx
 // ══════════════════════════════════════════════════════════════════
-export const backgrounds = {
-  page:        "#F5F6FA",  // خلفية الصفحة الرئيسية
-  sidebar:     "#FFFFFF",  // خلفية الـ Sidebar
-  card:        "#FFFFFF",  // خلفية الكروت
-  header:      "#FFFFFF",  // خلفية الـ Header/Topbar
-  cardAlt:     "#F9FAFB",  // خلفية ثانوية للكروت (hover states, inputs)
-  input:       "#F9FAFB",  // خلفية حقول الإدخال
-  hover:       "#F3F4F6",  // خلفية عامة عند hover
+export const CSS_VARS = `
+  --bg-page: #F5F6FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F9FAFB;
+  --bg-sidebar: #FFFFFF;
+
+  --border-default: #E5E7EB;
+  --border-light: #EDEEF2;
+
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-on-dark: #FFFFFF;
+
+  --primary: #DC2626;
+  --primary-hover: #B91C1C;
+  --primary-light: #FEE2E2;
+
+  --status-success: #10B981;
+  --status-success-bg: #D1FAE5;
+  --status-info: #3B82F6;
+  --status-info-bg: #DBEAFE;
+  --status-warning: #F59E0B;
+  --status-warning-bg: #FEF3C7;
+  --status-danger: #EF4444;
+  --status-danger-bg: #FEE2E2;
+  --status-purple: #8B5CF6;
+  --status-purple-bg: #EDE9FE;
+  --status-orange: #F97316;
+  --status-orange-bg: #FFEDD5;
+  --status-neutral: #6B7280;
+  --status-neutral-bg: #F3F4F6;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+`;
+
+// ══════════════════════════════════════════════════════════════════
+// JS VALUES — للاستخدام في inline styles
+// ══════════════════════════════════════════════════════════════════
+
+// Backgrounds
+export const bg = {
+  page:           "#F5F6FA",
+  surface:        "#FFFFFF",
+  surfaceHover:   "#F9FAFB",
+  sidebar:        "#FFFFFF",
+  input:          "#F9FAFB",
+  overlay:        "rgba(0,0,0,0.5)",
 };
 
-// ══════════════════════════════════════════════════════════════════
-// BORDERS / DIVIDERS — الحدود والفواصل
-// ══════════════════════════════════════════════════════════════════
-export const borders = {
-  card:      "#E5E7EB",  // حدود الكروت
-  divider:   "#EDEEF2",  // خط فاصل عام
-  input:     "#E5E7EB",  // حدود حقول الإدخال
-  sidebar:   "#E5E7EB",  // حدود الـ sidebar
-  light:     "#F3F4F6",  // حدود خفيفة جداً
+// Borders
+export const border = {
+  default: "#E5E7EB",
+  light:   "#EDEEF2",
 };
 
-// ══════════════════════════════════════════════════════════════════
-// TEXT — النصوص
-// ══════════════════════════════════════════════════════════════════
+// Text
 export const text = {
-  primary:     "#1A1A2E",  // نص أساسي (عناوين، أسماء)
-  secondary:   "#6B7280",  // نص ثانوي (تفاصيل، أرقام تليفون)
-  muted:       "#9CA3AF",  // نص باهت جداً (placeholders)
-  white:       "#FFFFFF",
-  inverse:     "#FFFFFF",  // نص على خلفيات داكنة
+  primary:   "#1A1A2E",
+  secondary: "#6B7280",
+  muted:     "#9CA3AF",
+  onDark:    "#FFFFFF",
+  white:     "#FFFFFF",  // alias
 };
 
-// ══════════════════════════════════════════════════════════════════
-// PRIMARY / ACCENT — اللون المميز (أحمر ONYX)
-// ══════════════════════════════════════════════════════════════════
+// Primary (Brand)
 export const primary = {
-  main:        "#DC2626",  // أحمر أساسي
-  hover:       "#B91C1C",  // أحمر عند hover
-  light:       "#FEE2E2",  // أحمر فاتح للخلفيات الثانوية (badges)
-  lighter:     "#FEF2F2",  // أحمر فاتح جداً
-  dark:        "#991B1B",  // أحمر داكن
+  main:   "#DC2626",
+  hover:  "#B91C1C",
+  light:  "#FEE2E2",
 };
 
-// ══════════════════════════════════════════════════════════════════
-// STATUS COLORS — ألوان الحالات (للبادجات)
-// ══════════════════════════════════════════════════════════════════
+// Status
 export const status = {
-  // أخضر (New/نشط)
-  green:      { color: "#10B981", bg: "#D1FAE5" },
-  // بنفسجي (Long Term)
-  purple:     { color: "#8B5CF6", bg: "#EDE9FE" },
-  // أصفر/برتقالي (تحذير)
-  amber:      { color: "#F59E0B", bg: "#FEF3C7" },
-  // رمادي (افتراضي)
-  gray:       { color: "#6B7280", bg: "#F3F4F6" },
-  // أحمر (خطر/مرفوض)
-  red:        { color: "#DC2626", bg: "#FEE2E2" },
-  // أزرق (معلومات)
-  blue:       { color: "#2563EB", bg: "#DBEAFE" },
-  // برتقالي (تنبيه)
-  orange:     { color: "#F97316", bg: "#FFEDD5" },
+  success: { color: "#10B981", bg: "#D1FAE5" },
+  info:    { color: "#3B82F6", bg: "#DBEAFE" },
+  warning: { color: "#F59E0B", bg: "#FEF3C7" },
+  danger:  { color: "#EF4444", bg: "#FEE2E2" },
+  purple:  { color: "#8B5CF6", bg: "#EDE9FE" },
+  orange:  { color: "#F97316", bg: "#FFEDD5" },
+  neutral: { color: "#6B7280", bg: "#F3F4F6" },
 };
 
-// ══════════════════════════════════════════════════════════════════
-// SHADOWS — الظلال
-// ══════════════════════════════════════════════════════════════════
-export const shadows = {
-  // ظل خفيف للكروت العادية
-  sm:    "0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)",
-  // ظل متوسط للكروت المرفوعة (hover, modals)
-  md:    "0 4px 12px rgba(0, 0, 0, 0.1)",
-  // ظل قوي للـ dropdowns و modals
-  lg:    "0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.04)",
-  // ظل للـ active/focused elements
-  focus: "0 0 0 3px rgba(220, 38, 38, 0.15)",
+// Shadows
+export const shadow = {
+  sm: "0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)",
+  md: "0 4px 12px rgba(0,0,0,0.1)",
+  lg: "0 10px 25px rgba(0,0,0,0.15)",
 };
 
-// ══════════════════════════════════════════════════════════════════
-// LAYOUT — أبعاد ثابتة
-// ══════════════════════════════════════════════════════════════════
+// Radius
+export const radius = {
+  sm:   8,
+  md:   12,
+  lg:   16,
+  full: 9999,
+};
+
+// Layout
 export const layout = {
-  sidebarWidth:      240,        // عرض الـ sidebar في desktop
-  mobileBreakpoint:  1024,       // breakpoint للـ mobile
-  contentPadding:    24,         // padding لمنطقة المحتوى
-  contentMaxWidth:   1200,       // max-width للمحتوى
-  cardPadding:       18,         // padding داخلي للكروت
-  cardRadius:        12,         // border-radius للكروت
-  cardGap:           12,         // مسافة بين الكروت
-  pillRadius:        9999,       // border-radius للـ badges (دائري)
+  sidebarWidth:     240,
+  mobileBreakpoint: 1024,
+  contentPadding:   24,
+  contentMaxWidth:  1200,
+  cardPadding:      18,
+  cardGap:          12,
 };
 
 // ══════════════════════════════════════════════════════════════════
-// COMPATIBILITY — اختصارات للتوافق مع الكود القديم
-// (الكود القديم يستخدم C.black, C.card, C.red, إلخ)
+// LEAD STATUS META — بيانات الـ Lead statuses
+// ══════════════════════════════════════════════════════════════════
+export const LEAD_STATUS_META = {
+  new:              { label: "New",              ...status.success },
+  callback:         { label: "Call Back",        ...status.warning },
+  pendingMeeting:   { label: "Pending Meeting",  ...status.orange  },
+  meetingDone:      { label: "Meeting Done",     ...status.info    },
+  deal:             { label: "Deal",             ...status.success },
+  onGoing:          { label: "On Going",         ...status.info    },
+  lowBudget:        { label: "Low Budget",       ...status.warning },
+  noAnswer:         { label: "No Answer",        ...status.neutral },
+  notInterested:    { label: "Not Interested",   ...status.danger  },
+  chooseCompetitor: { label: "Competitor",       ...status.danger  },
+  longTerm:         { label: "Long Term",        ...status.purple  },
+  closed:           { label: "Closed",           ...status.neutral },
+  duplicate:        { label: "Duplicate",        ...status.neutral },
+};
+
+// ══════════════════════════════════════════════════════════════════
+// COMPATIBILITY OBJECT — C (للتوافق مع الكود القديم)
+// كل ملف يستورد C من هنا بدلاً من تعريفه محلياً
 // ══════════════════════════════════════════════════════════════════
 export const C = {
   // Backgrounds
-  black:    backgrounds.page,     // legacy: كان أسود، الآن خلفية الصفحة
-  surface:  backgrounds.page,
-  card:     backgrounds.card,
-  cardAlt:  backgrounds.cardAlt,
-  cardHover: backgrounds.hover,
-  unread:   backgrounds.cardAlt,
+  black:     bg.page,
+  surface:   bg.page,
+  card:      bg.surface,
+  cardAlt:   bg.surfaceHover,
+  cardHover: bg.surfaceHover,
+  unread:    bg.surfaceHover,
 
   // Borders
-  border:    borders.card,
-  borderLt:  borders.light,
-  divider:   borders.divider,
+  border:    border.default,
+  borderLt:  border.light,
+  divider:   border.light,
 
   // Text
-  white:    text.white,
-  silver:   text.primary,         // legacy: كان فضي، الآن أساسي
+  white:    text.primary,        // legacy: كان أبيض، الآن أساسي
+  silver:   text.primary,        // legacy: كان فضي، الآن أساسي
   gray:     text.secondary,
   muted:    text.muted,
 
-  // Primary (أحمر)
+  // Primary
   red:      primary.main,
   redLight: primary.hover,
   redBg:    primary.light,
 
-  // Status
-  green:    status.green.color,
-  greenBg:  status.green.bg,
-  blue:     status.blue.color,
-  blueBg:   status.blue.bg,
-  amber:    status.amber.color,
-  amberBg:  status.amber.bg,
+  // Status (legacy aliases)
+  green:    status.success.color,
+  greenBg:  status.success.bg,
+  blue:     status.info.color,
+  blueBg:   status.info.bg,
+  amber:    status.warning.color,
+  amberBg:  status.warning.bg,
   orange:   status.orange.color,
   orangeBg: status.orange.bg,
   purple:   status.purple.color,
   purpleBg: status.purple.bg,
 };
 
-// ══════════════════════════════════════════════════════════════════
-// STATUS META — بيانات الـ Lead statuses (للـ badges)
-// ══════════════════════════════════════════════════════════════════
-export const LEAD_STATUS_META = {
-  new:              { label: "New",              color: status.green.color,  bg: status.green.bg  },
-  callback:         { label: "Call Back",        color: status.amber.color,  bg: status.amber.bg  },
-  pendingMeeting:   { label: "Pending Meeting",  color: status.orange.color, bg: status.orange.bg },
-  meetingDone:      { label: "Meeting Done",     color: status.blue.color,   bg: status.blue.bg   },
-  deal:             { label: "Deal",             color: status.green.color,  bg: status.green.bg  },
-  onGoing:          { label: "On Going",         color: status.blue.color,   bg: status.blue.bg   },
-  lowBudget:        { label: "Low Budget",       color: status.amber.color,  bg: status.amber.bg  },
-  noAnswer:         { label: "No Answer",        color: status.gray.color,   bg: status.gray.bg   },
-  notInterested:    { label: "Not Interested",   color: status.red.color,    bg: status.red.bg    },
-  chooseCompetitor: { label: "Competitor",       color: status.red.color,    bg: status.red.bg    },
-  longTerm:         { label: "Long Term",        color: status.purple.color, bg: status.purple.bg },
-  closed:           { label: "Closed",           color: status.gray.color,   bg: status.gray.bg   },
-  duplicate:        { label: "Duplicate",        color: status.gray.color,   bg: status.gray.bg   },
-};
+// Aliases للظلال (للتوافق)
+export const shadows = shadow;
 
 export default C;
