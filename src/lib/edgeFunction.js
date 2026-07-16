@@ -23,8 +23,7 @@ export async function invokeEdgeFunction(functionName, body = {}) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`,
-        "apikey": SUPABASE_ANON_KEY,
-        // ملاحظة: لا نضيف x-client-info header (يسبب مشكلة CORS)
+        // ملاحظة: لا نضيف x-client-info أو apikey headers (تسبب مشاكل CORS)
       },
       body: JSON.stringify(body),
     });

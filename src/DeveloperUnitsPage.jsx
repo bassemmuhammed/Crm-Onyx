@@ -23,10 +23,10 @@ import {  getDeveloperProject,
 } from "./developerData";
 
 const STATUS_META = {
-  [UnitStatus.AVAILABLE]: { label: "Available", color: C.green  },
-  [UnitStatus.RESERVED]:  { label: "Reserved",  color: C.amber  },
-  [UnitStatus.SOLD]:      { label: "Sold",      color: C.red    },
-  [UnitStatus.LOCKED]:    { label: "Locked",    color: C.gray   },
+  [UnitStatus.AVAILABLE]: { label: "Available", color: "#10B981" },
+  [UnitStatus.RESERVED]:  { label: "Reserved",  color: "#F59E0B" },
+  [UnitStatus.SOLD]:      { label: "Sold",      color: "#DC2626" },
+  [UnitStatus.LOCKED]:    { label: "Locked",    color: "#6B7280" },
 };
 
 export default function DeveloperUnitsPage({ currentUser }) {
@@ -490,8 +490,8 @@ function ResultRow({ label, value, color }) {
 
 const inputStyle = {
   width: "100%", padding: "8px 10px", borderRadius: 8,
-  border: `1px solid ${C.border}`, background: C.card,
-  color: C.white, fontSize: ".72rem", fontFamily: "inherit",
+  border: `1px solid #E5E7EB`, background: "#FFFFFF",
+  color: "#1A1A2E", fontSize: ".72rem", fontFamily: "inherit",
   outline: "none",
 };
 

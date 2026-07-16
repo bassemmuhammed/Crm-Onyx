@@ -144,45 +144,47 @@ export const LEAD_STATUS_META = {
 };
 
 // ══════════════════════════════════════════════════════════════════
-// COMPATIBILITY OBJECT — C (للتوافق مع الكود القديم)
-// كل ملف يستورد C من هنا بدلاً من تعريفه محلياً
+// COMPATIBILITY OBJECT — C (مستقلة تماماً — لا تعتمد على أي export آخر)
+// هذا يمنع TDZ (Temporal Dead Zone) errors في production builds
 // ══════════════════════════════════════════════════════════════════
 export const C = {
   // Backgrounds
-  black:     bg.page,
-  surface:   bg.page,
-  card:      bg.surface,
-  cardAlt:   bg.surfaceHover,
-  cardHover: bg.surfaceHover,
-  unread:    bg.surfaceHover,
+  black:     "#F5F6FA",
+  surface:   "#F5F6FA",
+  card:      "#FFFFFF",
+  cardAlt:   "#F9FAFB",
+  cardHover: "#F9FAFB",
+  cardGrad1: "#FFFFFF",
+  cardGrad2: "#FFFFFF",
+  unread:    "#F9FAFB",
 
   // Borders
-  border:    border.default,
-  borderLt:  border.light,
-  divider:   border.light,
+  border:    "#E5E7EB",
+  borderLt:  "#EDEEF2",
+  divider:   "#EDEEF2",
 
   // Text
-  white:    text.primary,        // legacy: كان أبيض، الآن أساسي
-  silver:   text.primary,        // legacy: كان فضي، الآن أساسي
-  gray:     text.secondary,
-  muted:    text.muted,
+  white:     "#1A1A2E",
+  silver:    "#1A1A2E",
+  gray:      "#6B7280",
+  muted:     "#9CA3AF",
 
-  // Primary
-  red:      primary.main,
-  redLight: primary.hover,
-  redBg:    primary.light,
+  // Primary (أحمر)
+  red:       "#DC2626",
+  redLight:  "#B91C1C",
+  redBg:     "#FEE2E2",
 
   // Status (legacy aliases)
-  green:    status.success.color,
-  greenBg:  status.success.bg,
-  blue:     status.info.color,
-  blueBg:   status.info.bg,
-  amber:    status.warning.color,
-  amberBg:  status.warning.bg,
-  orange:   status.orange.color,
-  orangeBg: status.orange.bg,
-  purple:   status.purple.color,
-  purpleBg: status.purple.bg,
+  green:     "#10B981",
+  greenBg:   "#D1FAE5",
+  blue:      "#2563EB",
+  blueBg:    "#DBEAFE",
+  amber:     "#F59E0B",
+  amberBg:   "#FEF3C7",
+  orange:    "#F97316",
+  orangeBg:  "#FFEDD5",
+  purple:    "#8B5CF6",
+  purpleBg:  "#EDE9FE",
 };
 
 // Aliases للظلال (للتوافق)

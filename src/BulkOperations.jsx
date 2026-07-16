@@ -22,18 +22,18 @@ import { useState, useEffect } from "react";
 import { C } from "./theme";
 
 const STATUS_OPTIONS = [
-  { value: "new",            label: "New",            color: C.blue   },
-  { value: "callback",       label: "Call Back",      color: C.amber  },
-  { value: "pendingMeeting", label: "Pending Meeting",color: C.orange },
-  { value: "meetingDone",    label: "Meeting Done",   color: C.green  },
-  { value: "deal",           label: "Deal",           color: C.green  },
-  { value: "onGoing",        label: "On Going",       color: C.blue   },
-  { value: "lowBudget",      label: "Low Budget",     color: C.amber  },
-  { value: "noAnswer",       label: "No Answer",      color: C.gray   },
-  { value: "notInterested",  label: "Not Interested", color: C.red    },
-  { value: "chooseCompetitor", label: "Competitor",   color: C.red    },
-  { value: "longTerm",       label: "Long Term",      color: C.gray   },
-  { value: "closed",         label: "Closed",         color: C.gray   },
+  { value: "new",            label: "New",            color: "#2563EB" },
+  { value: "callback",       label: "Call Back",      color: "#F59E0B" },
+  { value: "pendingMeeting", label: "Pending Meeting",color: "#F97316" },
+  { value: "meetingDone",    label: "Meeting Done",   color: "#10B981" },
+  { value: "deal",           label: "Deal",           color: "#10B981" },
+  { value: "onGoing",        label: "On Going",       color: "#2563EB" },
+  { value: "lowBudget",      label: "Low Budget",     color: "#F59E0B" },
+  { value: "noAnswer",       label: "No Answer",      color: "#6B7280" },
+  { value: "notInterested",  label: "Not Interested", color: "#DC2626" },
+  { value: "chooseCompetitor", label: "Competitor",   color: "#DC2626" },
+  { value: "longTerm",       label: "Long Term",      color: "#6B7280" },
+  { value: "closed",         label: "Closed",         color: "#6B7280" },
 ];
 
 // ─── Bulk Action Bar (overlay at bottom) ──────────────────────────

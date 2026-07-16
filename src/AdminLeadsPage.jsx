@@ -58,8 +58,8 @@ const STYLES = `
   ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px }
   ::-webkit-scrollbar-thumb:hover { background: #9CA3AF }
   input,select { color-scheme: light }
-  ::placeholder { color: ${C.muted} !important; opacity: 1 }
-  select option { background: ${C.card}; color: ${C.silver} }
+  ::placeholder { color: #9CA3AF !important; opacity: 1 }
+  select option { background: #FFFFFF; color: #1A1A2E }
 
   @keyframes spin { to { transform:rotate(360deg) } }
 
@@ -72,9 +72,9 @@ const STYLES = `
 
 const inputBase = {
   width:"100%", padding:"10px 14px", borderRadius:10,
-  border:`1.5px solid ${C.border}`, outline:"none",
-  fontSize:".82rem", fontWeight:600, color:C.white,
-  fontFamily:"Archivo, sans-serif", background:C.cardAlt,
+  border:`1.5px solid #E5E7EB`, outline:"none",
+  fontSize:".82rem", fontWeight:600, color:"#1A1A2E",
+  fontFamily:"Archivo, sans-serif", background:"#F9FAFB",
 };
 
 // ─── Loading Bar ──────────────────────────────────────────────────
