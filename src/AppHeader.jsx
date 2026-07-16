@@ -11,6 +11,7 @@
 //   <AppHeader unreadCount={3} onBellClick={() => setNotifOpen(true)} onProfileClick={() => setProfileOpen(true)} />
 
 import Icons from "./Icons";
+import Logo from "./Logo";  // P0-7+: Real PNG logo (ONYX_logo_transparent.png)
 
 // ── ONYX Brand Tokens ─────────────────────────────────────
 // Black: #0B0D12 | Fiery Red: #E23A4E | White: #F2F3F7
@@ -196,21 +197,28 @@ const OnyxMark = () => (
   </svg>
 );
 
-export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick, avatarUrl = null }) {
+export default function AppHeader({ unreadCount = 0, onBellClick, onProfileClick, avatarUrl = null, logo = null }) {
   return (
     <>
       <style>{styles}</style>
       <div className="onyx-header">
 
         {/* ── Logo ── */}
+        {/* P0-7+: If a `logo` prop is passed, render it (used by App.jsx
+            which now passes the real PNG logo via <OnyxLogo size={28} />).
+            Otherwise fall back to the inline SVG wordmark (legacy). */}
         <div className="onyx-logo">
-          <div className="onyx-wordmark">
-            <span className="onyx-wordmark-ony">ONY</span>
-            <span className="onyx-wordmark-x">
-              <OnyxMark />
-            </span>
-            <span className="onyx-crm-label">CRM</span>
-          </div>
+          {logo ? (
+            logo
+          ) : (
+            <div className="onyx-wordmark">
+              <span className="onyx-wordmark-ony">ONY</span>
+              <span className="onyx-wordmark-x">
+                <OnyxMark />
+              </span>
+              <span className="onyx-crm-label">CRM</span>
+            </div>
+          )}
         </div>
 
         {/* ── Actions ── */}

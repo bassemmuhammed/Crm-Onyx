@@ -69,6 +69,36 @@ export default function DeveloperAdminPage() {
       minHeight: "100%",
       paddingBottom: 100,
     }}>
+      {/* ── Page header ── */}
+      {/* P0-7+: Screen title is "Inventory" (was "Admin" in the original
+          Flutter build — renamed per the brief. The screen's content
+          and logic are unchanged.) */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 10,
+        padding: "0 14px 12px 14px",
+      }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 10,
+          background: `${C.red}1f`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke={C.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2 2 7l10 5 10-5-10-5z" />
+            <path d="m2 17 10 5 10-5" />
+            <path d="m2 12 10 5 10-5" />
+          </svg>
+        </div>
+        <div>
+          <div style={{
+            fontSize: 17, fontWeight: 700, color: C.white, lineHeight: 1.2,
+          }}>Inventory</div>
+          <div style={{
+            fontSize: 12, color: C.gray, marginTop: 2,
+          }}>Inventory &amp; booking approvals</div>
+        </div>
+      </div>
+
       {/* ── Tabs ── */}
       <div style={{
         display: "flex", gap: 0, padding: "12px 14px",

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Phone, Lock, Eye, EyeOff, AlertCircle, ArrowRight, Building2, TrendingUp, Users, Shield, KeyRound, CheckCircle2 } from "lucide-react";
 import { supabase } from "./lib/supabase";
+import Logo from "./Logo";  // P0-7+: Real PNG logo (ONYX_logo_transparent.png)
 
 // ─────────────────────────────────────────────
 //  SESSION HELPERS
@@ -106,6 +107,10 @@ export default function Login({ onLogin }) {
       }
 
       // 3) حفظ الـ session — نستخدم بيانات الـ RPC (موثوقة)
+      // P0-7+: 4-role permission system — pass through `account_type`
+      // (legacy) and `broker_admin_id` (links a sales_broker to their
+      // parent admin_broker — used by RLS policies and the Inventory
+      // screen to scope the team's data).
       const userData = {
         id: rpcUser.id,
         full_name: rpcUser.full_name,
@@ -115,6 +120,8 @@ export default function Login({ onLogin }) {
         role: rpcUser.role,
         avatar_url: rpcUser.avatar_url,
         active: rpcUser.active,
+        account_type: rpcUser.account_type,         // legacy (broker/developer)
+        broker_admin_id: rpcUser.broker_admin_id,   // P0-7+: parent admin_broker UUID (for sales_broker)
       };
 
       Session.save({ user: userData, role: userData.role, remember: rememberMe });
@@ -455,8 +462,8 @@ export default function Login({ onLogin }) {
 
           <div className="left-topbar">
             <div className="brand">
-              <div className="brand-icon"><Building2 size={20} color="#fff" strokeWidth={1.8} /></div>
-              <div><div className="brand-name">Onyx CRM</div></div>
+              {/* P0-7+: Real PNG logo (replaces the generic Building2 icon). */}
+              <Logo height={36} />
             </div>
           </div>
 

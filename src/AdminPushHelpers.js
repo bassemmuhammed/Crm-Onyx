@@ -29,12 +29,15 @@ const STATUS_LABELS_AR = {
   duplicate:         "مكرر",
 };
 
-// ── 1) جلب قائمة الأدمن/owner ───────────────────────────────────────
+// ── 1) جلب قائمة الأدمن/owner + admin_broker ─────────────────────────
+// P0-7+: admin_broker is now also an admin-like role and should receive
+// admin notifications (e.g. "new lead assigned", "sales opened the app"
+// — for their team's sales_broker accounts).
 async function fetchAdminIds() {
   const { data, error } = await supabase
     .from("users")
     .select("id")
-    .in("role", ["admin", "owner"]);
+    .in("role", ["admin", "owner", "admin_broker"]);
   if (error || !data) return [];
   return data.map(u => u.id);
 }
